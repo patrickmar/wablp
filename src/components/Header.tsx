@@ -21,6 +21,7 @@ export function Header() {
         { label: "Community Directory", href: "/community" },
       ],
     },
+    { label: "News", href: "/news", hasDropdown: false },
     { label: "Resources", href: "/resources", hasDropdown: false },
     { label: "Contact", href: "/contact", hasDropdown: false },
   ];
