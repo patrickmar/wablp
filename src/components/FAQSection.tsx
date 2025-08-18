@@ -52,7 +52,7 @@ export function FAQSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center bg-[#C9A74B] bg-opacity-10 rounded-full px-6 py-2 mb-6">
             <HelpCircle className="w-5 h-5 text-[#C9A74B] mr-2" />
-            <span className="text-[#C9A74B] font-medium">Frequently Asked Questions</span>
+            <span className="text-white font-medium">Frequently Asked Questions</span>
           </div>
           <h2 className="text-3xl md:text-4xl text-[#005A8C] mb-4">
             Got Questions? We&apos;ve Got Answers
@@ -95,7 +95,7 @@ export function FAQSection() {
             </Button>
             <Button 
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-[#005A8C] px-8 py-3"
+              className="border-2 border-white text-[#005A8C] hover:bg-white px-8 py-3"
             >
               <Phone className="w-5 h-5 mr-2" />
               Schedule a Call

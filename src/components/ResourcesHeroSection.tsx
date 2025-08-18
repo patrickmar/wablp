@@ -19,7 +19,7 @@ export function ResourcesHeroSection() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center bg-[#C9A74B] bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <BookOpen className="w-5 h-5 text-[#C9A74B] mr-2" />
-            <span className="text-[#C9A74B] font-medium">Knowledge Center</span>
+            <span className="text-white font-medium">Knowledge Center</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl mb-6 text-white leading-tight">

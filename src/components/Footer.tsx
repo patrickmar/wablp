@@ -42,20 +42,24 @@ export function Footer() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Company Info */}
             <div className="lg:col-span-1">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#C9A74B] to-[#d4b55a] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">W</span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">WABLP</h3>
-                  <p className="text-sm text-gray-300">West Africa Business Linkages</p>
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center space-x-3">
+
+                    <div className="w-40 h-12 rounded-lg flex items-center justify-center overflow-hidden">
+                      <img
+                        src="/logo.png"   // <- replace with your logo path
+                        alt="WABLP Logo"
+                        className="w-60 h-10 object-contain"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              
               <p className="text-gray-300 mb-6 leading-relaxed">
                 Connecting West African businesses to opportunities, fostering growth through strategic partnerships and supplier diversity.
               </p>
-              
+
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <MapPin className="w-5 h-5 text-[#C9A74B]" />
@@ -71,7 +75,7 @@ export function Footer() {
                 </div>
               </div>
             </div>
-            
+
             {/* Links Sections */}
             <div className="lg:col-span-2">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -87,7 +91,7 @@ export function Footer() {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="text-lg font-semibold mb-4">Services</h4>
                   <ul className="space-y-3">
@@ -100,7 +104,7 @@ export function Footer() {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="text-lg font-semibold mb-4">Resources</h4>
                   <ul className="space-y-3">
@@ -113,7 +117,7 @@ export function Footer() {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="text-lg font-semibold mb-4">Legal</h4>
                   <ul className="space-y-3">
@@ -128,26 +132,26 @@ export function Footer() {
                 </div>
               </div>
             </div>
-            
+
             {/* Newsletter Signup */}
             <div className="lg:col-span-1">
               <h4 className="text-lg font-semibold mb-4">Stay Updated</h4>
               <p className="text-gray-300 mb-6">
                 Get the latest opportunities and business insights delivered to your inbox.
               </p>
-              
+
               <div className="space-y-4">
-                <Input 
+                <Input
                   placeholder="Enter your email"
                   className="bg-white bg-opacity-10 border-gray-400 text-white placeholder-gray-400 focus:border-[#C9A74B]"
                 />
-                <Button 
+                <Button
                   className="w-full bg-[#C9A74B] text-white hover:bg-[#b8964a] transition-colors"
                 >
                   Subscribe
                 </Button>
               </div>
-              
+
               <div className="flex space-x-4 mt-8">
                 <a href="#" className="text-gray-300 hover:text-[#C9A74B] transition-colors">
                   <Facebook className="w-6 h-6" />
@@ -165,7 +169,7 @@ export function Footer() {
             </div>
           </div>
         </div>
-        
+
         {/* Bottom Footer */}
         <div className="border-t border-gray-600 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">

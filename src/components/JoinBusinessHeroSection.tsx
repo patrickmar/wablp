@@ -18,7 +18,7 @@ export function JoinBusinessHeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <div className="inline-flex items-center bg-[#C9A74B] bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 mb-8">
-              <span className="text-[#C9A74B] font-medium">🚀 Join the Growth Network</span>
+              <span className="text-white font-medium">🚀 Join the Growth Network</span>
             </div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl mb-6 text-white leading-tight">
@@ -41,7 +41,7 @@ export function JoinBusinessHeroSection() {
               <Button 
                 size="lg"
                 variant="outline"
-                className="border-2 border-white text-white hover:bg-white hover:text-[#005A8C] px-8 py-4 text-lg rounded-lg transition-all duration-300"
+                className="border-2 border-white text-[#005A8C] hover:bg-white px-8 py-4 text-lg rounded-lg transition-all duration-300"
               >
                 Schedule Demo
               </Button>

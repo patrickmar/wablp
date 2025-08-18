@@ -34,14 +34,13 @@ export function Header() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#005A8C] to-[#C9A74B] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">W</span>
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-[#005A8C]">WABLP</h1>
-                  <p className="text-xs text-gray-600 hidden sm:block">
-                    West Africa Business Linkages
-                  </p>
+
+                <div className="w-60 h-12 rounded-lg flex items-center justify-center overflow-hidden">
+                  <img
+                    src="/logo.png"   // <- replace with your logo path
+                    alt="WABLP Logo"
+                    className="w-60 h-10 object-contain"
+                  />
                 </div>
               </div>
             </div>
