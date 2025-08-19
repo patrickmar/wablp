@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "./ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export function Header() {
@@ -87,12 +88,12 @@ export function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <Button
               variant="outline"
-              className="border-[#005A8C] text-[#005A8C] hover:bg-[#005A8C] hover:text-white"
+              className="border-[#005A8C] text-[#005A8C] hover:bg-[#005A8C] hover:text-white" asChild
             >
-              Sign In
+              <Link href="/sign-in">Sign In</Link>
             </Button>
-            <Button className="bg-[#C9A74B] text-white hover:bg-[#b8964a] shadow-lg">
-              Join Now
+            <Button className="bg-[#C9A74B] text-white hover:bg-[#b8964a] shadow-lg" asChild>
+              <Link href="/sign-up">Join Now</Link>
             </Button>
           </div>
 
