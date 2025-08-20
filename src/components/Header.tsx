@@ -9,7 +9,7 @@ export function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const navigationItems = [
-    { label: "Home", href: "#", hasDropdown: false },
+    { label: "Home", href: "home", hasDropdown: false },
     { label: "About Us", href: "/about", hasDropdown: false },
     { label: "Features", href: "/features", hasDropdown: false },
     {
@@ -58,25 +58,25 @@ export function Header() {
                 }
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <a
+                <Link
                   href={item.href}
                   className="text-gray-700 hover:text-[#005A8C] px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center"
                 >
                   {item.label}
                   {item.hasDropdown && <ChevronDown className="w-4 h-4 ml-1" />}
-                </a>
+                </Link>
 
                 {/* Dropdown Menu */}
                 {item.hasDropdown && activeDropdown === item.label && (
                   <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2">
                     {item.dropdownItems?.map((dropdownItem) => (
-                      <a
+                      <Link
                         key={dropdownItem.label}
                         href={dropdownItem.href}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#005A8C] transition-colors"
                       >
                         {dropdownItem.label}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}

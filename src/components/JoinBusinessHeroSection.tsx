@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { ArrowRight, Users, TrendingUp, Shield } from "lucide-react";
+import Link from "next/link";
 
 export function JoinBusinessHeroSection() {
   return (
@@ -33,11 +34,18 @@ export function JoinBusinessHeroSection() {
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Button 
                 size="lg"
+                className="bg-[#C9A74B] text-white hover:bg-[#b8964a] px-8 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group" asChild
+              >
+                <Link href="/sign-up">Join as a Business</Link>
+                {/* <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" /> */}
+              </Button>
+              {/* <Button 
+                size="lg"
                 className="bg-[#C9A74B] text-white hover:bg-[#b8964a] px-8 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 Start Free Trial
                 <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              </Button> */}
               <Button 
                 size="lg"
                 variant="outline"
