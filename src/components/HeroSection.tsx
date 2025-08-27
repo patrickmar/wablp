@@ -112,7 +112,8 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { VideoPlayer } from "./VideoPlayer";
-import { Play, ArrowRight, Users, Globe, TrendingUp, Shield } from "lucide-react";
+import { Play, ArrowRight, Users, Globe, TrendingUp, Shield,} from "lucide-react";
+import Link from "next/link";
 
 export function HeroSection() {
   return (
@@ -162,7 +163,7 @@ export function HeroSection() {
                 size="lg"
                 className="bg-[#C9A74B] text-white hover:bg-[#b8964a] px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-200 shadow-xl"
               >
-                Join as a Business
+                <Link href="/sign-up">Join as a Business</Link>
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               <Button 
