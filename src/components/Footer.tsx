@@ -156,13 +156,15 @@ export function Footer() {
                 <a href="#" className="text-gray-300 hover:text-[#C9A74B] transition-colors">
                   <Facebook className="w-6 h-6" />
                 </a>
-                <a href="#" className="text-gray-300 hover:text-[#C9A74B] transition-colors">
+                <a href="https://x.com/home
+" className="text-gray-300 hover:text-[#C9A74B] transition-colors">
                   <Twitter className="w-6 h-6" />
                 </a>
                 <a href="#" className="text-gray-300 hover:text-[#C9A74B] transition-colors">
                   <Linkedin className="w-6 h-6" />
                 </a>
-                <a href="#" className="text-gray-300 hover:text-[#C9A74B] transition-colors">
+                <a href="https://www.instagram.com/wablp_uneca/
+" className="text-gray-300 hover:text-[#C9A74B] transition-colors">
                   <Instagram className="w-6 h-6" />
                 </a>
               </div>

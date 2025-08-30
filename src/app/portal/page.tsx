@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PortalLayout } from "@/components/portal/PortalLayout";
 import { DashboardPage } from "@/components/portal/DashboardPage";
-import { NewsEventsPage } from "@/components/portal/NewsEventsPage";
+import  NewsEventsPage  from "@/components/portal/NewsEventsPage";
+import  ProfilePage  from "@/components/portal/ProfilePage";
 
 function Placeholder({ title }: { title: string }) {
   return <div>{title} content goes here</div>;
@@ -30,7 +31,7 @@ export default function PortalPage() {
       case "news":
         return <NewsEventsPage />;
       case "profile":
-        return <Placeholder title="My Profile" />;
+        return <ProfilePage />;
       case "businesses":
         return <Placeholder title="Registered Businesses" />;
       case "organizations":
