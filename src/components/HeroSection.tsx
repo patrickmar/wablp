@@ -237,62 +237,62 @@ export function HeroSection() {
               {/* Slider (uses images from /public) */}
               <div
                 ref={sliderRef}
-                className="keen-slider relative z-10 rounded-3xl overflow-hidden shadow-xl transform hover:scale-105 transition-all duration-300"
+                className="keen-slider relative z-10 rounded-3xl overflow-hidden shadow-xl transform hover:scale-105 transition-all duration-300 h-[400px] w-[650px] mx-auto"
               >
                 <div className="keen-slider__slide">
                   <img
                     src="/slide01.jpg"
                     alt="Business connection"
-                    className="w-full h-96 object-cover"
+                    // className="w-[500px] h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
                     src="/slide02.jpg"
                     alt="Networking event"
-                    className="w-full h-96 object-cover"
+                    // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
                     src="/slide03.jpg"
                     alt="Growth opportunities"
-                    className="w-full h-96 object-cover"
+                    className="w-full h-[400px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
                     src="/slide04.jpg"
                     alt="Growth opportunities"
-                    className="w-full h-96 object-cover"
+                    // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
                     src="/slide05.jpg"
                     alt="Growth opportunities"
-                    className="w-full h-96 object-cover"
+                    // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
                     src="/slide06.jpg"
                     alt="Growth opportunities"
-                    className="w-full h-96 object-cover"
+                    // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
                     src="/slide07.jpg"
                     alt="Growth opportunities"
-                    className="w-full h-96 object-cover"
+                    // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
                     src="/slide08.jpg"
                     alt="Growth opportunities"
-                    className="w-full h-96 object-cover"
+                    // className="w-full h-[500px] object-cover"
                   />
                 </div>
               </div>
@@ -373,6 +373,8 @@ export function HeroSection() {
     </section>
   );
 }
+
+
 
 
 
