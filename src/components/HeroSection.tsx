@@ -241,56 +241,56 @@ export function HeroSection() {
               >
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide01.jpg"
+                    src="/replace01.jpg"
                     alt="Business connection"
                     // className="w-[500px] h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide02.jpg"
+                    src="/replace02.jpg"
                     alt="Networking event"
                     // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide3.jpg"
+                    src="/replace03.jpg"
                     alt="Growth opportunities"
                     // className="w-full h-[400px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide04.jpg"
+                    src="/replace04.jpg"
                     alt="Growth opportunities"
                     // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide05.jpg"
+                    src="/replace05.jpg"
                     alt="Growth opportunities"
                     // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide06.jpg"
+                    src="/replace06.jpg"
                     alt="Growth opportunities"
                     // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide07.jpg"
+                    src="/replace07.jpg"
                     alt="Growth opportunities"
                     // className="w-full h-[500px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide08.jpg"
+                    src="/replace08.jpg"
                     alt="Growth opportunities"
                     // className="w-full h-[500px] object-cover"
                   />
