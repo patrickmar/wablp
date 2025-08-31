@@ -20,10 +20,10 @@ import {
 const videos = [
   {
     id: 1,
-    title: "Success Story",
+    title: "Benefits of Registering on WABLP",
     description: "",
     thumbnail: "/images/wablp-thumbnail.jpg",  // Local image file for thumbnail
-    videoFile: "senegal01.mp4",  // Local video file
+    videoFile: "ghana02.mp4",  // Local video file
     duration: "3:42",
     category: "Success Story"
   },
