@@ -214,7 +214,7 @@ export function HeroSection() {
                 <div className="text-sm text-gray-300">Verified Members</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#C9A74B] mb-1">15</div>
+                <div className="text-3xl font-bold text-[#C9A74B] mb-1">27</div>
                 <div className="text-sm text-gray-300">Countries</div>
               </div>
               <div className="text-center">

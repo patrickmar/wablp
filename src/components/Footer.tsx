@@ -62,17 +62,20 @@ export function Footer() {
 
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
-                  <MapPin className="w-5 h-5 text-[#C9A74B]" />
-                  <span className="text-gray-300">Lagos, Nigeria</span>
+                  <MapPin className="w-10 h-7 text-[#C9A74B]" />
+                  <span className="text-gray-300">
+                    <p>United Nations Economic Commission for Africa</p>
+                    <p>Maison des Nations Unies, 428 Avenue du Fleuve Niger, Niamey, Niger</p>
+                  </span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-[#C9A74B]" />
-                  <span className="text-gray-300">+234 (0) 123 456 7890</span>
+                  <span className="text-gray-300">+227 20 72 73 00</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                {/* <div className="flex items-center space-x-3">
                   <Mail className="w-5 h-5 text-[#C9A74B]" />
                   <span className="text-gray-300">info@wablp.com</span>
-                </div>
+                </div> */}
               </div>
             </div>
 
