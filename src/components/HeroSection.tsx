@@ -219,7 +219,10 @@ export function HeroSection() {
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-[#C9A74B] mb-1">$2.8M</div>
-                <div className="text-sm text-gray-300">Deals Facilitated</div>
+                <div className="text-sm text-gray-300">
+                  <p>Deals Pipeline Value</p>
+                  <p>(Based on Co Creation & Market Access Opportunity)</p>
+                  </div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-[#C9A74B] mb-1">98%</div>
