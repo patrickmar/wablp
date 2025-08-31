@@ -255,9 +255,9 @@ export function HeroSection() {
                 </div>
                 <div className="keen-slider__slide">
                   <img
-                    src="/slide03.jpg"
+                    src="/slide3.jpg"
                     alt="Growth opportunities"
-                    className="w-full h-[400px] object-cover"
+                    // className="w-full h-[400px] object-cover"
                   />
                 </div>
                 <div className="keen-slider__slide">

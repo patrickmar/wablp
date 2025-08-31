@@ -158,7 +158,7 @@ export function VideoPlayer({
           src={src}
           poster={thumbnail}
           className="w-full h-auto rounded-lg"
-          controls={false} // Disable default controls
+          controls={true} // Disable default controls
         />
 
         {/* Controls */}
