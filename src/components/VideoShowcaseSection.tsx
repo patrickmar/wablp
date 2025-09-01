@@ -20,7 +20,7 @@ import {
 const videos = [
   {
     id: 1,
-    title: "Benefits of Registering on WABLP",
+    title: "Watch SMEs Case Studies & Success Stories",
     description: "",
     thumbnail: "/images/wablp-thumbnail.jpg",  // Local image file for thumbnail
     videoFile: "ghana02.mp4",  // Local video file
@@ -29,7 +29,7 @@ const videos = [
   },
   {
     id: 2,
-    title: "Success Story",
+    title: "Ghana Success Story",
     description: "",
     thumbnail: "/images/technova-thumbnail.jpg",  // Local image file for thumbnail
     videoFile: "ghana01.mp4",  // Local video file
@@ -38,7 +38,7 @@ const videos = [
   },
   {
     id: 3,
-    title: "Success Story",
+    title: "Senegal Success Story",
     description: "",
     thumbnail: "/images/security-thumbnail.jpg",  // Local image file for thumbnail
     videoFile: "senegal01.mp4",  // Local video file
@@ -47,7 +47,7 @@ const videos = [
   },
   {
     id: 4,
-    title: "Success Story",
+    title: "Ivory Coast Success Story",
     description: "",
     thumbnail: "/images/security-thumbnail.jpg",  // Local image file for thumbnail
     videoFile: "ivory01.mp4",  // Local video file
