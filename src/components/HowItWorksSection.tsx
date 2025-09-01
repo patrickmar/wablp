@@ -6,7 +6,7 @@ const steps = [
     icon: UserPlus,
     title: "Create Your Profile",
     description: "Sign up and build your comprehensive business profile with all relevant information and certifications.",
-    Link: "/sign-up"
+    link: "/sign-up"
   },
   {
     icon: Search,
@@ -30,6 +30,7 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
+    <div className="pb-20">
     <section className="py-20 bg-[#005A8C]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -80,5 +81,6 @@ export function HowItWorksSection() {
         </div>
       </div>
     </section>
+    </div>
   );
 }

@@ -248,7 +248,7 @@ export function SignupFormSection() {
 
                   <p className="text-center text-sm text-gray-600">
                     Already have an account?
-                    <a href="#" className="text-[#005A8C] hover:underline ml-1">Login here</a>
+                    <a href="sign-in" className="text-[#005A8C] hover:underline ml-1">Login here</a>
                   </p>
                 </form>
               </CardContent>
