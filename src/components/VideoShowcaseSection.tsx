@@ -32,7 +32,7 @@ const videos = [
     title: "Success Story",
     description: "",
     thumbnail: "/images/technova-thumbnail.jpg",  // Local image file for thumbnail
-    videoFile: "ivory01.mp4",  // Local video file
+    videoFile: "ghana01.mp4",  // Local video file
     duration: "2:18",
     category: "Success Story"
   },
@@ -41,7 +41,7 @@ const videos = [
     title: "Success Story",
     description: "",
     thumbnail: "/images/security-thumbnail.jpg",  // Local image file for thumbnail
-    videoFile: "ghana01.mp4",  // Local video file
+    videoFile: "senegal01.mp4",  // Local video file
     duration: "2:54",
     category: "Success Story"
   },
@@ -50,7 +50,7 @@ const videos = [
     title: "Success Story",
     description: "",
     thumbnail: "/images/security-thumbnail.jpg",  // Local image file for thumbnail
-    videoFile: "senegal01.mp4",  // Local video file
+    videoFile: "ivory01.mp4",  // Local video file
     duration: "2:54",
     category: "Success Story"
   }
