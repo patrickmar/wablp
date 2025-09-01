@@ -1,25 +1,30 @@
 import { UserPlus, Search, MessageSquare, Handshake } from "lucide-react";
+import { Button } from "./ui/button"; // ✅ Import your button component
 
 const steps = [
   {
     icon: UserPlus,
     title: "Create Your Profile",
-    description: "Sign up and build your comprehensive business profile with all relevant information and certifications."
+    description: "Sign up and build your comprehensive business profile with all relevant information and certifications.",
+    Link: "/sign-up"
   },
   {
     icon: Search,
     title: "Discover Opportunities",
-    description: "Browse and search through thousands of business opportunities, tenders, and networking events."
+    description: "Browse and search through thousands of business opportunities, tenders, and networking events.",
+    link: "/sign-up"
   },
   {
     icon: MessageSquare,
     title: "Connect & Communicate",
-    description: "Reach out to potential partners through our secure messaging system and collaboration tools."
+    description: "Reach out to potential partners through our secure messaging system and collaboration tools.",
+    link: "/sign-up"
   },
   {
     icon: Handshake,
     title: "Close Deals",
-    description: "Finalize partnerships and business deals with our integrated contract management and payment systems."
+    description: "Finalize partnerships and business deals with our integrated contract management and payment systems.",
+    link: "/sign-up"
   }
 ];
 
@@ -62,6 +67,14 @@ export function HowItWorksSection() {
               <p className="text-gray-300 leading-relaxed">
                 {step.description}
               </p>
+
+              <Button
+                asChild
+                variant="outline"
+                className="mt-5 text-[#005A8C] border-[#005A8C] hover:bg-[#005A8C] hover:text-white"
+              >
+                <a href={step.link}>Learn More</a>
+              </Button>
             </div>
           ))}
         </div>
