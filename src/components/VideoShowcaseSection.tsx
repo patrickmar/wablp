@@ -32,7 +32,7 @@ const videos = [
     title: "Success Story",
     description: "",
     thumbnail: "/images/technova-thumbnail.jpg",  // Local image file for thumbnail
-    videoFile: "senegal02.mp4",  // Local video file
+    videoFile: "ivory01.mp4",  // Local video file
     duration: "2:18",
     category: "Success Story"
   },
