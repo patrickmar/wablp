@@ -16,8 +16,8 @@ export default function Home() {
               <CommunitySpotlightSection />
               <VideoShowcaseSection />
               <HowItWorksSection />
-              <SpotlightSection2 />
               <Testimonial />
+              <SpotlightSection2 />
               <TechnologySecuritySection />
               <TestimonialsSection />
             </>

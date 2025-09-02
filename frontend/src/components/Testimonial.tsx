@@ -19,6 +19,7 @@ export function Testimonial() {
     const prevTestimonial = () => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
+        <div className="pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div className="bg-gradient-to-r from-[#005A8C] to-[#0066a3] rounded-3xl p-8 md:p-12 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -122,6 +123,7 @@ export function Testimonial() {
                 </Button>
             </div>
         </div>
+    </div>
     </div>
     </div>
     )
