@@ -2,6 +2,7 @@ import { CommunitySpotlightSection } from "@/components/CommunitySpotlightSectio
 import { HeroSection } from "@/components/HeroSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { KeyFeaturesSection } from "@/components/KeyFeaturesSection";
+import { PartnerPage } from "@/components/PartnerPage";
 import { SpotlightSection2 } from "@/components/SpotlightSection2";
 import { TechnologySecuritySection } from "@/components/TechnologySecuritySection";
 import { Testimonial } from "@/components/Testimonial";
@@ -18,8 +19,9 @@ export default function Home() {
               <HowItWorksSection />
               <Testimonial />
               <SpotlightSection2 />
-              <TechnologySecuritySection />
               <TestimonialsSection />
+              <TechnologySecuritySection />
+              <PartnerPage />
             </>
   );
 }

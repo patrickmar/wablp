@@ -84,7 +84,7 @@ export function TestimonialsSection() {
           ))}
         </div>
         
-        {/* Partner Logos */}
+        {/* Partner Logos
         <div className="text-center">
           <h3 className="text-2xl text-[#005A8C] mb-8">Trusted by Leading Organizations</h3>
           <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
@@ -98,7 +98,7 @@ export function TestimonialsSection() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );
