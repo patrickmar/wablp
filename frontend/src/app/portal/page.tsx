@@ -9,6 +9,8 @@ import  ProfilePage  from "@/components/portal/ProfilePage";
 import { BusinessPage } from "@/components/portal/BusinessPage";
 import { OrganizationPage } from "@/components/portal/OrganizationPage";
 import { ExpertPage } from "@/components/portal/ExpertPage";
+import { JobsPage } from "@/components/portal/JobsPage";
+import { WebinarsPage } from "@/components/portal/WebinarsPage";
 
 function Placeholder({ title }: { title: string }) {
   return <div>{title} content goes here</div>;
@@ -41,12 +43,14 @@ export default function PortalPage() {
         return <OrganizationPage />;
       case "experts":
         return <ExpertPage />;
+        // case "resources":
+        // return <Placeholder title="Resources" />;
       case "jobs":
-        return <Placeholder title="Jobs" />;
+        return <JobsPage />;
       case "courses":
         return <Placeholder title="Courses" />;
       case "webinars":
-        return <Placeholder title="Webinars" />;
+        return <WebinarsPage />;
       case "deal-rooms":
         return <Placeholder title="Deal Rooms" />;
       case "tenders":

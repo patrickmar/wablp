@@ -61,7 +61,7 @@ export function PortalLayout({
             { key: "businesses", label: "Businesses", icon: Building2 },
             { key: "organizations", label: "Organizations", icon: Landmark },
             { key: "experts", label: "Experts", icon: User },
-            { key: "resources", label: "Resources", icon: Factory },
+            // { key: "resources", label: "Resources", icon: Factory },
           ],
         },
       ],
