@@ -18,8 +18,8 @@ export default function Home() {
               <VideoShowcaseSection />
               <HowItWorksSection />
               <Testimonial />
-              <SpotlightSection2 />
               <TestimonialsSection />
+              <SpotlightSection2 />
               <TechnologySecuritySection />
               <PartnerPage />
             </>

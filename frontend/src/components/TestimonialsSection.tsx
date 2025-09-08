@@ -41,7 +41,7 @@ export function TestimonialsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl text-[#005A8C] mb-4">
-            What Our Members Say
+            What Our Partners Say
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Hear from successful businesses who have grown their networks and closed deals through WABLP

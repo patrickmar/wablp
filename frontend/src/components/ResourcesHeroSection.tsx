@@ -26,12 +26,15 @@ export function ResourcesHeroSection() {
             Empower Your Business with 
             <span className="text-[#C9A74B]"> Knowledge</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-4xl mx-auto">
-            Access training resources, market insights, success stories, and industry reports to accelerate your business growth
+          <p className="text-xl md:text-xl text-gray-200 mb-8 max-w-4xl mx-auto">
+            {/* Access training resources, market insights, success stories, and industry reports to accelerate your business growth */}
+            By providing access to resources, WABLP empowers businesses to navigate the West African market and build a sustainable 
+            competitive advantage. We offer a wealth of knowledge that goes beyond simple transactions to include in-depth market 
+            intelligence and advisory services, which small and medium enterprises (SMEs) desperately need to grow their operations. 
           </p>
           
           {/* Search Bar */}
-          <div className="max-w-3xl mx-auto mb-8">
+          {/* <div className="max-w-3xl mx-auto mb-8">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 relative">
@@ -49,29 +52,29 @@ export function ResourcesHeroSection() {
                 </Button>
               </div>
             </div>
-          </div>
+          </div> */}
           
           {/* Resource Categories */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 hover:bg-opacity-20 transition-all cursor-pointer group">
               <BookOpen className="w-12 h-12 text-[#C9A74B] mx-auto mb-4 group-hover:scale-110 transition-transform" />
               <div className="text-2xl font-bold text-white mb-2">120+</div>
-              <div className="text-gray-300">Training Materials</div>
+              <div className="text-[#005A8C]">Training Materials</div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 hover:bg-opacity-20 transition-all cursor-pointer group">
               <TrendingUp className="w-12 h-12 text-[#C9A74B] mx-auto mb-4 group-hover:scale-110 transition-transform" />
               <div className="text-2xl font-bold text-white mb-2">85+</div>
-              <div className="text-gray-300">Market Reports</div>
+              <div className="text-[#005A8C]">Market Reports</div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 hover:bg-opacity-20 transition-all cursor-pointer group">
               <Award className="w-12 h-12 text-[#C9A74B] mx-auto mb-4 group-hover:scale-110 transition-transform" />
               <div className="text-2xl font-bold text-white mb-2">200+</div>
-              <div className="text-gray-300">Success Stories</div>
+              <div className="text-[#005A8C]">Success Stories</div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 hover:bg-opacity-20 transition-all cursor-pointer group">
               <Users className="w-12 h-12 text-[#C9A74B] mx-auto mb-4 group-hover:scale-110 transition-transform" />
               <div className="text-2xl font-bold text-white mb-2">50+</div>
-              <div className="text-gray-300">Expert Articles</div>
+              <div className="text-[#005A8C]">Expert Articles</div>
             </div>
           </div>
         </div>

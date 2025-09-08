@@ -4,17 +4,17 @@ const values = [
   {
     icon: Eye,
     title: "Our Vision",
-    description: "To be the leading platform connecting West African businesses globally, creating sustainable economic opportunities and fostering regional prosperity through innovation and collaboration."
+    description: "Our vision is rooted in the audacious ambition of West Africa's tech ecosystem. We aim to serve as a key component of the region's digital public infrastructure , leveraging the high mobile adoption rate and fintech innovation to empower a new generation of entrepreneurs. Our goal is to not only facilitate commerce but also to enable a collaborative community where businesses can thrive and export their innovation to the rest of the continent and beyond."
   },
   {
     icon: Heart,
     title: "Integrity",
-    description: "We operate with transparency, honesty, and ethical practices in all our interactions, building trust within our community of business partners."
+    description: "In a region where a significant portion of the population is unbanked, trust is the foundation of every transaction. Our platform is built on secure, encrypted data transmission to ensure the confidentiality of all information. We also aim to foster a transparent environment by providing verifiable business profiles and a clear digital trail for every transaction, building confidence among both local and international partners."
   },
   {
     icon: Lightbulb,
     title: "Innovation",
-    description: "We continuously evolve our platform and services to meet the changing needs of West African businesses in an increasingly connected world."
+    description: "Innovation for us means directly addressing the unique needs of the West African market. Our platform will be designed to support the informal economy, providing digital tools that are essential for businesses to formalize and participate in the broader digital marketplace. "
   }
 ];
 

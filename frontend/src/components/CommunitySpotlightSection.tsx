@@ -41,8 +41,8 @@ export function CommunitySpotlightSection() {
             <Users className="w-5 h-5 text-[#C9A74B] mr-2" />
             <span className="text-white font-medium">Community Spotlight</span>
           </div>
-          <h2 className="text-4xl md:text-5xl text-[#005A8C] mb-4">
-            Meet Our Success Stories
+          <h2 className="text-3xl md:text-3xl text-[#005A8C] mb-4">
+            Hear from the region’s Sector Champions and their success stories
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Discover how businesses across West Africa are thriving through WABLP connections

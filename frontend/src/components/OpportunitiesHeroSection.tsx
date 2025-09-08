@@ -26,7 +26,7 @@ export function OpportunitiesHeroSection() {
           </p>
           
           {/* Search Bar */}
-          <div className="max-w-4xl mx-auto">
+          {/* <div className="max-w-4xl mx-auto">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
@@ -51,7 +51,7 @@ export function OpportunitiesHeroSection() {
                 </Button>
               </div>
             </div>
-          </div>
+          </div> */}
           
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
@@ -68,7 +68,7 @@ export function OpportunitiesHeroSection() {
               <div className="text-gray-300">Industries</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-[#C9A74B] mb-2">15+</div>
+              <div className="text-3xl font-bold text-[#C9A74B] mb-2">27+</div>
               <div className="text-gray-300">Countries</div>
             </div>
           </div>

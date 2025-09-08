@@ -5,7 +5,7 @@ const Resources = () => {
   return (
     <>
       <ResourcesHeroSection />
-            <ResourceCategoriesSection />
+      <ResourceCategoriesSection />
     </>
   );
 };

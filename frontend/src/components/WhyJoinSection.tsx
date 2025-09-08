@@ -49,11 +49,16 @@ export function WhyJoinSection() {
             Why Join WABLP?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Unlock the power of West Africa&apos;s premier business network and accelerate your growth
+            Unlock the power of West Africa&apos;s premier business network and accelerate your growth marked by diverse currencies and regulatory environments. 
           </p>
         </div>
         
         <div className="space-y-20">
+          <div className="text-center mb-16">
+            <h1 className="text-3xl text-[#005A8C] max-w-3xl mx-auto">
+            Why Join WABLP?
+          </h1>
+          </div>
           {benefits.map((benefit, index) => (
             <div 
               key={index}

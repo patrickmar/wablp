@@ -5,25 +5,25 @@ const features = [
   {
     icon: Users,
     title: "Supplier Diversity",
-    description: "Connect with certified diverse suppliers and promote inclusive business practices across West Africa.",
+    description: "The West African economy is heavily reliant on small, medium, and micro enterprises (SMMEs), which form its backbone. The WABLP platform is designed to facilitate connections between large corporations and a wide range of these SMMEs, including those in different geographical locations. By helping to integrate these businesses into formal supply chains, the platform plays vital role in local economic development and address a core challenge of supplier development across the region.",
     link: "/sign-up"
   },
   {
     icon: Globe,
     title: "Market Access",
-    description: "Expand your reach across regional and international markets with our comprehensive platform.",
+    description: "This platform provides critical solution to challenges by creating a single, comprehensive hub for businesses to expand their reach. By leveraging its digital infrastructure, the platform can help businesses access new markets and align with broader regional trade initiatives, such as the African Continental Free Trade Area (AfCFTA). This enables seamless cross-border trade, which is a significant untapped opportunity in the region.   ",
     link: "/sign-up"
   },
   {
     icon: Network,
     title: "Business Networking",
-    description: "Build meaningful relationships with verified businesses through intelligent matching.",
+    description: "The West African tech and business ecosystems thrive on a culture of strong collaboration and community, where founders and entrepreneurs often co-invest in each other's ventures. Engaging network allows participants to tap into a broader ecosystem of stakeholders, investors, and innovators, which can enhance their visibility and reputation as a leader in their industry.",
     link: "/sign-up"
   },
   {
     icon: Shield,
     title: "Secure Transactions",
-    description: "Conduct business safely with encrypted communication and verified member profiles.",
+    description: "Trust is a fundamental element in West African commerce, particularly for the large unbanked population. This platform prioritizes this by employing secure, encrypted data transmission. In addition, modern fintech solutions can be integrated to further build trust and security.  This focus on a transparent, secure, and reliable environment is essential for a business that aims to serve as a key part of the region's digital public infrastructure.",
     link: "/sign-up"
   }
 ];
@@ -43,7 +43,7 @@ export function KeyFeaturesSection() {
         </div>
         
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {features.map((feature, index) => (
             <div 
               key={index}

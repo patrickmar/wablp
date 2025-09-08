@@ -23,7 +23,7 @@ const tiers = [
     popular: false
   },
   {
-    name: "Professional",
+    name: "Enterprise",
     icon: Star,
     price: "$49",
     period: "/month",
@@ -41,7 +41,7 @@ const tiers = [
     popular: true
   },
   {
-    name: "Enterprise",
+    name: "Corporate Partnership",
     icon: Crown,
     price: "$149",
     period: "/month",
@@ -96,10 +96,10 @@ export function MembershipTiersSection() {
                     <tier.icon className="w-8 h-8" />
                   </div>
                   <h3 className="text-2xl text-[#005A8C] mb-2">{tier.name}</h3>
-                  <div className="mb-4">
+                  {/* <div className="mb-4">
                     <span className="text-4xl font-bold text-[#005A8C]">{tier.price}</span>
                     {tier.period && <span className="text-gray-600">{tier.period}</span>}
-                  </div>
+                  </div> */}
                   <p className="text-gray-600">{tier.description}</p>
                 </div>
                 
