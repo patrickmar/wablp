@@ -4,13 +4,21 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PortalLayout } from "@/components/portal/PortalLayout";
 import { DashboardPage } from "@/components/portal/DashboardPage";
-import  NewsEventsPage  from "@/components/portal/NewsEventsPage";
-import  ProfilePage  from "@/components/portal/ProfilePage";
+import NewsEventsPage from "@/components/portal/NewsEventsPage";
+import ProfilePage  from "@/components/portal/ProfilePage";
 import { BusinessPage } from "@/components/portal/BusinessPage";
 import { OrganizationPage } from "@/components/portal/OrganizationPage";
 import { ExpertPage } from "@/components/portal/ExpertPage";
 import { JobsPage } from "@/components/portal/JobsPage";
 import { WebinarsPage } from "@/components/portal/WebinarsPage";
+import { TendersPage } from "@/components/portal/TendersPage";
+import { ProjectsPage } from "@/components/portal/ProjectsPage";
+import { CataloguePage } from "@/components/portal/CataloguePage";
+import { ProductDetailsPage } from "@/components/portal/ProductDetailsPage";
+import { MyOrdersPage } from "@/components/portal/OrdersPage";
+import { SellerOrdersPage } from "@/components/portal/SellerOrdersPage";
+import { CreateCataloguePage } from "@/components/portal/CreateCataloguePage";
+import  FullNewsPage from "@/components/portal/FullNewsPage"; // ✅ added
 
 function Placeholder({ title }: { title: string }) {
   return <div>{title} content goes here</div>;
@@ -20,6 +28,8 @@ export default function PortalPage() {
   const [activePage, setActivePage] = useState("dashboard");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null); // ✅ added
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -33,38 +43,100 @@ export default function PortalPage() {
     switch (activePage) {
       case "dashboard":
         return <DashboardPage />;
+
       case "news":
-        return <NewsEventsPage />;
+        return (
+          <NewsEventsPage
+            onSelectNews={(id) => {
+              setSelectedNewsId(id.toString());
+              setActivePage("newsDetails");
+            }}
+          />
+        );
+
+      case "newsDetails":
+        return (
+          <FullNewsPage
+            id={selectedNewsId!}
+            onBack={() => setActivePage("news")}
+          />
+        );
+
       case "profile":
         return <ProfilePage />;
+
       case "businesses":
         return <BusinessPage />;
+
       case "organizations":
         return <OrganizationPage />;
+
       case "experts":
         return <ExpertPage />;
-        // case "resources":
-        // return <Placeholder title="Resources" />;
+
       case "jobs":
         return <JobsPage />;
+
       case "courses":
         return <Placeholder title="Courses" />;
+
       case "webinars":
         return <WebinarsPage />;
-      case "deal-rooms":
+
+      case "dealrooms":
         return <Placeholder title="Deal Rooms" />;
+
       case "tenders":
-        return <Placeholder title="Tenders" />;
+        return <TendersPage />;
+
       case "projects":
-        return <Placeholder title="WABLP Projects" />;
+        return <ProjectsPage />;
+
       case "catalogue":
-        return <Placeholder title="Members Catalogue" />;
+        return (
+          <CataloguePage
+            onSelectProduct={(id) => {
+              setSelectedProductId(id.toString());
+              setActivePage("productDetails");
+            }}
+            onCreateCatalogue={() => setActivePage("createCatalogue")}
+          />
+        );
+
+      case "productDetails":
+        return (
+          <ProductDetailsPage
+            id={selectedProductId!}
+            onBack={() => setActivePage("catalogue")}
+          />
+        );
+
+      case "createCatalogue":
+        return <CreateCataloguePage onBack={() => setActivePage("catalogue")} />;
+
       case "services":
         return <Placeholder title="Services Directory" />;
-      case "my-orders":
-        return <Placeholder title="My Orders" />;
-      case "seller-orders":
-        return <Placeholder title="Seller Orders" />;
+
+      case "myorders":
+        return (
+          <MyOrdersPage
+            onViewProduct={(id) => {
+              setSelectedProductId(id);
+              setActivePage("productDetails");
+            }}
+          />
+        );
+
+      case "sellerorders":
+        return (
+          <SellerOrdersPage
+            onSelectProduct={(id) => {
+              setSelectedProductId(id.toString());
+              setActivePage("productDetails");
+            }}
+          />
+        );
+
       default:
         return <DashboardPage />;
     }
@@ -84,86 +156,129 @@ export default function PortalPage() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // "use client";
 
-// import { useState } from "react";
-// import { AnalyticsPage } from "@/components/portal/AnalyticsPage";
+// import { useEffect, useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { PortalLayout } from "@/components/portal/PortalLayout";
 // import { DashboardPage } from "@/components/portal/DashboardPage";
-// import { MessagesPage } from "@/components/portal/MessagesPage";
-// import { OpportunitiesPage } from "@/components/portal/OpportunitiesPage";
-// import  PortalLayout from "@/components/portal/PortalLayout";
-// import { ProfilePage } from "@/components/portal/ProfilePage";
-// import { NewsEventsPage } from "@/components/portal/NewsEventsPage";
-// import { CommunityMembersPage } from "@/components/portal/CommunityMembersPage";
+// import  NewsEventsPage  from "@/components/portal/NewsEventsPage";
+// import  ProfilePage  from "@/components/portal/ProfilePage";
+// import { BusinessPage } from "@/components/portal/BusinessPage";
+// import { OrganizationPage } from "@/components/portal/OrganizationPage";
+// import { ExpertPage } from "@/components/portal/ExpertPage";
 // import { JobsPage } from "@/components/portal/JobsPage";
-// import { TrainingPage } from "@/components/portal/TrainingPage";
-// import { DealsPage } from "@/components/portal/DealsPage";
-// import { MembersCataloguePage } from "@/components/portal/MembersCataloguePage";
-// import { ServicesDirectoryPage } from "@/components/portal/ServicesDirectoryPage";
-// import { OrdersPage } from "@/components/portal/OrdersPage";
+// import { WebinarsPage } from "@/components/portal/WebinarsPage";
+// import { TendersPage } from "@/components/portal/TendersPage";
+// import { ProjectsPage } from "@/components/portal/ProjectsPage";
+// import { CataloguePage } from "@/components/portal/CataloguePage";
+// import { ProductDetailsPage } from "@/components/portal/ProductDetailsPage";
+// import { MyOrdersPage } from "@/components/portal/OrdersPage";
+// import { SellerOrdersPage } from "@/components/portal/SellerOrdersPage";
+// import { CreateCataloguePage } from "@/components/portal/CreateCataloguePage";
+// import FullNewsPage from "@/components/portal/FullNewsPage";
 
-// const Members = () => {
-//   const [page, setPage] = useState("dashboard"); // default page
+// function Placeholder({ title }: { title: string }) {
+//   return <div>{title} content goes here</div>;
+// }
+
+// export default function PortalPage() {
+//   const [activePage, setActivePage] = useState("dashboard");
+//   const [loading, setLoading] = useState(true);
+//   const router = useRouter();
+//   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+//   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
+
+
+
+//   useEffect(() => {
+//     const token = localStorage.getItem("token");
+//     if (!token) router.push("/sign-in");
+//     else setLoading(false);
+//   }, [router]);
+
+//   if (loading) return <p className="p-6">Checking authentication...</p>;
+
+//   const renderPage = () => {
+//     switch (activePage) {
+//       case "dashboard":
+//         return <DashboardPage />;
+//       case "news":
+//         return (
+//     <NewsEventsPage
+//       onSelectNews={(id) => {
+//         setSelectedNewsId(id.toString());
+//         setActivePage("newsDetails");
+//       }}
+//     />
+//   );
+//       case "fullNews":
+//         return (
+//     <FullNewsPage
+//       id={selectedNewsId!}
+//       onBack={() => setActivePage("news")}
+//     />
+//   );
+//       case "profile":
+//         return <ProfilePage />;
+//       case "businesses":
+//         return <BusinessPage />;
+//       case "organizations":
+//         return <OrganizationPage />;
+//       case "experts":
+//         return <ExpertPage />;
+//         // case "resources":
+//         // return <Placeholder title="Resources" />;
+//       case "jobs":
+//         return <JobsPage />;
+//       case "courses":
+//         return <Placeholder title="Courses" />;
+//       case "webinars":
+//         return <WebinarsPage />;
+//       case "dealrooms":
+//         return <Placeholder title="Deal Rooms" />;
+//       case "tenders":
+//         return <TendersPage />;
+//       case "projects":
+//         return <ProjectsPage />;
+//       case "catalogue":
+//         return (
+//           <CataloguePage
+//             onSelectProduct={(id) => {
+//               setSelectedProductId(id.toString());
+//               setActivePage("productDetails");
+//             }}
+//             onCreateCatalogue={() => setActivePage("createCatalogue")}
+//           />
+//         );
+//       case "productDetails":
+//         return <ProductDetailsPage id={selectedProductId!} onBack={() => setActivePage("catalogue")} />;
+//       case "createCatalogue":
+//         return <CreateCataloguePage onBack={() => setActivePage("catalogue")} />;
+//       case "services":
+//         return <Placeholder title="Services Directory" />;
+//       case "myorders":
+//         return <MyOrdersPage onViewProduct={(id) => {
+//           setSelectedProductId(id);
+//           setActivePage("productDetails");
+//         }} />;
+//       case "sellerorders":
+//         return (
+//     <SellerOrdersPage
+//       onSelectProduct={(id) => {
+//         setSelectedProductId(id.toString());
+//         setActivePage("productDetails");
+//       }}
+//     />
+//   );
+//       default:
+//         return <DashboardPage />;
+//     }
+//   };
 
 //   return (
-//     <PortalLayout currentPage={page} onPageChange={setPage}>
-//       {page === "dashboard" && <DashboardPage />}
-//       {page === "dashboard" && <NewsEventsPage />}
-//       {page === "profile" && <ProfilePage />}
-//       {page === "profile" && <CommunityMembersPage />}
-//       {page === "profile" && <JobsPage />}
-//       {page === "profile" && <TrainingPage />}
-//       {page === "profile" && <DealsPage />}
-//       {page === "profile" && <MembersCataloguePage />}
-//       {page === "profile" && <ServicesDirectoryPage />}
-//       {page === "profile" && <OrdersPage />}
-//       {/* {page === "messages" && <MessagesPage />}
-//       {page === "opportunities" && <OpportunitiesPage />}
-//       {page === "analytics" && <AnalyticsPage />} */}
-      
+//     <PortalLayout activePage={activePage} onNavigate={setActivePage}>
+//       {renderPage()}
 //     </PortalLayout>
 //   );
-// };
-
-// export default Members;
-
-
-
-
-
-
-
-
-
-
-
-
-// // const Members = () => {
-// //   return (
-// //     <>
-// //       <AnalyticsPage />
-// //             <DashboardPage />
-// //             <MessagesPage />
-// //             <OpportunitiesPage />
-// //             <PortalLayout children={undefined} currentPage={""} onPageChange={function (page: string): void {
-// //               throw new Error("Function not implemented.");
-// //           } } />
-// //             <ProfilePage />
-// //     </>
-// //   );
-// // };
-
-// // export default Members;
+// }
