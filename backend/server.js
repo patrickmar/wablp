@@ -25,6 +25,14 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+
+app.get('/', (req, res) => {
+  db.query('SELECT NOW() as now', (err, results) => {
+    if (err) return res.status(500).send(err);
+    res.send(`Database time: ${results[0].now}`);
+  });
+});
+
 // Path to your XAMPP uploads folder
 const EXTERNAL_UPLOADS = "C:/xampp/htdocs/Wablp/admin/";
 
