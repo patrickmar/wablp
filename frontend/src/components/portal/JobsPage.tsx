@@ -19,7 +19,11 @@ type Category = {
   name: string;
 };
 
-export function JobsPage() {
+type JobsPageProps = {
+  onSelectJob: (id: number) => void;
+};
+
+export function JobsPage({ onSelectJob }: JobsPageProps) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -108,7 +112,11 @@ export function JobsPage() {
               />
             )}
             <CardContent className="p-4">
-              <h3 className="text-lg font-semibold text-blue-700 hover:underline">
+              {/* ✅ Clickable job title */}
+              <h3
+                className="text-lg font-semibold text-blue-700 hover:underline cursor-pointer"
+                onClick={() => onSelectJob(job.jobs_id)}
+              >
                 {job.title}
               </h3>
               <p className="text-sm text-gray-500">
@@ -147,8 +155,8 @@ export function JobsPage() {
 //   title: string;
 //   institution: string;
 //   photo: string;
-//   timestamp: string;
 //   category_name: string;
+//   timeAgo: string; // ✅ comes from backend
 // };
 
 // type Category = {
@@ -163,11 +171,7 @@ export function JobsPage() {
 //   const [institutionFilter, setInstitutionFilter] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
 
-//   // ✅ Pagination state
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const jobsPerPage = 6;
-
-//   // ✅ Fetch categories from backend
+//   // ✅ Fetch categories
 //   useEffect(() => {
 //     const fetchCategories = async () => {
 //       try {
@@ -180,7 +184,7 @@ export function JobsPage() {
 //     fetchCategories();
 //   }, []);
 
-//   // ✅ Fetch jobs from backend
+//   // ✅ Fetch jobs
 //   useEffect(() => {
 //     fetchJobs();
 //   }, []);
@@ -189,7 +193,6 @@ export function JobsPage() {
 //     try {
 //       const res = await axios.get("http://localhost:5000/routes/jobs", { params: filters });
 //       setJobs(res.data);
-//       setCurrentPage(1); // reset to first page after search
 //     } catch (err) {
 //       console.error("Error fetching jobs:", err);
 //     }
@@ -203,12 +206,6 @@ export function JobsPage() {
 //     fetchJobs(filters);
 //   };
 
-//   // ✅ Pagination logic
-//   const indexOfLastJob = currentPage * jobsPerPage;
-//   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-//   const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
-//   const totalPages = Math.ceil(jobs.length / jobsPerPage);
-
 //   return (
 //     <div className="p-6 space-y-6">
 //       {/* Search Filters */}
@@ -216,7 +213,6 @@ export function JobsPage() {
 //         <CardContent className="p-6">
 //           <h2 className="text-xl font-semibold mb-4">Search Jobs</h2>
 //           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//             {/* Category Filter */}
 //             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
 //               <SelectTrigger>
 //                 <SelectValue placeholder="Category" />
@@ -231,14 +227,12 @@ export function JobsPage() {
 //               </SelectContent>
 //             </Select>
 
-//             {/* Institution Filter */}
 //             <Input
 //               placeholder="Institution Name"
 //               value={institutionFilter}
 //               onChange={(e) => setInstitutionFilter(e.target.value)}
 //             />
 
-//             {/* Search Button */}
 //             <Button onClick={handleSearch} className="bg-blue-600 text-white">
 //               Search
 //             </Button>
@@ -246,21 +240,10 @@ export function JobsPage() {
 //         </CardContent>
 //       </Card>
 
-//       {/* Results Summary */}
-//       {jobs.length > 0 && (
-//         <div className="flex justify-between items-center text-sm text-gray-600">
-//           <p>
-//             Showing {indexOfFirstJob + 1}–{Math.min(indexOfLastJob, jobs.length)} of {jobs.length} jobs
-//           </p>
-//           <p>Page {currentPage} of {totalPages}</p>
-//         </div>
-//       )}
-
 //       {/* Job Results */}
 //       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//         {currentJobs.map((job) => (
+//         {jobs.map((job) => (
 //           <Card key={job.jobs_id} className="hover:shadow-lg transition">
-//             {/* Job Image */}
 //             {job.photo && (
 //               <img
 //                 src={job.photo}
@@ -274,34 +257,13 @@ export function JobsPage() {
 //                 {job.title}
 //               </h3>
 //               <p className="text-sm text-gray-500">
-//                 {job.timestamp} | {job.category_name}
+//                 {job.timeAgo} | {job.category_name}
 //               </p>
 //             </CardContent>
 //           </Card>
 //         ))}
 //       </div>
 
-//       {/* Pagination Controls */}
-//       {jobs.length > jobsPerPage && (
-//         <div className="flex justify-center space-x-4 mt-6">
-//           <Button
-//             variant="outline"
-//             disabled={currentPage === 1}
-//             onClick={() => setCurrentPage((prev) => prev - 1)}
-//           >
-//             Previous
-//           </Button>
-//           <Button
-//             variant="outline"
-//             disabled={currentPage === totalPages}
-//             onClick={() => setCurrentPage((prev) => prev + 1)}
-//           >
-//             Next
-//           </Button>
-//         </div>
-//       )}
-
-//       {/* No Results */}
 //       {jobs.length === 0 && (
 //         <div className="text-center text-red-500 font-medium">
 //           No jobs found. Please adjust your filters.

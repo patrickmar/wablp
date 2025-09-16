@@ -12,7 +12,7 @@ export function OurMissionSection() {
             Our Mission
           </h2>
           <p className="text-xl text-gray-700 leading-relaxed mb-8">
-            To create a comprehensive platform that connects West African businesses, fostering economic growth through
+            To create a comprehensive community that connects West African businesses, fostering economic growth through
              strategic partnerships, supplier diversity, and market access opportunities. We believe in the power of connection
               to transform businesses and communities across the region.
           </p>

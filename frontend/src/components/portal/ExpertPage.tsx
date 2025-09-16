@@ -47,7 +47,11 @@ type Expert = {
   photo: string;
 };
 
-export function ExpertPage() {
+type ExpertPageProps = {
+  onSelectExpert: (id: number) => void;
+};
+
+export function ExpertPage({ onSelectExpert }: ExpertPageProps) {
   const [experts, setExperts] = useState<Expert[]>([]);
   const [categories, setCategories] = useState<{ mentor_categories_id: number, name: string }[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -155,32 +159,23 @@ export function ExpertPage() {
             <CardContent className="p-6">
               <div className="flex items-start space-x-4">
                 <Avatar className="w-16 h-16">
-                  <AvatarImage src={`/uploads/${expert.photo}`} />
+                  <AvatarImage src={expert.photo || "/placeholder.png"} />
                   <AvatarFallback>{expert.name?.slice(0, 2)}</AvatarFallback>
                 </Avatar>
 
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{expert.name}</h3>
+                  {/* ✅ Clickable expert name */}
+                  <h3
+                    className="text-lg font-semibold text-blue-600 cursor-pointer hover:underline"
+                    onClick={() => onSelectExpert(expert.customers_id)}
+                  >
+                    {expert.name}
+                  </h3>
                   {expert.company_name && (
                     <p><Badge>{expert.company_name}</Badge></p>
                   )}
                   <p><Badge variant="outline">{expert.category}</Badge></p>
                   <p className="text-sm text-gray-500">{expert.country}</p>
-
-                  {/* <div className="flex items-center justify-between mt-3">
-                    <div className="flex items-center space-x-2 text-xs text-gray-500">
-                      <Eye className="w-3 h-3" /> 0 views
-                      <Users className="w-3 h-3" /> 0 connections
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline">
-                        <MessageSquare className="w-3 h-3 mr-1" /> Message
-                      </Button>
-                      <Button size="sm" className="bg-blue-600 text-white">
-                        <UserPlus className="w-3 h-3 mr-1" /> Connect
-                      </Button>
-                    </div>
-                  </div> */}
                 </div>
               </div>
             </CardContent>

@@ -2,6 +2,7 @@ import { CommunitySpotlightSection } from "@/components/CommunitySpotlightSectio
 import { HeroSection } from "@/components/HeroSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { KeyFeaturesSection } from "@/components/KeyFeaturesSection";
+import NewsMarquee from "@/components/NewsMarquee";
 import { PartnerPage } from "@/components/PartnerPage";
 import { SpotlightSection2 } from "@/components/SpotlightSection2";
 import { TechnologySecuritySection } from "@/components/TechnologySecuritySection";
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <>
               <HeroSection />
+              <NewsMarquee className="my-4" speed={50} />
               <KeyFeaturesSection />
               <CommunitySpotlightSection />
               <VideoShowcaseSection />

@@ -1,5 +1,5 @@
 import { NewsHeroSection } from "@/components/NewsHeroSection";
-import { NewsSection } from "@/components/NewsSection";
+import  NewsSection  from "@/components/NewsSection";
 
 const News = () => {
   return (

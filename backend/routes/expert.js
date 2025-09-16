@@ -1,6 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
+const path = require("path");
+
+// ✅ Helper to normalize expert rows
+function normalizeExpert(expert) {
+  return {
+    ...expert,
+    photo: expert.photo
+      ? `http://localhost:5000/jtps_photos/${expert.photo}`
+      : null,
+  };
+}
 
 // ✅ Get all categories for dropdown
 router.get("/categories", (req, res) => {
@@ -47,9 +58,30 @@ router.get("/", (req, res) => {
       return res.status(500).json({ error: "Failed to fetch experts" });
     }
 
-    // ✅ Always return array (empty [] if no results)
-    res.json(results);
+    // ✅ Normalize results so photo is a URL
+    const normalized = results.map(normalizeExpert);
+    res.json(normalized);
+  });
+});
+
+// ✅ Get single expert by ID
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "SELECT * FROM customers WHERE customers_id = ? AND joined_as = 'EXPERT'";
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("❌ Error fetching expert:", err);
+      return res.status(500).json({ error: "Failed to fetch expert" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Expert not found" });
+    }
+
+    const normalized = normalizeExpert(results[0]);
+    res.json(normalized);
   });
 });
 
 module.exports = router;
+

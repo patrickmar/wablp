@@ -3,6 +3,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
+// const db = require("../config/db");
+
 
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
@@ -19,6 +21,8 @@ const tendersRoutes = require("./routes/tenders");
 const projectsRoutes = require("./routes/projects");
 const cataloguesRoutes = require("./routes/catalogues");
 const ordersRoutes = require("./routes/orders");
+const statusRoutes = require("./routes/status");
+const messageRoutes = require("./routes/messages");
 
 const app = express();
 
@@ -44,6 +48,7 @@ if (fs.existsSync(EXTERNAL_UPLOADS)) {
     app.use("/webinars_photos", express.static(EXTERNAL_UPLOADS));
     app.use("/projects_photos", express.static(EXTERNAL_UPLOADS));
     app.use("/products_photos", express.static(EXTERNAL_UPLOADS));
+    app.use("/jtps_photos", express.static(EXTERNAL_UPLOADS));
 } else {
   console.error("❌ Folder not found:", EXTERNAL_UPLOADS);
 }
@@ -70,6 +75,8 @@ app.use("/routes/tenders", tendersRoutes);
 app.use("/routes/projects", projectsRoutes);
 app.use("/routes/catalogues", cataloguesRoutes);
 app.use("/routes/orders", ordersRoutes);
+app.use("/routes/status", statusRoutes);
+app.use("/routes/messages", messageRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
