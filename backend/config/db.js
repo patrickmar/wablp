@@ -11,7 +11,7 @@ const dbConfig = {
   port: process.env.DB_PORT || 3306
 };
 
-EXTERNAL_UPLOADS_PATH=process.env.EXTERNAL_UPLOADS_PATH;
+// EXTERNAL_UPLOADS_PATH=process.env.EXTERNAL_UPLOADS_PATH;
 const db = mysql.createConnection(dbConfig);
 
 db.connect((err) => {
