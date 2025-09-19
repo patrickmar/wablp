@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 });
 
 // Path to your XAMPP uploads folder
-const EXTERNAL_UPLOADS = process.env.EXTERNAL_UPLOADS_PATH || "C:/xampp/htdocs/Wablp/admin";
+const EXTERNAL_UPLOADS = process.env.EXTERNAL_UPLOADS_PATH;
 
 // Serve real uploaded photos (only if the folder exists)
 if (fs.existsSync(EXTERNAL_UPLOADS)) {
