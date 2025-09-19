@@ -30,7 +30,7 @@ export default function JobDetailsPage({ id, onBack }: JobDetailsPageProps) {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/routes/jobs/${id}`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/jobs/${id}`);
         setJob(res.data);
       } catch (err) {
         console.error("❌ Error fetching job details:", err);

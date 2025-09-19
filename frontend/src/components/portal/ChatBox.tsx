@@ -43,7 +43,7 @@ export default function ChatBox({
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/routes/messages`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/messages`, {
         params: { sender: userId, client: peerId },
       });
 
@@ -76,7 +76,7 @@ export default function ChatBox({
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
-      await axios.post(`http://localhost:5000/routes/messages/send`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/messages/send`, {
         sender: userId,
         client: peerId,
         text: newMessage,

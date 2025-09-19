@@ -37,7 +37,7 @@ export default function ExpertDetailsPage({ id, onBack }: ExpertDetailsPageProps
   useEffect(() => {
     const fetchExpert = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/routes/experts/${id}`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/experts/${id}`);
         console.log("✅ Expert data:", res.data);
         setExpert(res.data);
       } catch (err) {
@@ -51,7 +51,7 @@ export default function ExpertDetailsPage({ id, onBack }: ExpertDetailsPageProps
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/routes/status/${id}`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/status/${id}`);
         setStatus(res.data.status);
       } catch (err) {
         console.error("❌ Error fetching status:", err);

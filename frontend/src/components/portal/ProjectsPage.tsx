@@ -34,7 +34,7 @@ export function ProjectsPage() {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/routes/projects/countries");
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/projects/countries`);
         setCountries(res.data);
       } catch (err) {
         console.error("Error fetching countries:", err);
@@ -50,7 +50,7 @@ export function ProjectsPage() {
 
   const fetchProjects = async (filters: any = {}) => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/projects", { params: filters });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/projects`, { params: filters });
       setProjects(res.data);
       setCurrentPage(1); // reset page after new search
     } catch (err) {

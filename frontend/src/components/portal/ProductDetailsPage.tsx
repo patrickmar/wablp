@@ -38,7 +38,7 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/routes/catalogues/${id}`)
+      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues/${id}`)
       .then((res) => setProduct(res.data))
       .catch((err) => console.error("❌ Error fetching product:", err));
   }, [id]);
@@ -53,7 +53,7 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
         return;
       }
 
-      await axios.post("http://localhost:5000/routes/orders", {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders`, {
         product_id: product?.products_id,
         quantity,
         shipping_details: shippingDetails,

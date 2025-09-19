@@ -22,7 +22,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (userId) {
       axios
-        .get(`http://localhost:5000/routes/customers/${userId}`)
+        .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/customers/${userId}`)
         .then((res) => setProfileData(res.data))
         .catch((err) => console.error("Error fetching profile:", err));
     }
@@ -31,7 +31,7 @@ export default function ProfilePage() {
   const handleSave = () => {
     if (!userId) return;
     axios
-      .put(`http://localhost:5000/routes/customers/${userId}`, profileData)
+      .put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/customers/${userId}`, profileData)
       .then(() => {
         setIsEditing(false);
         toast({
@@ -60,7 +60,7 @@ export default function ProfilePage() {
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/routes/customers/${userId}/upload-profile-photo`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/customers/${userId}/upload-profile-photo`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

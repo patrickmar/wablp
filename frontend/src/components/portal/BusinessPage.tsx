@@ -68,7 +68,7 @@ export function BusinessPage({ onSelectBusiness }: BusinessPageProps) {
 
   const fetchBusinesses = async (filters = {}) => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/business", { params: filters });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/business`, { params: filters });
       setBusinesses(res.data);
     } catch (err) {
       console.error(err);

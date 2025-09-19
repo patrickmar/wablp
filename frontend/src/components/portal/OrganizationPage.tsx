@@ -68,7 +68,7 @@ export function OrganizationPage({ onSelectOrganization }: OrganizationPageProps
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/organizations/categories");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/organizations/categories`);
       setCategories(res.data);
     } catch (err) {
       console.error("❌ Error fetching categories:", err);
@@ -77,7 +77,7 @@ export function OrganizationPage({ onSelectOrganization }: OrganizationPageProps
 
   const fetchOrganizations = async (filters = {}) => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/organizations", { params: filters });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/organizations`, { params: filters });
       setOrganizations(res.data);
     } catch (err) {
       console.error("❌ Error fetching organizations:", err);

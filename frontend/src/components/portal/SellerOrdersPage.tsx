@@ -32,7 +32,7 @@ export function SellerOrdersPage({ onSelectProduct }: SellerOrdersPageProps) {
 
   const fetchOrders = () => {
     axios
-      .get<SellerOrder[]>(`http://localhost:5000/routes/orders/seller/${sellerId}`)
+      .get<SellerOrder[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders/seller/${sellerId}`)
       .then((res) => setOrders(res.data))
       .catch((err) => console.error("Error fetching seller orders:", err))
       .finally(() => setLoading(false));
@@ -41,7 +41,7 @@ export function SellerOrdersPage({ onSelectProduct }: SellerOrdersPageProps) {
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this order?")) return;
     try {
-      await axios.delete(`http://localhost:5000/routes/orders/${id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders/${id}`);
       setOrders(orders.filter((o) => o.product_orders_id !== id));
     } catch (err) {
       console.error("Error deleting order:", err);
@@ -50,7 +50,7 @@ export function SellerOrdersPage({ onSelectProduct }: SellerOrdersPageProps) {
 
   const handleUpdateStatus = async (id: number, status: string) => {
     try {
-      await axios.put(`http://localhost:5000/routes/orders/${id}/status`, { status });
+      await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders/${id}/status`, { status });
       setOrders(
         orders.map((o) =>
           o.product_orders_id === id ? { ...o, status } : o

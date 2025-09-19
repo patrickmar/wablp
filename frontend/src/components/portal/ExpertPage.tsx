@@ -69,7 +69,7 @@ export function ExpertPage({ onSelectExpert }: ExpertPageProps) {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/experts/categories");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/experts/categories`);
       setCategories(res.data);
     } catch (err) {
       console.error("❌ Error fetching categories:", err);
@@ -78,7 +78,7 @@ export function ExpertPage({ onSelectExpert }: ExpertPageProps) {
 
   const fetchExperts = async (filters = {}) => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/experts", { params: filters });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/experts`, { params: filters });
       if (Array.isArray(res.data)) {
         setExperts(res.data);
       } else {

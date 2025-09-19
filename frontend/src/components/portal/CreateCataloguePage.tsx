@@ -64,7 +64,7 @@ export function CreateCataloguePage({ onBack }: CreateCataloguePageProps) {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/catalogues/categories");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues/categories`);
       setCategories(res.data);
     } catch (err) {
       console.error("❌ Error fetching categories:", err);
@@ -73,7 +73,7 @@ export function CreateCataloguePage({ onBack }: CreateCataloguePageProps) {
 
   const fetchTypes = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/catalogues/types");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues/types`);
       setTypes(res.data);
     } catch (err) {
       console.error("❌ Error fetching types:", err);
@@ -82,7 +82,7 @@ export function CreateCataloguePage({ onBack }: CreateCataloguePageProps) {
 
   const fetchProduct = async (id: string) => {
     try {
-      const res = await axios.get(`http://localhost:5000/routes/catalogues/${id}`);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues/${id}`);
       const prod = res.data;
       setForm({
         name: prod.name || "",
@@ -157,12 +157,12 @@ export function CreateCataloguePage({ onBack }: CreateCataloguePageProps) {
       let res;
       if (productId) {
         // ✅ Edit existing product
-        res = await axios.put(`http://localhost:5000/routes/catalogues/${productId}`, formData, {
+        res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues/${productId}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
         // ✅ Create new product
-        res = await axios.post("http://localhost:5000/routes/catalogues", formData, {
+        res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }

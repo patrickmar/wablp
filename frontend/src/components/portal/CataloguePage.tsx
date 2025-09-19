@@ -45,7 +45,7 @@ export function CataloguePage({ onSelectProduct, onCreateCatalogue, businessId }
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/catalogues/categories");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues/categories`);
       setCategories(res.data);
     } catch (err) {
       console.error("❌ Error fetching categories:", err);
@@ -54,7 +54,7 @@ export function CataloguePage({ onSelectProduct, onCreateCatalogue, businessId }
 
   const fetchProducts = async (filters = {}) => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/catalogues", { params: filters });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues`, { params: filters });
       setProducts(res.data);
     } catch (err) {
       console.error("❌ Error fetching products:", err);

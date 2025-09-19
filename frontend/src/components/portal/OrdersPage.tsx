@@ -30,7 +30,7 @@ export function MyOrdersPage({ onViewProduct }: MyOrdersPageProps) {
   useEffect(() => {
     if (!userId) return;
     axios
-      .get(`http://localhost:5000/routes/orders/${userId}`)
+      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders/${userId}`)
       .then((res) => setOrders(res.data))
       .catch((err) => console.error("❌ Error fetching orders:", err))
       .finally(() => setLoading(false));
@@ -39,7 +39,7 @@ export function MyOrdersPage({ onViewProduct }: MyOrdersPageProps) {
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this record?")) return;
     try {
-      await axios.delete(`http://localhost:5000/routes/orders/${id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders/${id}`);
       setOrders((prev) => prev.filter((o) => o.product_orders_id !== id));
     } catch (err) {
       console.error("❌ Error deleting order:", err);

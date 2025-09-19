@@ -44,7 +44,7 @@ export function TendersPage() {
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/routes/tenders/types");
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/tenders/types`);
         setTypes(res.data);
       } catch (err) {
         console.error("Error fetching tender types:", err);
@@ -57,7 +57,7 @@ export function TendersPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/routes/tenders/categories");
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/tenders/categories`);
         setCategories(res.data);
       } catch (err) {
         console.error("Error fetching tender categories:", err);
@@ -73,7 +73,7 @@ export function TendersPage() {
 
   const fetchTenders = async (filters: any = {}) => {
     try {
-      const res = await axios.get("http://localhost:5000/routes/tenders", { params: filters });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/tenders`, { params: filters });
       setTenders(res.data);
       setCurrentPage(1); // reset to first page on new search
     } catch (err) {
