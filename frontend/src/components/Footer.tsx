@@ -4,31 +4,31 @@ import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "luc
 
 const footerLinks = {
   company: [
-    { label: "About Us", href: "#" },
+    { label: "About Us", href: "/about" },
     { label: "Our Team", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Press", href: "#" },
-    { label: "Contact", href: "#" }
+    // { label: "Careers", href: "#" },
+    // { label: "Press", href: "#" },
+    { label: "Contact", href: "/contact" }
   ],
   services: [
-    { label: "Join as Business", href: "#" },
-    { label: "Opportunities", href: "#" },
-    { label: "Directory", href: "#" },
-    { label: "Resources", href: "#" },
-    { label: "Pricing", href: "#" }
+    { label: "Join as Business", href: "/join" },
+    { label: "Opportunities ", href: "/opportunity" },
+    // { label: "Directory", href: "#" },
+    // { label: "Resources", href: "#" },
+    // { label: "Pricing", href: "#" }
   ],
-  resources: [
-    { label: "Help Center", href: "#" },
-    { label: "API Documentation", href: "#" },
-    { label: "Success Stories", href: "#" },
-    { label: "White Papers", href: "#" },
-    { label: "Webinars", href: "#" }
-  ],
+  // resources: [
+  //   { label: "Help Center", href: "#" },
+  //   { label: "API Documentation", href: "#" },
+  //   { label: "Success Stories", href: "#" },
+  //   { label: "White Papers", href: "#" },
+  //   { label: "Webinars", href: "#" }
+  // ],
   legal: [
     { label: "Privacy Policy", href: "#" },
     { label: "Terms of Service", href: "#" },
-    { label: "Cookie Policy", href: "#" },
-    { label: "GDPR Compliance", href: "#" },
+    // { label: "Cookie Policy", href: "#" },
+    // { label: "GDPR Compliance", href: "#" },
     { label: "Security", href: "#" }
   ]
 };
@@ -81,7 +81,7 @@ export function Footer() {
 
             {/* Links Sections */}
             <div className="lg:col-span-2">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                 <div>
                   <h4 className="text-lg font-semibold mb-4">Company</h4>
                   <ul className="space-y-3">
@@ -108,7 +108,7 @@ export function Footer() {
                   </ul>
                 </div>
 
-                <div>
+                {/* <div>
                   <h4 className="text-lg font-semibold mb-4">Resources</h4>
                   <ul className="space-y-3">
                     {footerLinks.resources.map((link, index) => (
@@ -119,7 +119,7 @@ export function Footer() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </div> */}
 
                 <div>
                   <h4 className="text-lg font-semibold mb-4">Legal</h4>
