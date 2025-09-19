@@ -23,11 +23,14 @@ const cataloguesRoutes = require("./routes/catalogues");
 const ordersRoutes = require("./routes/orders");
 const statusRoutes = require("./routes/status");
 const messageRoutes = require("./routes/messages");
+const db = require("./config/db");
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+require('dotenv').config();
 
 
 app.get('/', (req, res) => {

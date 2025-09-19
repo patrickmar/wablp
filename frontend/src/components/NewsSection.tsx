@@ -5,18 +5,18 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const videos = [
   {
-    title: "Video Title 1",
-    subtitle: "Video Sub-Title",
+    title: "Boosting Intra-African Trade: AfCFTA Launches Digital Innovation Challenge",
+    // subtitle: "Video Sub-Title",
     url: "/videos/news1.mp4",
   },
   {
-    title: "Video Title 2",
-    subtitle: "Video Sub-Title",
+    title: "AfCFTA Empowers African Innovators with New E-commerce Initiative",
+    // subtitle: "Video Sub-Title",
     url: "/videos/news2.mp4",
   },
   {
     title: "Video Title 3",
-    subtitle: "Video Sub-Title",
+    // subtitle: "Video Sub-Title",
     url: "/videos/news2.mp4",
   },
 ];
@@ -154,7 +154,7 @@ export default function NewsSection() {
                   <h3 className="font-semibold text-[#003366]">
                     {video.title}
                   </h3>
-                  <p className="text-[#FFD700] text-sm">{video.subtitle}</p>
+                  {/* <p className="text-[#FFD700] text-sm">{video.subtitle}</p> */}
                 </div>
               </div>
             ))}
