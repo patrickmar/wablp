@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
             // ✅ NEW: Provide both URLs
             image: {
               localUrl: `${baseUrl}/posts_photos/${photoFile}`,
-              externalUrl: `${baseUrl}/external/posts_photos/${photoFile}`,
+              externalUrl: `${baseUrl}/external/${photoFile}`,
               fallback: `${baseUrl}/uploads/default.jpg`
             }
           };
