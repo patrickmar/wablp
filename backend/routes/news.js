@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
       "SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4"
     );
 
-    const baseUrl = NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
     const formatted = Array.isArray(rows)
       ? rows.map((row) => ({
