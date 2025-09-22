@@ -19,11 +19,11 @@ export function Header() {
       dropdownItems: [
         { label: "Join as a Business", href: "/join" },
         { label: "Opportunities & Tenders", href: "/opportunity" },
-        // { label: "Community Directory", href: "/community" },
+        { label: "Community Directory", href: "/community" },
       ],
     },
     { label: "News", href: "/news", hasDropdown: false },
-    // { label: "Resources", href: "/resources", hasDropdown: false },
+    { label: "Resources", href: "/resources", hasDropdown: false },
     { label: "Contact", href: "/contact", hasDropdown: false },
   ];
 

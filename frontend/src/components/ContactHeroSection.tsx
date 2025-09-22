@@ -29,17 +29,17 @@ export function ContactHeroSection() {
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-opacity-20 transition-all">
             <MapPin className="w-12 h-12 text-[#C9A74B] mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Visit Our Office</h3>
-            <p className="text-gray-300 text-sm">
-              Victoria Island<br />
-              Lagos, Nigeria<br />
-              100001
+            <p className="text-[#005A8C] text-md">
+              United Nations Economic Commission for Africa<br />
+              Maison des Nations Unies,<br />
+              428 Avenue du Fleuve Niger, Niamey, Niger
             </p>
           </div>
           
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-opacity-20 transition-all">
             <Phone className="w-12 h-12 text-[#C9A74B] mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Call Us</h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-[#005A8C] text-md">
               +234 (0) 123 456 7890<br />
               +234 (0) 987 654 3210<br />
               Toll-free: 0800-WABLP-01
@@ -49,7 +49,7 @@ export function ContactHeroSection() {
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-opacity-20 transition-all">
             <Mail className="w-12 h-12 text-[#C9A74B] mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Email Us</h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-[#005A8C] text-md">
               info@wablp.com<br />
               support@wablp.com<br />
               partnerships@wablp.com
@@ -59,7 +59,7 @@ export function ContactHeroSection() {
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-opacity-20 transition-all">
             <Clock className="w-12 h-12 text-[#C9A74B] mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Office Hours</h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-[#005A8C] text-md">
               Monday - Friday<br />
               8:00 AM - 6:00 PM WAT<br />
               Saturday: 9:00 AM - 2:00 PM

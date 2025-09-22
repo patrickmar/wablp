@@ -21,7 +21,7 @@ export function OurMissionSection() {
              enable West African enterprises to thrive in the global marketplace while strengthening regional economic ties.
           </p>
           <p className="text-xl text-gray-700 leading-relaxed">
-            Our mission is to provide an integrated solution to these challenges, addressing the core needs of SMMEs, which
+            Our mission is to provide an integrated solution to these challenges, addressing the core needs of SMEs, which
              form the backbone of the region's economy. 
           </p>
         </div>

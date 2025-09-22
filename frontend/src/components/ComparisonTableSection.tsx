@@ -92,22 +92,22 @@ export function ComparisonTableSection() {
                       <span className="text-lg font-medium text-[#003366]">WABLP</span>
                     </div>
                   </th>
-                  <th className="px-6 py-4 text-center text-lg font-medium text-gray-600">
+                  {/* <th className="px-6 py-4 text-center text-lg font-medium text-gray-600">
                     <div className="flex flex-col items-center">
                       <div className="w-12 h-12 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center mb-2">
                         <span className="font-bold">A</span>
                       </div>
                       <span>Competitor A</span>
                     </div>
-                  </th>
-                  <th className="px-6 py-4 text-center text-lg font-medium text-gray-600">
+                  </th> */}
+                  {/* <th className="px-6 py-4 text-center text-lg font-medium text-gray-600">
                     <div className="flex flex-col items-center">
                       <div className="w-12 h-12 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center mb-2">
                         <span className="font-bold">B</span>
                       </div>
                       <span>Competitor B</span>
                     </div>
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody>
@@ -127,7 +127,7 @@ export function ComparisonTableSection() {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    {/* <td className="px-6 py-4 text-center">
                       {row.competitor1 ? (
                         <div className="inline-flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-full">
                           <Check className="w-5 h-5" />
@@ -137,8 +137,8 @@ export function ComparisonTableSection() {
                           <X className="w-5 h-5" />
                         </div>
                       )}
-                    </td>
-                    <td className="px-6 py-4 text-center">
+                    </td> */}
+                    {/* <td className="px-6 py-4 text-center">
                       {row.competitor2 ? (
                         <div className="inline-flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-full">
                           <Check className="w-5 h-5" />
@@ -148,7 +148,7 @@ export function ComparisonTableSection() {
                           <X className="w-5 h-5" />
                         </div>
                       )}
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

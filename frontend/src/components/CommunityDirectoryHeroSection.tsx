@@ -2,6 +2,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Search, Filter, Users, Globe, TrendingUp } from "lucide-react";
+import Link from "next/link";
 
 export function CommunityDirectoryHeroSection() {
   return (
@@ -41,18 +42,18 @@ export function CommunityDirectoryHeroSection() {
                     className="pl-12 pr-4 py-3 bg-white border-0 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-[#C9A74B] text-lg"
                   />
                 </div>
-                <Button 
+                {/* <Button 
                   variant="outline"
                   className="border-white text-white hover:bg-white hover:text-[#005A8C] px-6 py-3 rounded-lg"
                 >
                   <Filter className="w-5 h-5 mr-2" />
                   Advanced Filters
-                </Button>
+                </Button> */}
                 <Button 
                   className="bg-[#C9A74B] text-white hover:bg-[#b8964a] px-6 py-3 rounded-lg"
                 >
                   <Search className="w-5 h-5 mr-2" />
-                  Search Directory
+                  <Link href="/sign-up">Search Directory</Link>
                 </Button>
               </div>
             </div>
@@ -63,17 +64,17 @@ export function CommunityDirectoryHeroSection() {
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
               <Users className="w-12 h-12 text-[#C9A74B] mx-auto mb-4" />
               <div className="text-3xl font-bold text-white mb-2">560+</div>
-              <div className="text-gray-300">Verified Businesses</div>
+              <div className="text-[#005A8C] text-lg">Verified Businesses</div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
               <Globe className="w-12 h-12 text-[#C9A74B] mx-auto mb-4" />
               <div className="text-3xl font-bold text-white mb-2">15+</div>
-              <div className="text-gray-300">Countries Covered</div>
+              <div className="text-[#005A8C] text-lg">Countries Covered</div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
               <TrendingUp className="w-12 h-12 text-[#C9A74B] mx-auto mb-4" />
               <div className="text-3xl font-bold text-white mb-2">25+</div>
-              <div className="text-gray-300">Industry Sectors</div>
+              <div className="text-[#005A8C] text-lg">Industry Sectors</div>
             </div>
           </div>
         </div>

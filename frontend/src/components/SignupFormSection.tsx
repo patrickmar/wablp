@@ -147,7 +147,7 @@ export function SignupFormSection() {
                       />
                     </div>
 
-                    <div className="mt-4">
+                    {/* <div className="mt-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Code *
                       </label>
@@ -166,9 +166,9 @@ export function SignupFormSection() {
                           Send Code
                         </a>
                       </div>
-                    </div>
+                    </div> */}
 
-                    <div className="mt-4">
+                    {/* <div className="mt-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Joining As: *
                       </label>
@@ -178,7 +178,7 @@ export function SignupFormSection() {
                         value={form.joined_as}
                         onChange={(e) => setForm({ ...form, joined_as: e.target.value })}
                       />
-                    </div>
+                    </div> */}
 
                     <div className="mt-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">

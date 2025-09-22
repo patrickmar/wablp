@@ -10,8 +10,8 @@ const Features = () => {
     <>
       <FeaturesHeroSection />
       <FeatureGridSection />
-      <BenefitsSection />
       <ComparisonTableSection />
+      <BenefitsSection />
       <CTASection />
     </>
   );

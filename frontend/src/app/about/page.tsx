@@ -1,4 +1,5 @@
 import { AboutHeroSection } from "@/components/AboutHeroSection";
+import { Difference } from "@/components/Difference";
 import { OurImpactSection } from "@/components/OurImpactSection";
 import { OurMissionSection } from "@/components/OurMissionSection";
 import { OurStorySection } from "@/components/OurStorySection";
@@ -13,8 +14,9 @@ const About = () => {
       <OurMissionSection />
       <VisionValuesSection />
       <OurStorySection />
-      <OurImpactSection />
+      <Difference />
       <TeamMembersSection />
+      <OurImpactSection />
     </>
   );
 };

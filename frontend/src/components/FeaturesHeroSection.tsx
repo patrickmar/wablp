@@ -24,11 +24,11 @@ export function FeaturesHeroSection() {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 flex items-center space-x-3">
                 <div className="w-3 h-3 bg-[#FFD700] rounded-full"></div>
-                <span className="text-gray-200">Advanced Analytics</span>
+                <span className="text-[#005A8C] text-lg">Advanced Analytics</span>
               </div>
               <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 flex items-center space-x-3">
                 <div className="w-3 h-3 bg-[#FFD700] rounded-full"></div>
-                <span className="text-gray-200">Secure Platform</span>
+                <span className="text-[#005A8C] text-lg">Secure Platform</span>
               </div>
             </div>
           </div>
