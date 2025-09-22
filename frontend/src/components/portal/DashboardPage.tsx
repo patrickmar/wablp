@@ -361,7 +361,23 @@ export function DashboardPage() {
           ) : (
             news.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-md transition">
-                {item.imageUrl && (
+                {item.image && (
+                  <img
+                    src={item.image.localUrl}
+                    alt={item.title}
+                    className="w-full h-40 object-cover"
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      if (target.src !== item.image.externalUrl) {
+                        target.src = item.image.externalUrl;
+                      } else {
+                        target.src = item.image.fallback;
+                      }
+                    }}
+                  />
+                )}
+
+                {/* {item.imageUrl && (
 
                   <img
                     src={item.image.localUrl}
@@ -382,7 +398,7 @@ export function DashboardPage() {
                   //         `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/default.jpg`;
                   //     }}
                   // />
-                )}
+                )} */}
                 {/* <img
                   src={`http://localhost:5000${item.imageUrl}`} // ✅ backend-provided URL
                   alt={item.title}
