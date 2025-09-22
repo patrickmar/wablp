@@ -217,18 +217,18 @@ import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
-import { 
-  Eye, 
-  MessageSquare, 
-  Briefcase, 
-  Users, 
-  TrendingUp, 
+import {
+  Eye,
+  MessageSquare,
+  Briefcase,
+  Users,
+  TrendingUp,
   Star
 } from "lucide-react";
 
 // Keep your existing constants
-const recentActivities = [ /* keep your dummy data */ ];
-const quickActions = [ /* keep your actions */ ];
+const recentActivities = [ /* keep your dummy data */];
+const quickActions = [ /* keep your actions */];
 
 export function DashboardPage() {
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
@@ -323,33 +323,33 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading
           ? Array(4).fill(0).map((_, idx) => (
-              <Card key={idx} className="animate-pulse">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-                      <div className="h-6 bg-gray-300 rounded w-16"></div>
-                    </div>
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
+            <Card key={idx} className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                    <div className="h-6 bg-gray-300 rounded w-16"></div>
                   </div>
-                </CardContent>
-              </Card>
-            ))
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
           : statCards.map((stat, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-[#6B7280] mb-1">{stat.title}</p>
-                      <p className="text-2xl font-bold text-[#333333] mb-1">{stat.value}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-[#004C97] bg-opacity-10 rounded-lg flex items-center justify-center">
-                      <stat.icon className="w-6 h-6 text-[#004C97]" />
-                    </div>
+            <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-[#6B7280] mb-1">{stat.title}</p>
+                    <p className="text-2xl font-bold text-[#333333] mb-1">{stat.value}</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <div className="w-12 h-12 bg-[#004C97] bg-opacity-10 rounded-lg flex items-center justify-center">
+                    <stat.icon className="w-6 h-6 text-[#004C97]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
       </div>
 
       {/* ✅ News & Events Section */}
@@ -362,17 +362,27 @@ export function DashboardPage() {
             news.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-md transition">
                 {item.imageUrl && (
-                  
-              <img
-                src={item.imageUrl}
-                alt={item.title}
-                className="w-full h-40 object-cover"
-                onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src =
-                      `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/default.jpg`;
-                  }}
-              />
-            )}
+
+                  <img
+                    src={item.image.localUrl}
+                    alt={item.title}
+                    className="w-full h-40 object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        item.image.externalUrl || item.image.fallback;
+                    }}
+                  />
+
+                  // <img
+                  //   src={item.imageUrl}
+                  //   alt={item.title}
+                  //   className="w-full h-40 object-cover"
+                  //   onError={(e) => {
+                  //       (e.currentTarget as HTMLImageElement).src =
+                  //         `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/default.jpg`;
+                  //     }}
+                  // />
+                )}
                 {/* <img
                   src={`http://localhost:5000${item.imageUrl}`} // ✅ backend-provided URL
                   alt={item.title}

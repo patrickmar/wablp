@@ -4,27 +4,67 @@ const db = require("../config/db");
 const dayjs = require("dayjs");
 
 // ✅ Get latest news (already exists, untouched)
+// router.get("/", async (req, res) => {
+//   try {
+//     const [rows] = await db.promise().query(
+//       "SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4"
+//     );
+
+//     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
+//     const formatted = Array.isArray(rows)
+//       ? rows.map((row) => ({
+//           id: row.posts_id,
+//           title: row.title,
+//           body: row.body ? row.body.toString("utf-8") : "",
+//           category: row.category,
+//           tags: row.tags,
+//           status: row.status,
+//           timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+//           imageUrl: row.photo
+//             ? `${baseUrl}/posts_photos/${row.photo}`
+//             : `${baseUrl}/uploads/default.jpg`,
+//         }))
+//       : [];
+
+//     res.json(formatted);
+//   } catch (error) {
+//     console.error("Error fetching news:", error);
+//     res.json([]);
+//   }
+// });
+
+
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const externalBase = "https://wablp.com/admin";
+
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.promise().query(
       "SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4"
     );
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
     const formatted = Array.isArray(rows)
-      ? rows.map((row) => ({
-          id: row.posts_id,
-          title: row.title,
-          body: row.body ? row.body.toString("utf-8") : "",
-          category: row.category,
-          tags: row.tags,
-          status: row.status,
-          timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          imageUrl: row.photo
-            ? `${baseUrl}/posts_photos/${row.photo}`
-            : `${baseUrl}/uploads/default.jpg`,
-        }))
+      ? rows.map((row) => {
+          const photoFile = row.photo || "default.jpg";
+
+          return {
+            id: row.posts_id,
+            title: row.title,
+            body: row.body ? row.body.toString("utf-8") : "",
+            category: row.category,
+            tags: row.tags,
+            status: row.status,
+            timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+
+            // ✅ NEW: Provide both URLs
+            image: {
+              localUrl: `${baseUrl}/posts_photos/${photoFile}`,
+              externalUrl: `${baseUrl}/external/posts_photos/${photoFile}`,
+              fallback: `${baseUrl}/uploads/default.jpg`
+            }
+          };
+        })
       : [];
 
     res.json(formatted);
@@ -33,6 +73,10 @@ router.get("/", async (req, res) => {
     res.json([]);
   }
 });
+
+
+
+
 
 // ✅ Get full single news by ID + related posts
 router.get("/:id", async (req, res) => {
