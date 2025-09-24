@@ -9,7 +9,7 @@ function normalizeBusiness(business) {
   return {
     ...business,
     photo: business.photo
-      ? `http://localhost:5000/jtps_photos/${business.photo}`
+      ? `https://wablp.com/admin/jtps_photos/${business.photo}`
       : null,
   };
 }
@@ -82,7 +82,7 @@ router.get("/:id/products", (req, res) => {
     const normalized = results.map((p) => ({
       ...p,
       photo: p.photo
-        ? `http://localhost:5000/product_photos/${p.photo}`
+        ? `https://wablp.com/admin/product_photos/${p.photo}`
         : null,
     }));
 

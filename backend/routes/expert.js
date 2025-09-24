@@ -8,7 +8,7 @@ function normalizeExpert(expert) {
   return {
     ...expert,
     photo: expert.photo
-      ? `http://localhost:5000/jtps_photos/${expert.photo}`
+      ? `https://wablp.com/admin/jtps_photos/${expert.photo}`
       : null,
   };
 }

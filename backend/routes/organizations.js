@@ -19,7 +19,7 @@ function normalizeOrg(org) {
     portfolio: org.portfolio?.toString() || "",
     description: org.description?.toString() || "",
     photo: org.photo
-      ? `http://localhost:5000/jtps_photos/${org.photo}`
+      ? `https://wablp.com/admin/jtps_photos/${org.photo}`
       : null,
   };
 }
