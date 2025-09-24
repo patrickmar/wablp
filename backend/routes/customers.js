@@ -5,10 +5,10 @@ const multer = require("multer");
 const path = require("path");
 const { countryNames } = require("../utils/CountryNames"); // ✅ import country map
 
-// ✅ Multer storage for profile photos (jtps_photos folder)
+// ✅ Multer storage for profile photos (store filename only)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join("C:/xampp/htdocs/Wablp/admin/jtps_photos")); // <-- absolute path to your folder
+    cb(null, path.join(__dirname, "../uploads/jtps_photos")); // local uploads folder
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -16,8 +16,17 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Helper to convert Buffer fields to strings + include photo URL + map country
+// ✅ Helper to normalize photo path and customer data
 function normalizeCustomer(customer) {
+  let photoFile = customer.photo || null;
+
+  if (photoFile) {
+    // Remove duplicate folder name if already included in DB
+    photoFile = photoFile.replace(/^jtps_photos\//, "");
+    // Remove leading slashes
+    photoFile = photoFile.replace(/^\/+/, "");
+  }
+
   return {
     ...customer,
     portfolio: customer.portfolio ? customer.portfolio.toString() : "",
@@ -30,9 +39,9 @@ function normalizeCustomer(customer) {
       customer.country && countryNames[customer.country]
         ? countryNames[customer.country] // ✅ full country name
         : customer.country, // fallback
-    photo: customer.photo
-      ? `http://localhost:5000/jtps_photos/${customer.photo}`
-      : null, // ✅ full photo URL
+    photo: photoFile
+      ? `https://wablp.com/admin/jtps_photos/${photoFile}`
+      : null, // ✅ clean full photo URL
   };
 }
 
@@ -123,7 +132,6 @@ router.post("/:id/upload-profile-photo", upload.single("photo"), (req, res) => {
   }
 
   const filename = req.file.filename;
-  const photoUrl = `http://localhost:5000/jtps_photos/${filename}`; // ✅ served path
 
   db.query(
     "UPDATE customers SET photo = ? WHERE customers_id = ?",
@@ -133,6 +141,8 @@ router.post("/:id/upload-profile-photo", upload.single("photo"), (req, res) => {
         console.error("DB Error:", err);
         return res.status(500).json({ error: "Database error" });
       }
+
+      const photoUrl = `https://wablp.com/admin/jtps_photos/${filename}`;
       res.json({ STATUS: "SUCC", MESSAGE: "Photo uploaded", photoUrl });
     }
   );
@@ -146,16 +156,20 @@ module.exports = router;
 
 
 
+
+
+
 // const express = require("express");
 // const router = express.Router();
 // const db = require("../config/db"); // MySQL connection file
 // const multer = require("multer");
 // const path = require("path");
+// const { countryNames } = require("../utils/CountryNames"); // ✅ import country map
 
 // // ✅ Multer storage for profile photos (jtps_photos folder)
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
-//     cb(null, path.join("C:/xampp/htdocs/Wablp/admin/jtps_photos")); // <-- absolute path to your folder
+//     cb(null, path.join("https://wablp.com/admin/jtps_photos")); // <-- absolute path to your folder
 //   },
 //   filename: (req, file, cb) => {
 //     cb(null, Date.now() + path.extname(file.originalname));
@@ -163,16 +177,22 @@ module.exports = router;
 // });
 // const upload = multer({ storage });
 
-// // ✅ Helper to convert Buffer fields to strings + include photo URL
+// // ✅ Helper to convert Buffer fields to strings + include photo URL + map country
 // function normalizeCustomer(customer) {
 //   return {
 //     ...customer,
 //     portfolio: customer.portfolio ? customer.portfolio.toString() : "",
-//     education_level: customer.education_level ? customer.education_level.toString() : "",
+//     education_level: customer.education_level
+//       ? customer.education_level.toString()
+//       : "",
 //     description: customer.description ? customer.description.toString() : "",
 //     about_me: customer.about_me ? customer.about_me.toString() : "",
+//     country:
+//       customer.country && countryNames[customer.country]
+//         ? countryNames[customer.country] // ✅ full country name
+//         : customer.country, // fallback
 //     photo: customer.photo
-//       ? `http://localhost:5000/jtps_photos/${customer.photo}`
+//       ? `https://wablp.com/admin/jtps_photos/${customer.photo}`
 //       : null, // ✅ full photo URL
 //   };
 // }
@@ -180,17 +200,21 @@ module.exports = router;
 // // ✅ Get customer by ID
 // router.get("/:id", (req, res) => {
 //   const { id } = req.params;
-//   db.query("SELECT * FROM customers WHERE customers_id = ?", [id], (err, results) => {
-//     if (err) {
-//       console.error("DB Error:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-//     if (results.length === 0) {
-//       return res.status(404).json({ error: "Customer not found" });
-//     }
+//   db.query(
+//     "SELECT * FROM customers WHERE customers_id = ?",
+//     [id],
+//     (err, results) => {
+//       if (err) {
+//         console.error("DB Error:", err);
+//         return res.status(500).json({ error: "Database error" });
+//       }
+//       if (results.length === 0) {
+//         return res.status(404).json({ error: "Customer not found" });
+//       }
 
-//     res.json(normalizeCustomer(results[0]));
-//   });
+//       res.json(normalizeCustomer(results[0]));
+//     }
+//   );
 // });
 
 // // ✅ Update customer by ID (ignores unexpected fields safely)
@@ -224,25 +248,31 @@ module.exports = router;
 //   // Build SQL dynamically
 //   const sql = `
 //     UPDATE customers
-//     SET ${Object.keys(updates).map((f) => `${f}=?`).join(", ")}
+//     SET ${Object.keys(updates)
+//       .map((f) => `${f}=?`)
+//       .join(", ")}
 //     WHERE customers_id=?
 //   `;
 //   const values = [...Object.values(updates), id];
 
-//   db.query(sql, values, (err, result) => {
+//   db.query(sql, values, (err) => {
 //     if (err) {
 //       console.error("DB Error:", err);
 //       return res.status(500).json({ error: "Database error" });
 //     }
 
 //     // Fetch updated customer to return
-//     db.query("SELECT * FROM customers WHERE customers_id = ?", [id], (err2, results) => {
-//       if (err2) {
-//         console.error("DB Error:", err2);
-//         return res.status(500).json({ error: "Database error" });
+//     db.query(
+//       "SELECT * FROM customers WHERE customers_id = ?",
+//       [id],
+//       (err2, results) => {
+//         if (err2) {
+//           console.error("DB Error:", err2);
+//           return res.status(500).json({ error: "Database error" });
+//         }
+//         res.json(normalizeCustomer(results[0]));
 //       }
-//       res.json(normalizeCustomer(results[0]));
-//     });
+//     );
 //   });
 // });
 
@@ -254,7 +284,7 @@ module.exports = router;
 //   }
 
 //   const filename = req.file.filename;
-//   const photoUrl = `http://localhost:5000/jtps_photos/${filename}`; // ✅ served path
+//   const photoUrl = `https://wablp.com/admin/jtps_photos/${filename}`; // ✅ served path
 
 //   db.query(
 //     "UPDATE customers SET photo = ? WHERE customers_id = ?",
@@ -270,4 +300,3 @@ module.exports = router;
 // });
 
 // module.exports = router;
-
