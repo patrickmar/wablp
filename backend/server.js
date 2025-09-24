@@ -38,22 +38,41 @@ app.get("/", (req, res) => {
   });
 });
 
+
 // Path to your XAMPP uploads folder
 const EXTERNAL_UPLOADS = `C:/xampp/htdocs/Wablp/admin`; // Adjust this path as needed
 console.log("Using EXTERNAL_UPLOADS path:", EXTERNAL_UPLOADS);
 
-// Serve real uploaded photos (only if the folder exists)
+// Serve real uploaded photos (point directly into each subfolder)
 if (fs.existsSync(EXTERNAL_UPLOADS)) {
   console.log("✅ Serving images from:", EXTERNAL_UPLOADS);
-  app.use("/posts_photos", express.static(EXTERNAL_UPLOADS));
-  app.use("/jobs_photos", express.static(EXTERNAL_UPLOADS));
-  app.use("/webinars_photos", express.static(EXTERNAL_UPLOADS));
-  app.use("/projects_photos", express.static(EXTERNAL_UPLOADS));
-  app.use("/products_photos", express.static(EXTERNAL_UPLOADS));
-  app.use("/jtps_photos", express.static(EXTERNAL_UPLOADS));
+
+  app.use("/posts_photos", express.static(path.join(EXTERNAL_UPLOADS, "posts_photos")));
+  app.use("/jobs_photos", express.static(path.join(EXTERNAL_UPLOADS, "jobs_photos")));
+  app.use("/webinars_photos", express.static(path.join(EXTERNAL_UPLOADS, "webinars_photos")));
+  app.use("/projects_photos", express.static(path.join(EXTERNAL_UPLOADS, "projects_photos")));
+  app.use("/products_photos", express.static(path.join(EXTERNAL_UPLOADS, "products_photos")));
+  app.use("/jtps_photos", express.static(path.join(EXTERNAL_UPLOADS, "jtps_photos")));
 } else {
   console.error("❌ Folder not found:", EXTERNAL_UPLOADS);
 }
+
+// // Path to your XAMPP uploads folder
+// const EXTERNAL_UPLOADS = `C:/xampp/htdocs/Wablp/admin`; // Adjust this path as needed
+// console.log("Using EXTERNAL_UPLOADS path:", EXTERNAL_UPLOADS);
+
+// // Serve real uploaded photos (only if the folder exists)
+// if (fs.existsSync(EXTERNAL_UPLOADS)) {
+//   console.log("✅ Serving images from:", EXTERNAL_UPLOADS);
+//   app.use("/posts_photos", express.static(EXTERNAL_UPLOADS));
+//   app.use("/jobs_photos", express.static(EXTERNAL_UPLOADS));
+//   app.use("/webinars_photos", express.static(EXTERNAL_UPLOADS));
+//   app.use("/projects_photos", express.static(EXTERNAL_UPLOADS));
+//   app.use("/products_photos", express.static(EXTERNAL_UPLOADS));
+//   app.use("/jtps_photos", express.static(EXTERNAL_UPLOADS));
+// } else {
+//   console.error("❌ Folder not found:", EXTERNAL_UPLOADS);
+// }
 
 // Fallback (default.jpg, etc.) inside your Node project
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
