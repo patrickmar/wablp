@@ -108,7 +108,6 @@ export function JobsPage({ onSelectJob }: JobsPageProps) {
                 src={job.photo}
                 alt={job.title}
                 className="w-full h-40 object-cover rounded-t"
-                onError={(e) => (e.currentTarget.src = "/default-job.png")}
               />
             )}
             <CardContent className="p-4">

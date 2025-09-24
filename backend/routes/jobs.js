@@ -6,7 +6,6 @@ const db = require("../config/db");
 function timeAgo(timestamp) {
   if (!timestamp) return "Unknown date";
 
-  // handle UNIX timestamps
   let date = typeof timestamp === "number" || !isNaN(timestamp)
     ? new Date(timestamp * 1000)
     : new Date(timestamp);
@@ -30,7 +29,7 @@ function timeAgo(timestamp) {
   return "Just now";
 }
 
-// ✅ Get all job categories
+// Get all job categories
 router.get("/categories", (req, res) => {
   const sql = "SELECT job_categories_id, name FROM job_categories ORDER BY name ASC";
   db.query(sql, (err, results) => {
@@ -42,7 +41,7 @@ router.get("/categories", (req, res) => {
   });
 });
 
-// ✅ Get jobs with filters
+// Get jobs with filters
 router.get("/", (req, res) => {
   const { category, institution, search } = req.query;
 
@@ -55,7 +54,6 @@ router.get("/", (req, res) => {
   `;
   const params = [];
 
-  // Filtering
   if (category && category !== "all") {
     sql += " AND j.category = ?";
     params.push(category);
@@ -78,17 +76,20 @@ router.get("/", (req, res) => {
     }
 
     const jobsWithExtras = results.map((job) => {
-      // ✅ Convert Buffer fields to string
       ["description", "more_details", "salary"].forEach((field) => {
         if (job[field] && Buffer.isBuffer(job[field])) {
           job[field] = job[field].toString("utf-8");
         }
       });
 
+      // Remove duplicate "jobs_photos/" if present
+      let photoFile = job.photo || null;
+      if (photoFile) photoFile = photoFile.replace(/^jobs_photos\//, "");
+
       return {
         ...job,
-        photo: job.photo
-          ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+        photo: photoFile
+          ? `https://wablp.com/admin/jobs_photos/${photoFile}`
           : null,
         timeAgo: timeAgo(job.timestamp),
       };
@@ -98,7 +99,7 @@ router.get("/", (req, res) => {
   });
 });
 
-// ✅ Get single job details
+// Get single job details
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
@@ -120,21 +121,22 @@ router.get("/:id", (req, res) => {
 
     const job = results[0];
 
-    // ✅ Convert Buffer fields (BLOB/TEXT) into UTF-8 strings
     ["description", "more_details", "salary", "application_link", "document"].forEach((field) => {
       if (job[field] && Buffer.isBuffer(job[field])) {
         job[field] = job[field].toString("utf-8");
       }
     });
 
-    // update photo/document to full URL
-    
-    job.photo = job.photo
-      ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+    // Remove duplicate "jobs_photos/" if present
+    let photoFile = job.photo || null;
+    if (photoFile) photoFile = photoFile.replace(/^jobs_photos\//, "");
+
+    job.photo = photoFile
+      ? `https://wablp.com/admin/jobs_photos/${photoFile}`
       : null;
-    job.document = job.document
-      ? `https://wablp.com/admin/${job.document}`
-      : null;
+
+    if (job.document) job.document = `https://wablp.com/admin/${job.document}`;
+
     job.timeAgo = timeAgo(job.timestamp);
 
     res.json(job);
@@ -142,9 +144,6 @@ router.get("/:id", (req, res) => {
 });
 
 module.exports = router;
-
-
-
 
 
 
@@ -204,7 +203,7 @@ module.exports = router;
 
 //   let sql = `
 //     SELECT j.jobs_id, j.title, j.institution, j.photo, j.timestamp,
-//            c.name AS category_name
+//            c.name AS category_name, j.description, j.more_details, j.salary
 //     FROM jobs j
 //     LEFT JOIN job_categories c ON j.category = c.job_categories_id
 //     WHERE 1=1
@@ -233,13 +232,22 @@ module.exports = router;
 //       return res.status(500).json({ error: "Database error" });
 //     }
 
-//     const jobsWithExtras = results.map((job) => ({
-//       ...job,
-//       photo: job.photo
-//         ? `http://localhost:5000/jobs_photos/${job.photo}`
-//         : "http://localhost:5000/uploads/default.png",
-//       timeAgo: timeAgo(job.timestamp),
-//     }));
+//     const jobsWithExtras = results.map((job) => {
+//       // ✅ Convert Buffer fields to string
+//       ["description", "more_details", "salary"].forEach((field) => {
+//         if (job[field] && Buffer.isBuffer(job[field])) {
+//           job[field] = job[field].toString("utf-8");
+//         }
+//       });
+
+//       return {
+//         ...job,
+//         photo: job.photo
+//           ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+//           : null,
+//         timeAgo: timeAgo(job.timestamp),
+//       };
+//     });
 
 //     res.json(jobsWithExtras);
 //   });
@@ -266,11 +274,21 @@ module.exports = router;
 //     }
 
 //     const job = results[0];
+
+//     // ✅ Convert Buffer fields (BLOB/TEXT) into UTF-8 strings
+//     ["description", "more_details", "salary", "application_link", "document"].forEach((field) => {
+//       if (job[field] && Buffer.isBuffer(job[field])) {
+//         job[field] = job[field].toString("utf-8");
+//       }
+//     });
+
+//     // update photo/document to full URL
+
 //     job.photo = job.photo
-//       ? `http://localhost:5000/jobs_photos/${job.photo}`
-//       : "http://localhost:5000/uploads/default.png";
+//       ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+//       : null;
 //     job.document = job.document
-//       ? `http://localhost:5000/${job.document}`
+//       ? `https://wablp.com/admin/${job.document}`
 //       : null;
 //     job.timeAgo = timeAgo(job.timestamp);
 

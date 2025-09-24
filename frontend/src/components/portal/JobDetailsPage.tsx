@@ -66,7 +66,6 @@ export default function JobDetailsPage({ id, onBack }: JobDetailsPageProps) {
               src={String(job.photo)}
               alt={String(job.title || "Job Image")}
               className="w-full rounded-lg my-4"
-              onError={(e) => (e.currentTarget.src = "/default-job.png")}
             />
           )}
 
