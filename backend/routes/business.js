@@ -93,7 +93,7 @@ router.get("/:id", async (req, res) => {
 router.get("/:id/products", (req, res) => {
   const { id } = req.params;
 
-  const sql = "SELECT * FROM products WHERE business_id = ?"; // assuming products reference business_id
+  const sql = "SELECT * FROM products WHERE products_id = ?"; // assuming products reference business_id
   db.query(sql, [id], (err, results) => {
     if (err) {
       console.error("❌ Error fetching products:", err);
