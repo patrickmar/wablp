@@ -363,7 +363,7 @@ export function DashboardPage() {
               <Card key={item.id} className="overflow-hidden hover:shadow-md transition">
                 {item.imageUrl && (
                   <img
-                    src={item.image.localUrl}
+                    src={item.imageUrl}
                     alt={item.title}
                     className="w-full h-40 object-cover"
                     // onError={(e) => {
