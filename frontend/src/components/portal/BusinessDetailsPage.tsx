@@ -51,7 +51,7 @@ export default function BusinessDetailsPage({ id, onBack }: BusinessDetailsPageP
   useEffect(() => {
     const fetchBusiness = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/routes/business/${id}`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/business/${id}`);
         setBusiness(res.data);
       } catch (err) {
         console.error("❌ Error loading business:", err);
@@ -64,7 +64,7 @@ export default function BusinessDetailsPage({ id, onBack }: BusinessDetailsPageP
   useEffect(() => {
     const pingStatus = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/routes/status/${id}`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/status/${id}`);
         setStatus(res.data.status);
       } catch (err) {
         console.error("❌ Error fetching status", err);
@@ -80,7 +80,7 @@ export default function BusinessDetailsPage({ id, onBack }: BusinessDetailsPageP
     const fetchProducts = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/routes/business/${id}/products`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/business/${id}/products`
         );
         setProducts(res.data || []);
       } catch (err) {
