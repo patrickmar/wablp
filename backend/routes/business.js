@@ -89,22 +89,22 @@ router.get("/:id", async (req, res) => {
 });
 
 // ✅ Get products for a business (fully safe)
-router.get("/:id/products", async (req, res) => {
-  try {
-    const { id } = req.params;
+// router.get("/:id/products", async (req, res) => {
+//   try {
+//     const { id } = req.params;
 
-    const [results] = await db.query(
-      "SELECT * FROM products WHERE business_id = ?",
-      [id]
-    );
+//     const [results] = await db.query(
+//       "SELECT * FROM products WHERE business_id = ?",
+//       [id]
+//     );
 
-    const normalized = Array.isArray(results) ? results.map(normalizeProduct) : [];
-    res.json(normalized);
-  } catch (err) {
-    console.error("❌ Error fetching products:", err);
-    res.status(500).json({ error: "Failed to fetch products" });
-  }
-});
+//     const normalized = Array.isArray(results) ? results.map(normalizeProduct) : [];
+//     res.json(normalized);
+//   } catch (err) {
+//     console.error("❌ Error fetching products:", err);
+//     res.status(500).json({ error: "Failed to fetch products" });
+//   }
+// });
 
 module.exports = router;
 
