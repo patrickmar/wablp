@@ -1,69 +1,63 @@
-// require("dotenv").config();
-// const mysql = require("mysql2");
+require("dotenv").config();
+const mysql = require("mysql2");
 
-// const isProduction = process.env.NODE_ENV === "production";
-
-// const dbConfig = {
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-//   port: process.env.DB_PORT || 3306,
-//   waitForConnections: true,
-//   connectionLimit: 10, // adjust as needed
-//   queueLimit: 0,
-// };
-
-// const db = mysql.createPool(dbConfig);
-
-// // Optional: Test connection
-// db.getConnection((err, connection) => {
-//   if (err) {
-//     console.error("Database connection failed:", err);
-//   } else {
-//     console.log(
-//       `Database connected: ${isProduction ? "Remote DB (Render)" : "Local DB"}`
-//     );
-//     connection.release(); // release connection back to pool
-//   }
-// });
-
-// module.exports = db;
-
-
-
-
-
-
-
-
-
-
-require('dotenv').config();
-const mysql = require('mysql2');
-
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 const dbConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 3, // keep small if your DB host has strict limits
+  queueLimit: 0,
 };
 
-// EXTERNAL_UPLOADS_PATH=process.env.EXTERNAL_UPLOADS_PATH;
-const db = mysql.createConnection(dbConfig);
+// Create a pool with promise wrapper for async/await usage
+const db = mysql.createPool(dbConfig).promise();
 
-db.connect((err) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-  } else {
-    console.log(`Database connected: ${isProduction ? 'Remote DB (Render)' : 'Local DB'}`);
-  }
-});
+console.log(
+  `Database config loaded: ${isProduction ? "Remote DB (Render)" : "Local DB"}`
+);
 
 module.exports = db;
+
+
+
+
+
+
+
+
+
+
+
+// require('dotenv').config();
+// const mysql = require('mysql2');
+
+// const isProduction = process.env.NODE_ENV === 'production';
+
+// const dbConfig = {
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_NAME,
+//   port: process.env.DB_PORT || 3306
+// };
+
+// // EXTERNAL_UPLOADS_PATH=process.env.EXTERNAL_UPLOADS_PATH;
+// const db = mysql.createConnection(dbConfig);
+
+// db.connect((err) => {
+//   if (err) {
+//     console.error('Database connection failed:', err);
+//   } else {
+//     console.log(`Database connected: ${isProduction ? 'Remote DB (Render)' : 'Local DB'}`);
+//   }
+// });
+
+// module.exports = db;
 
 
 

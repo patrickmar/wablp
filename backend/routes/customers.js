@@ -1,23 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // MySQL connection file
+const db = require("../config/db"); // MySQL pool
 const multer = require("multer");
 const path = require("path");
-const ftp = require("basic-ftp"); // ✅ FTP client
+const ftp = require("basic-ftp");
 const { countryNames } = require("../utils/CountryNames");
 
-// ✅ Use memory storage (keep file in memory for FTP upload)
+// ✅ Use memory storage for FTP upload
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// ✅ Helper to normalize photo path and customer data
+// ✅ Normalize customer data
 function normalizeCustomer(customer) {
   let photoFile = customer.photo || null;
 
   if (photoFile) {
-    // Remove duplicate folder name if already included in DB
-    photoFile = photoFile.replace(/^jtps_photos\//, "");
-    photoFile = photoFile.replace(/^\/+/, ""); // remove leading slashes
+    photoFile = photoFile.replace(/^jtps_photos\//, "").replace(/^\/+/, "");
   }
 
   return {
@@ -30,139 +28,336 @@ function normalizeCustomer(customer) {
     about_me: customer.about_me ? customer.about_me.toString() : "",
     country:
       customer.country && countryNames[customer.country]
-        ? countryNames[customer.country] // ✅ full country name
-        : customer.country, // fallback
+        ? countryNames[customer.country]
+        : customer.country,
     photo: photoFile
       ? `https://wablp.com/admin/jtps_photos/${photoFile}`
-      : null, // ✅ clean full photo URL
+      : null,
   };
 }
 
 // ✅ Get customer by ID
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
-  db.query(
-    "SELECT * FROM customers WHERE customers_id = ?",
-    [id],
-    (err, results) => {
-      if (err) {
-        console.error("DB Error:", err);
-        return res.status(500).json({ error: "Database error" });
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ error: "Customer not found" });
-      }
-
-      res.json(normalizeCustomer(results[0]));
-    }
-  );
-});
-
-// ✅ Update customer by ID (ignores unexpected fields safely)
-router.put("/:id", (req, res) => {
-  const { id } = req.params;
-
-  const allowedFields = [
-    "name",
-    "email",
-    "phone",
-    "country",
-    "specialties",
-    "language",
-    "joined_as",
-    "company_name",
-    "about_me",
-  ];
-
-  const updates = {};
-  allowedFields.forEach((field) => {
-    if (req.body[field] !== undefined) {
-      updates[field] = req.body[field];
-    }
-  });
-
-  if (Object.keys(updates).length === 0) {
-    return res.status(400).json({ error: "No valid fields to update" });
-  }
-
-  const sql = `
-    UPDATE customers
-    SET ${Object.keys(updates)
-      .map((f) => `${f}=?`)
-      .join(", ")}
-    WHERE customers_id=?
-  `;
-  const values = [...Object.values(updates), id];
-
-  db.query(sql, values, (err) => {
-    if (err) {
-      console.error("DB Error:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-
-    db.query(
-      "SELECT * FROM customers WHERE customers_id = ?",
-      [id],
-      (err2, results) => {
-        if (err2) {
-          console.error("DB Error:", err2);
-          return res.status(500).json({ error: "Database error" });
-        }
-        res.json(normalizeCustomer(results[0]));
-      }
-    );
-  });
-});
-
-// ✅ Upload profile photo (FTP to cPanel)
-router.post("/:id/upload-profile-photo", upload.single("photo"), async (req, res) => {
-  const { id } = req.params;
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-
-  const filename = Date.now() + path.extname(req.file.originalname);
-
+router.get("/:id", async (req, res) => {
   try {
-    const client = new ftp.Client();
-    client.ftp.verbose = false;
+    const { id } = req.params;
+    const [results] = await db.promise().query(
+      "SELECT * FROM customers WHERE customers_id = ?",
+      [id]
+    );
 
-    await client.access({
-      host: process.env.FTP_HOST,
-      user: process.env.FTP_USER,
-      password: process.env.FTP_PASSWORD,
-      secure: false, // set to true if your FTP uses TLS/SSL
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Customer not found" });
+    }
+
+    res.json(normalizeCustomer(results[0]));
+  } catch (err) {
+    console.error("DB Error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// ✅ Update customer by ID
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const allowedFields = [
+      "name",
+      "email",
+      "phone",
+      "country",
+      "specialties",
+      "language",
+      "joined_as",
+      "company_name",
+      "about_me",
+    ];
+
+    const updates = {};
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
     });
 
-    // ✅ Upload to cPanel folder (adjust path if needed)
-    await client.uploadFrom(
-      req.file.buffer,
-      `/public_html/admin/jtps_photos/${filename}`
-    );
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: "No valid fields to update" });
+    }
 
-    client.close();
+    const sql = `
+      UPDATE customers
+      SET ${Object.keys(updates).map((f) => `${f}=?`).join(", ")}
+      WHERE customers_id=?
+    `;
+    const values = [...Object.values(updates), id];
 
-    // ✅ Save filename in DB
-    db.query(
-      "UPDATE customers SET photo = ? WHERE customers_id = ?",
-      [filename, id],
-      (err) => {
-        if (err) {
-          console.error("DB Error:", err);
-          return res.status(500).json({ error: "Database error" });
-        }
+    await db.promise().query(sql, values);
 
-        const photoUrl = `https://wablp.com/admin/jtps_photos/${filename}`;
-        res.json({ STATUS: "SUCC", MESSAGE: "Photo uploaded", photoUrl });
-      }
-    );
+    // Return updated record
+    const [results] = await db
+      .promise()
+      .query("SELECT * FROM customers WHERE customers_id = ?", [id]);
+
+    res.json(normalizeCustomer(results[0]));
   } catch (err) {
-    console.error("FTP Upload Error:", err);
-    res.status(500).json({ error: "Failed to upload image via FTP" });
+    console.error("DB Error:", err);
+    res.status(500).json({ error: "Database error" });
   }
 });
 
+// ✅ Upload profile photo (FTP + DB save)
+router.post(
+  "/:id/upload-profile-photo",
+  upload.single("photo"),
+  async (req, res) => {
+    const { id } = req.params;
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const filename = Date.now() + path.extname(req.file.originalname);
+
+    try {
+      const client = new ftp.Client();
+      client.ftp.verbose = false;
+
+      await client.access({
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD,
+        secure: false,
+      });
+
+      // ✅ Upload to cPanel
+      await client.uploadFrom(
+        req.file.buffer,
+        `/public_html/admin/jtps_photos/${filename}`
+      );
+      client.close();
+
+      // ✅ Save filename in DB
+      await db
+        .promise()
+        .query("UPDATE customers SET photo = ? WHERE customers_id = ?", [
+          filename,
+          id,
+        ]);
+
+      const photoUrl = `https://wablp.com/admin/jtps_photos/${filename}`;
+      res.json({ STATUS: "SUCC", MESSAGE: "Photo uploaded", photoUrl });
+    } catch (err) {
+      console.error("FTP Upload Error:", err);
+      res.status(500).json({ error: "Failed to upload image via FTP" });
+    }
+  }
+);
+
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const db = require("../config/db"); // MySQL connection file
+// const multer = require("multer");
+// const path = require("path");
+// const ftp = require("basic-ftp"); // ✅ FTP client
+// const { countryNames } = require("../utils/CountryNames");
+
+// // ✅ Use memory storage (keep file in memory for FTP upload)
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage });
+
+// // ✅ Helper to normalize photo path and customer data
+// function normalizeCustomer(customer) {
+//   let photoFile = customer.photo || null;
+
+//   if (photoFile) {
+//     // Remove duplicate folder name if already included in DB
+//     photoFile = photoFile.replace(/^jtps_photos\//, "");
+//     photoFile = photoFile.replace(/^\/+/, ""); // remove leading slashes
+//   }
+
+//   return {
+//     ...customer,
+//     portfolio: customer.portfolio ? customer.portfolio.toString() : "",
+//     education_level: customer.education_level
+//       ? customer.education_level.toString()
+//       : "",
+//     description: customer.description ? customer.description.toString() : "",
+//     about_me: customer.about_me ? customer.about_me.toString() : "",
+//     country:
+//       customer.country && countryNames[customer.country]
+//         ? countryNames[customer.country] // ✅ full country name
+//         : customer.country, // fallback
+//     photo: photoFile
+//       ? `https://wablp.com/admin/jtps_photos/${photoFile}`
+//       : null, // ✅ clean full photo URL
+//   };
+// }
+
+// // ✅ Get customer by ID
+// router.get("/:id", (req, res) => {
+//   const { id } = req.params;
+//   db.query(
+//     "SELECT * FROM customers WHERE customers_id = ?",
+//     [id],
+//     (err, results) => {
+//       if (err) {
+//         console.error("DB Error:", err);
+//         return res.status(500).json({ error: "Database error" });
+//       }
+//       if (results.length === 0) {
+//         return res.status(404).json({ error: "Customer not found" });
+//       }
+
+//       res.json(normalizeCustomer(results[0]));
+//     }
+//   );
+// });
+
+// // ✅ Update customer by ID (ignores unexpected fields safely)
+// router.put("/:id", (req, res) => {
+//   const { id } = req.params;
+
+//   const allowedFields = [
+//     "name",
+//     "email",
+//     "phone",
+//     "country",
+//     "specialties",
+//     "language",
+//     "joined_as",
+//     "company_name",
+//     "about_me",
+//   ];
+
+//   const updates = {};
+//   allowedFields.forEach((field) => {
+//     if (req.body[field] !== undefined) {
+//       updates[field] = req.body[field];
+//     }
+//   });
+
+//   if (Object.keys(updates).length === 0) {
+//     return res.status(400).json({ error: "No valid fields to update" });
+//   }
+
+//   const sql = `
+//     UPDATE customers
+//     SET ${Object.keys(updates)
+//       .map((f) => `${f}=?`)
+//       .join(", ")}
+//     WHERE customers_id=?
+//   `;
+//   const values = [...Object.values(updates), id];
+
+//   db.query(sql, values, (err) => {
+//     if (err) {
+//       console.error("DB Error:", err);
+//       return res.status(500).json({ error: "Database error" });
+//     }
+
+//     db.query(
+//       "SELECT * FROM customers WHERE customers_id = ?",
+//       [id],
+//       (err2, results) => {
+//         if (err2) {
+//           console.error("DB Error:", err2);
+//           return res.status(500).json({ error: "Database error" });
+//         }
+//         res.json(normalizeCustomer(results[0]));
+//       }
+//     );
+//   });
+// });
+
+// // ✅ Upload profile photo (FTP to cPanel)
+// router.post("/:id/upload-profile-photo", upload.single("photo"), async (req, res) => {
+//   const { id } = req.params;
+//   if (!req.file) {
+//     return res.status(400).json({ error: "No file uploaded" });
+//   }
+
+//   const filename = Date.now() + path.extname(req.file.originalname);
+
+//   try {
+//     const client = new ftp.Client();
+//     client.ftp.verbose = false;
+
+//     await client.access({
+//       host: process.env.FTP_HOST,
+//       user: process.env.FTP_USER,
+//       password: process.env.FTP_PASSWORD,
+//       secure: false, // set to true if your FTP uses TLS/SSL
+//     });
+
+//     // ✅ Upload to cPanel folder (adjust path if needed)
+//     await client.uploadFrom(
+//       req.file.buffer,
+//       `/public_html/admin/jtps_photos/${filename}`
+//     );
+
+//     client.close();
+
+//     // ✅ Save filename in DB
+//     db.query(
+//       "UPDATE customers SET photo = ? WHERE customers_id = ?",
+//       [filename, id],
+//       (err) => {
+//         if (err) {
+//           console.error("DB Error:", err);
+//           return res.status(500).json({ error: "Database error" });
+//         }
+
+//         const photoUrl = `https://wablp.com/admin/jtps_photos/${filename}`;
+//         res.json({ STATUS: "SUCC", MESSAGE: "Photo uploaded", photoUrl });
+//       }
+//     );
+//   } catch (err) {
+//     console.error("FTP Upload Error:", err);
+//     res.status(500).json({ error: "Failed to upload image via FTP" });
+//   }
+// });
+
+// module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
