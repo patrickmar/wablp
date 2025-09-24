@@ -89,7 +89,7 @@ router.get("/", (req, res) => {
         ...job,
         photo: job.photo
           ? `https://wablp.com/admin/jobs_photos/${job.photo}`
-          : "https://wablp.com/admin/uploads/default.png",
+          : null,
         timeAgo: timeAgo(job.timestamp),
       };
     });
@@ -127,9 +127,11 @@ router.get("/:id", (req, res) => {
       }
     });
 
+    // update photo/document to full URL
+    
     job.photo = job.photo
       ? `https://wablp.com/admin/jobs_photos/${job.photo}`
-      : "https://wablp.com/admin/uploads/default.png";
+      : null;
     job.document = job.document
       ? `https://wablp.com/admin/${job.document}`
       : null;
