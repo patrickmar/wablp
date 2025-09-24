@@ -8,14 +8,27 @@ function normalizeBusiness(business) {
   let photoFile = business.photo || null;
 
   if (photoFile) {
-    photoFile = photoFile.replace(/^jtps_photos\//, "");
-    photoFile = photoFile.replace(/^\/+/, ""); // remove leading slashes
+    photoFile = photoFile.replace(/^jtps_photos\//, "").replace(/^\/+/, "");
   }
 
   return {
     ...business,
     photo: photoFile
       ? `https://wablp.com/admin/jtps_photos/${photoFile}`
+      : null,
+  };
+}
+
+// ✅ Helper to normalize product rows
+function normalizeProduct(product) {
+  let photoFile = product.photo || null;
+  if (photoFile) {
+    photoFile = photoFile.replace(/^product_photos\//, "").replace(/^\/+/, "");
+  }
+  return {
+    ...product,
+    photo: photoFile
+      ? `https://wablp.com/admin/product_photos/${photoFile}`
       : null,
   };
 }
@@ -45,7 +58,7 @@ router.get("/", async (req, res) => {
 
     const [results] = await db.query(query, params);
 
-    const normalized = results.map(normalizeBusiness);
+    const normalized = Array.isArray(results) ? results.map(normalizeBusiness) : [];
     res.json(normalized);
   } catch (err) {
     console.error("❌ Error fetching businesses:", err);
@@ -63,7 +76,7 @@ router.get("/:id", async (req, res) => {
       [id]
     );
 
-    if (results.length === 0) {
+    if (!results || results.length === 0) {
       return res.status(404).json({ error: "Business not found" });
     }
 
@@ -75,7 +88,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// ✅ Get products for a business
+// ✅ Get products for a business (fully safe)
 router.get("/:id/products", async (req, res) => {
   try {
     const { id } = req.params;
@@ -85,21 +98,7 @@ router.get("/:id/products", async (req, res) => {
       [id]
     );
 
-    const normalized = results.map((p) => {
-      let photoFile = p.photo || null;
-      if (photoFile) {
-        photoFile = photoFile.replace(/^product_photos\//, "");
-        photoFile = photoFile.replace(/^\/+/, "");
-      }
-
-      return {
-        ...p,
-        photo: photoFile
-          ? `https://wablp.com/admin/product_photos/${photoFile}`
-          : null,
-      };
-    });
-
+    const normalized = Array.isArray(results) ? results.map(normalizeProduct) : [];
     res.json(normalized);
   } catch (err) {
     console.error("❌ Error fetching products:", err);
@@ -108,6 +107,7 @@ router.get("/:id/products", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
