@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db");
+// const db = require("../config/db");
+const { db, uploadToFTP } = require("../config/db");
 const dayjs = require("dayjs");
 
 // ✅ Get latest news
