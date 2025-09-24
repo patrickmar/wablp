@@ -137,7 +137,6 @@ export function WebinarsPage() {
                 src={w.photo}
                 alt={w.name}
                 className="w-full h-40 object-cover rounded-t"
-                onError={(e) => (e.currentTarget.src = "/default-webinar.png")}
               />
             )}
             <CardContent className="p-4">

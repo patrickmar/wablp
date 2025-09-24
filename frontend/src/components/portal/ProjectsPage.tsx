@@ -148,7 +148,6 @@ export function ProjectsPage() {
                 src={p.photo}
                 alt={p.name}
                 className="w-full h-40 object-cover rounded-t"
-                onError={(e) => (e.currentTarget.src = "/default-project.png")}
               />
             )}
             <CardContent className="p-4">

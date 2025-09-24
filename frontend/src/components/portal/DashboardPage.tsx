@@ -302,19 +302,9 @@ export function DashboardPage() {
                 Welcome back{user?.name ? `, ${user.name}!` : "!"}
               </h1>
               <p className="text-blue-100 text-lg">
-                You have 3 new messages and 2 opportunity matches today.
+                Below is your dashboard.
               </p>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-4 mt-6">
-            <Badge className="bg-white bg-opacity-20 text-white border-0 px-4 py-2">
-              <Star className="w-4 h-4 mr-2" />
-              Premium Member
-            </Badge>
-            <Badge className="bg-[#D4AF37] text-[#333333] px-4 py-2">
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Profile Visibility: High
-            </Badge>
           </div>
         </div>
       </div>

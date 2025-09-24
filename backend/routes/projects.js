@@ -50,14 +50,18 @@ router.get("/", (req, res) => {
 
     // ✅ Fix photo path + add timeAgo
     const projects = results.map((proj) => {
+      // Strip duplicate prefix if present
+      let photoFile = proj.photo || null;
+      if (photoFile) photoFile = photoFile.replace(/^projects_photos\//, "");
+
       // Convert UNIX timestamp (seconds) to JS Date
       const ts = proj.timestamp ? new Date(proj.timestamp * 1000) : null;
 
       return {
         ...proj,
-        photo: proj.photo
-          ? `http://localhost:5000/projects_photos/${proj.photo}`
-          : "http://localhost:5000/uploads/default.png",
+        photo: photoFile
+          ? `https://wablp.com/admin/projects_photos/${photoFile}`
+          : null,
         timeAgo: ts ? timeAgo(ts) : "Unknown date",
       };
     });

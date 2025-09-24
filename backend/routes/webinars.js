@@ -29,7 +29,7 @@ function timeAgo(timestamp) {
   return "Just now";
 }
 
-// ✅ Fetch all webinar platforms
+// Fetch all webinar platforms
 router.get("/platforms", (req, res) => {
   const sql = "SELECT webinar_platforms_id, name FROM webinar_platforms";
   con.query(sql, (err, results) => {
@@ -41,7 +41,7 @@ router.get("/platforms", (req, res) => {
   });
 });
 
-// ✅ Fetch webinars
+// Fetch webinars
 router.get("/", (req, res) => {
   let { platform, search } = req.query;
 
@@ -71,13 +71,18 @@ router.get("/", (req, res) => {
       return res.status(500).json({ error: "Database error" });
     }
 
-    const formatted = results.map((w) => ({
-      ...w,
-      photo: w.photo
-        ? `http://localhost:5000/webinars_photos/${w.photo}`
-        : "http://localhost:5000/uploads/default.png",
-      timeAgo: timeAgo(w.timestamp),
-    }));
+    const formatted = results.map((w) => {
+      let photoFile = w.photo || null;
+      if (photoFile) photoFile = photoFile.replace(/^webinars_photos\//, "");
+
+      return {
+        ...w,
+        photo: photoFile
+          ? `https://wablp.com/admin/webinars_photos/${photoFile}`
+          : null,
+        timeAgo: timeAgo(w.timestamp),
+      };
+    });
 
     res.json(formatted);
   });

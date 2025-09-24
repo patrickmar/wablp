@@ -5,16 +5,16 @@ const multer = require("multer");
 const path = require("path");
 
 // ✅ Absolute external directories
-const PHOTO_DIR = "C:/xampp/htdocs/Wablp/admin/products_photos";
-const DOC_DIR = "C:/xampp/htdocs/Wablp/admin/product_documents";
+const PHOTO_DIR = "https://wablp.com/admin/products_photos";
+const DOC_DIR = "https://wablp.com/admin/product_documents";
 
 // ✅ Storage for photo & document uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (file.fieldname === "photo") {
-      cb(null, PHOTO_DIR);
+      cb(null, "uploads/products_photos");
     } else if (file.fieldname === "document") {
-      cb(null, DOC_DIR);
+      cb(null, "uploads/product_documents");
     } else {
       cb(null, "uploads/");
     }
@@ -29,16 +29,11 @@ const upload = multer({ storage });
 router.get("/categories", (req, res) => {
   const sql = "SELECT product_categories_id, name FROM product_categories ORDER BY name ASC";
   db.query(sql, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching product categories:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-
+    if (err) return res.status(500).json({ error: "Database error" });
     const categories = results.map((cat) => ({
       product_categories_id: String(cat.product_categories_id),
       name: String(cat.name),
     }));
-
     res.json(categories);
   });
 });
@@ -47,16 +42,11 @@ router.get("/categories", (req, res) => {
 router.get("/types", (req, res) => {
   const sql = "SELECT product_types_id, name FROM product_types ORDER BY name ASC";
   db.query(sql, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching product types:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-
+    if (err) return res.status(500).json({ error: "Database error" });
     const types = results.map((t) => ({
       product_types_id: String(t.product_types_id),
       name: String(t.name),
     }));
-
     res.json(types);
   });
 });
@@ -91,13 +81,15 @@ router.get("/", (req, res) => {
   sql += " ORDER BY p.timestamp DESC";
 
   db.query(sql, params, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching products:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
+    if (err) return res.status(500).json({ error: "Database error" });
 
     const products = results.map((prod) => {
       const ts = prod.timestamp ? new Date(prod.timestamp * 1000) : null;
+
+      // ✅ Remove duplicate prefixes
+      let photoFile = prod.photo ? prod.photo.replace(/^products_photos\//, "") : null;
+      let docFile = prod.document ? prod.document.replace(/^product_documents\//, "") : null;
+
       return {
         products_id: String(prod.products_id),
         name: String(prod.name),
@@ -107,12 +99,8 @@ router.get("/", (req, res) => {
         type: prod.type ? String(prod.type) : "",
         currency: prod.currency ? String(prod.currency) : "",
         price: prod.price ? String(prod.price) : "0",
-        photo: prod.photo
-          ? `http://localhost:5000/products_photos/${prod.photo}`
-          : "http://localhost:5000/uploads/default.png",
-        document: prod.document
-          ? `http://localhost:5000/product_documents/${prod.document}`
-          : null,
+        photo: photoFile ? `${PHOTO_DIR}/${photoFile}` : null,
+        document: docFile ? `${DOC_DIR}/${docFile}` : null,
         timeAgo: ts ? timeAgo(ts) : "Unknown date",
       };
     });
@@ -138,16 +126,14 @@ router.get("/:id", (req, res) => {
   `;
 
   db.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching product details:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-    if (results.length === 0) {
-      return res.status(404).json({ error: "Product not found" });
-    }
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (results.length === 0) return res.status(404).json({ error: "Product not found" });
 
     const prod = results[0];
     const ts = prod.timestamp ? new Date(prod.timestamp * 1000) : null;
+
+    let photoFile = prod.photo ? prod.photo.replace(/^products_photos\//, "") : null;
+    let docFile = prod.document ? prod.document.replace(/^product_documents\//, "") : null;
 
     const product = {
       products_id: String(prod.products_id),
@@ -164,157 +150,14 @@ router.get("/:id", (req, res) => {
       contact_phone: prod.contact_phone ? String(prod.contact_phone) : "",
       website: prod.website ? String(prod.website) : "",
       status: prod.status ? String(prod.status) : "PUBLISHED",
-      photo: prod.photo
-        ? `http://localhost:5000/products_photos/${prod.photo}`
-        : "http://localhost:5000/uploads/default.png",
-      document: prod.document
-        ? `http://localhost:5000/product_documents/${prod.document}`
-        : null,
+      photo: photoFile ? `${PHOTO_DIR}/${photoFile}` : null,
+      document: docFile ? `${DOC_DIR}/${docFile}` : null,
       timeAgo: ts ? timeAgo(ts) : "Unknown date",
     };
 
     res.json(product);
   });
 });
-
-// ✅ Create a new catalogue
-router.post(
-  "/",
-  upload.fields([
-    { name: "photo", maxCount: 1 },
-    { name: "document", maxCount: 1 },
-  ]),
-  (req, res) => {
-    const {
-      name,
-      description,
-      category,
-      type,
-      currency,
-      price,
-      stock_available,
-      uom,
-      contact_email,
-      contact_phone,
-      website,
-      status,
-    } = req.body;
-
-    const photo = req.files["photo"] ? req.files["photo"][0].filename : null;
-    const document = req.files["document"] ? req.files["document"][0].filename : null;
-    const timestamp = Math.floor(Date.now() / 1000);
-
-    const sql = `
-      INSERT INTO products 
-      (name, description, category, type, currency, price, stock_available, uom, 
-       contact_email, contact_phone, website, status, photo, document, timestamp) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    db.query(
-      sql,
-      [
-        name,
-        description,
-        category,
-        type,
-        currency,
-        price,
-        stock_available,
-        uom,
-        contact_email,
-        contact_phone,
-        website,
-        status,
-        photo,
-        document,
-        timestamp,
-      ],
-      (err, result) => {
-        if (err) {
-          console.error("❌ Error inserting catalogue:", err);
-          return res.status(500).json({ error: "Database insert error" });
-        }
-        res.json({
-          STATUS: "SUCC",
-          MESSAGE: "Catalogue created successfully",
-          insertedId: result.insertId,
-        });
-      }
-    );
-  }
-);
-
-// ✅ Update an existing catalogue
-router.put(
-  "/:id",
-  upload.fields([
-    { name: "photo", maxCount: 1 },
-    { name: "document", maxCount: 1 },
-  ]),
-  (req, res) => {
-    const { id } = req.params;
-    const {
-      name,
-      description,
-      category,
-      type,
-      currency,
-      price,
-      stock_available,
-      uom,
-      contact_email,
-      contact_phone,
-      website,
-      status,
-    } = req.body;
-
-    const photo = req.files["photo"] ? req.files["photo"][0].filename : null;
-    const document = req.files["document"] ? req.files["document"][0].filename : null;
-
-    let sql = `
-      UPDATE products SET 
-      name=?, description=?, category=?, type=?, currency=?, price=?, stock_available=?, uom=?, 
-      contact_email=?, contact_phone=?, website=?, status=?`;
-    const params = [
-      name,
-      description,
-      category,
-      type,
-      currency,
-      price,
-      stock_available,
-      uom,
-      contact_email,
-      contact_phone,
-      website,
-      status,
-    ];
-
-    if (photo) {
-      sql += `, photo=?`;
-      params.push(photo);
-    }
-    if (document) {
-      sql += `, document=?`;
-      params.push(document);
-    }
-
-    sql += ` WHERE products_id=?`;
-    params.push(id);
-
-    db.query(sql, params, (err) => {
-      if (err) {
-        console.error("❌ Error updating catalogue:", err);
-        return res.status(500).json({ error: "Database update error" });
-      }
-      res.json({
-        STATUS: "SUCC",
-        MESSAGE: "Catalogue updated successfully",
-      });
-    });
-  }
-);
 
 // 🔹 Helper for "time ago"
 function timeAgo(date) {
@@ -337,6 +180,7 @@ function timeAgo(date) {
 }
 
 module.exports = router;
+
 
 
 
