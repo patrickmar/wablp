@@ -1,3 +1,4 @@
+/// routes/organization.js
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
@@ -7,7 +8,6 @@ function normalizeOrg(org) {
   let photoFile = org.photo || null;
 
   if (photoFile) {
-    // Remove any leading "jtps_photos/" or slashes to prevent duplicates
     photoFile = photoFile.replace(/^jtps_photos\//, "");
     photoFile = photoFile.replace(/^\/+/, "");
   }
@@ -32,71 +32,76 @@ function normalizeOrg(org) {
 }
 
 // ✅ Get all categories for dropdown
-router.get("/categories", (req, res) => {
-  const query = "SELECT mentor_categories_id, name FROM mentor_categories";
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching categories:", err);
-      return res.status(500).json({ error: "Failed to fetch categories" });
-    }
+router.get("/categories", async (req, res) => {
+  try {
+    const [results] = await db.query(
+      "SELECT mentor_categories_id, name FROM mentor_categories"
+    );
     res.json(results);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching categories:", err);
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
 });
 
 // ✅ Get organizations (with filters)
-router.get("/", (req, res) => {
-  const { category, search, location } = req.query;
+router.get("/", async (req, res) => {
+  try {
+    const { category, search, location } = req.query;
 
-  let query = "SELECT * FROM customers WHERE joined_as = 'ORGANIZATION'";
-  const params = [];
+    let query = "SELECT * FROM customers WHERE joined_as = 'ORGANIZATION'";
+    const params = [];
 
-  if (category && category !== "all") {
-    query += " AND category = ?";
-    params.push(category);
-  }
-
-  if (location && location !== "all") {
-    query += " AND country LIKE ?";
-    params.push(`%${location}%`);
-  }
-
-  if (search) {
-    query += " AND (name LIKE ? OR company_name LIKE ?)";
-    params.push(`%${search}%`, `%${search}%`);
-  }
-
-  query += " ORDER BY timestamp DESC";
-
-  db.query(query, params, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching organizations:", err);
-      return res.status(500).json({ error: "Failed to fetch organizations" });
+    if (category && category !== "all") {
+      query += " AND category = ?";
+      params.push(category);
     }
+
+    if (location && location !== "all") {
+      query += " AND country LIKE ?";
+      params.push(`%${location}%`);
+    }
+
+    if (search) {
+      query += " AND (name LIKE ? OR company_name LIKE ?)";
+      params.push(`%${search}%`, `%${search}%`);
+    }
+
+    query += " ORDER BY timestamp DESC";
+
+    const [results] = await db.query(query, params);
     const normalized = results.map(normalizeOrg);
     res.json(normalized);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching organizations:", err);
+    res.status(500).json({ error: "Failed to fetch organizations" });
+  }
 });
 
 // ✅ Get single organization details
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
-  const sql =
-    "SELECT * FROM customers WHERE customers_id = ? AND joined_as = 'ORGANIZATION'";
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
-  db.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching organization details:", err);
-      return res.status(500).json({ error: err.message });
-    }
+    const [results] = await db.query(
+      "SELECT * FROM customers WHERE customers_id = ? AND joined_as = 'ORGANIZATION'",
+      [id]
+    );
+
     if (results.length === 0) {
       return res.status(404).json({ error: "Organization not found" });
     }
+
     const normalized = normalizeOrg(results[0]);
     res.json(normalized);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching organization details:", err);
+    res.status(500).json({ error: "Failed to fetch organization" });
+  }
 });
 
 module.exports = router;
+
 
 
 
