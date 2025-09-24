@@ -4,8 +4,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 require("dotenv").config();
 
-const { db, uploadToFTP } = require("./config/db");
-// const db = require("./config/db");
+const db = require("./config/db");
 
 // Routes
 const authRoutes = require("./routes/auth");

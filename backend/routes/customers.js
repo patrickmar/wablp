@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { db, uploadToFTP } = require("../config/db"); // ✅ pooled MySQL + FTP helper
+const { db } = require("../config/db"); // ✅ pooled MySQL only
+const { uploadToFTP } = require("../config/ftp"); // ✅ FTP helper
 const multer = require("multer");
 const path = require("path");
 const { countryNames } = require("../utils/CountryNames");
@@ -116,10 +117,11 @@ router.post(
     }
 
     const filename = Date.now() + path.extname(req.file.originalname);
+    const remotePath = `/public_html/admin/jtps_photos/${filename}`;
 
     try {
-      // ✅ Upload file buffer to FTP using helper
-      await uploadToFTP(req.file.buffer, `/public_html/admin/jtps_photos/${filename}`);
+      // ✅ Upload file buffer to FTP
+      await uploadToFTP(req.file.buffer, remotePath);
 
       // ✅ Save filename in DB
       await db.query(
@@ -137,6 +139,7 @@ router.post(
 );
 
 module.exports = router;
+
 
 
 

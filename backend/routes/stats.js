@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-// const db = require("../config/db"); // ✅ pooled MySQL connection
-const { db, uploadToFTP } = require("../config/db");
+const db = require("../config/db"); // ✅ pooled MySQL connection
 
 // ✅ GET /api/stats
 router.get("/stats", async (req, res) => {
