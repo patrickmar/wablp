@@ -58,6 +58,10 @@ router.get("/:id", async (req, res) => {
     const row = rows[0];
     const baseUrl = "https://wablp.com/admin";
 
+    // ✅ ensure no duplicate "posts_photos/"
+    let photoFile = row.photo || "default.jpg";
+    photoFile = photoFile.replace(/^posts_photos\//, "");
+
     // Fetch related news (same category, exclude this post)
     const [relatedRows] = await db
       .promise()
@@ -66,58 +70,32 @@ router.get("/:id", async (req, res) => {
         [row.category, id]
       );
 
-      const formatted = Array.isArray(rows)
-      ? rows.map((row) => {
-          // ✅ make sure we only keep the filename (remove "posts_photos/" if it exists)
-          let photoFile = row.photo || "default.jpg";
-          photoFile = photoFile.replace(/^posts_photos\//, "");
-
-          return {
-            id: row.posts_id,
-            title: row.title,
-            body: row.body ? row.body.toString("utf-8") : "",
-            category: row.category,
-            tags: row.tags,
-            status: row.status,
-            timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          imageUrl: row.photo
-            ? `${baseUrl}/posts_photos/${photoFile}`
-            : `${baseUrl}/uploads/default.jpg`,
-          related: Array.isArray(relatedRows)
-            ? relatedRows.map((r) => ({
-                id: r.posts_id,
-                title: r.title,
-              }))
-            : [],
-        };
-        })
-      : [];
-
-    // const formatted = {
-    //   id: row.posts_id,
-    //   title: row.title,
-    //   body: row.body ? row.body.toString("utf-8") : "",
-    //   category: row.category,
-    //   tags: row.tags,
-    //   status: row.status,
-    //   timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-    //   imageUrl: row.photo
-    //     ? `${baseUrl}/posts_photos/${row.photo}`
-    //     : `${baseUrl}/uploads/default.jpg`,
-    //   related: Array.isArray(relatedRows)
-    //     ? relatedRows.map((r) => ({
-    //       id: r.posts_id,
-    //       title: r.title,
-    //     }))
-    //     : [],
-    // };
+    const formatted = {
+      id: row.posts_id,
+      title: row.title,
+      body: row.body ? row.body.toString("utf-8") : "",
+      category: row.category,
+      tags: row.tags,
+      status: row.status,
+      timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      imageUrl: row.photo
+        ? `${baseUrl}/posts_photos/${photoFile}`
+        : `${baseUrl}/uploads/default.jpg`,
+      related: Array.isArray(relatedRows)
+        ? relatedRows.map((r) => ({
+            id: r.posts_id,
+            title: r.title,
+          }))
+        : [],
+    };
 
     res.json(formatted);
   } catch (error) {
-    console.error("Error fetching single news:", error);
+    console.error("❌ Error fetching single news:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 module.exports = router;
 
