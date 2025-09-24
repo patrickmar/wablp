@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // ✅ pooled MySQL connection (promise-based)
+const { db, uploadToFTP } = require("../config/db"); // ✅ pooled MySQL + FTP helper
 const multer = require("multer");
 const path = require("path");
-const ftp = require("basic-ftp");
 const { countryNames } = require("../utils/CountryNames");
 
 // ✅ Use memory storage for FTP upload
@@ -119,22 +118,8 @@ router.post(
     const filename = Date.now() + path.extname(req.file.originalname);
 
     try {
-      const client = new ftp.Client();
-      client.ftp.verbose = false;
-
-      await client.access({
-        host: process.env.FTP_HOST,
-        user: process.env.FTP_USER,
-        password: process.env.FTP_PASSWORD,
-        secure: false,
-      });
-
-      // ✅ Upload to cPanel
-      await client.uploadFrom(
-        req.file.buffer,
-        `/public_html/admin/jtps_photos/${filename}`
-      );
-      client.close();
+      // ✅ Upload file buffer to FTP using helper
+      await uploadToFTP(req.file.buffer, `/public_html/admin/jtps_photos/${filename}`);
 
       // ✅ Save filename in DB
       await db.query(
@@ -152,6 +137,7 @@ router.post(
 );
 
 module.exports = router;
+
 
 
 
