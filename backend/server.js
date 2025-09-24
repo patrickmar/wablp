@@ -1,8 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const path = require("path");
-const fs = require("fs");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const authRoutes = require("./routes/auth");
@@ -38,65 +36,45 @@ app.get("/", (req, res) => {
   });
 });
 
-/** ---- Fallback images from local project ---- **/
-app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
-
 /** ---- External image proxies ---- **/
 const externalBase = "https://wablp.com/admin";
 
-app.use(
-  "/external/posts_photos",
-  createProxyMiddleware({
-    target: externalBase,
-    changeOrigin: true,
-    pathRewrite: { "^/external/posts_photos": "/posts_photos" },
-  })
-);
+function createLoggedProxy(route, folder) {
+  console.log(`✅ External proxy enabled: ${route} -> ${externalBase}/${folder}`);
 
-app.use(
-  "/external/jobs_photos",
-  createProxyMiddleware({
+  return createProxyMiddleware({
     target: externalBase,
     changeOrigin: true,
-    pathRewrite: { "^/external/jobs_photos": "/jobs_photos" },
-  })
-);
+    pathRewrite: { [`^${route}`]: `/${folder}` },
 
-app.use(
-  "/external/webinars_photos",
-  createProxyMiddleware({
-    target: externalBase,
-    changeOrigin: true,
-    pathRewrite: { "^/external/webinars_photos": "/webinars_photos" },
-  })
-);
+    // Log every request
+    onProxyReq: (proxyReq, req) => {
+      const fullExternalUrl = `${externalBase}/${folder}${req.url}`;
+      console.log(`📸 Image requested: ${req.originalUrl} → ${fullExternalUrl}`);
+    },
 
-app.use(
-  "/external/projects_photos",
-  createProxyMiddleware({
-    target: externalBase,
-    changeOrigin: true,
-    pathRewrite: { "^/external/projects_photos": "/projects_photos" },
-  })
-);
+    // Log errors (connection issues, etc.)
+    onError: (err, req, res) => {
+      console.error(`❌ Proxy error for ${req.originalUrl}:`, err.message);
+      res.status(500).send("Proxy error");
+    },
 
-app.use(
-  "/external/products_photos",
-  createProxyMiddleware({
-    target: externalBase,
-    changeOrigin: true,
-    pathRewrite: { "^/external/products_photos": "/products_photos" },
-  })
-);
+    // Log responses (non-2xx status codes)
+    onProxyRes: (proxyRes, req) => {
+      if (proxyRes.statusCode >= 400) {
+        const fullExternalUrl = `${externalBase}/${folder}${req.url}`;
+        console.error(`⚠️ Failed to fetch: ${req.originalUrl} → ${fullExternalUrl} (status: ${proxyRes.statusCode})`);
+      }
+    },
+  });
+}
 
-app.use(
-  "/external/jtps_photos",
-  createProxyMiddleware({
-    target: externalBase,
-    changeOrigin: true,
-    pathRewrite: { "^/external/jtps_photos": "/jtps_photos" },
-  })
-);
+app.use("/external/posts_photos", createLoggedProxy("/external/posts_photos", "posts_photos"));
+app.use("/external/jobs_photos", createLoggedProxy("/external/jobs_photos", "jobs_photos"));
+app.use("/external/webinars_photos", createLoggedProxy("/external/webinars_photos", "webinars_photos"));
+app.use("/external/projects_photos", createLoggedProxy("/external/projects_photos", "projects_photos"));
+app.use("/external/products_photos", createLoggedProxy("/external/products_photos", "products_photos"));
+app.use("/external/jtps_photos", createLoggedProxy("/external/jtps_photos", "jtps_photos"));
 
 /** ---- ROUTES ---- **/
 app.use("/api/auth", authRoutes);
@@ -118,9 +96,13 @@ app.use("/routes/status", statusRoutes);
 app.use("/routes/messages", messageRoutes);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`🚀 Server running at http://localhost:${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log("🚀 Server running...");
+  console.log(`🌐 Local: http://localhost:${PORT}`);
+  console.log(`🌍 Render: https://wablp.onrender.com`);
+  console.log("📸 External image proxies are active and will log each request, errors, and failed responses.");
+});
+
 
 
 
