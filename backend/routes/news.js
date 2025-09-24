@@ -13,64 +13,32 @@ router.get("/", async (req, res) => {
     const baseUrl = "https://wablp.com/admin";
 
     const formatted = Array.isArray(rows)
-      ? rows.map((row) => ({
-          id: row.posts_id,
-          title: row.title,
-          body: row.body ? row.body.toString("utf-8") : "",
-          category: row.category,
-          tags: row.tags,
-          status: row.status,
-          timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          imageUrl: row.photo
-            ? `${baseUrl}/posts_photos/${row.photo}`
-            : `${baseUrl}/uploads/default.jpg`,
-        }))
+      ? rows.map((row) => {
+          // ✅ make sure we only keep the filename (remove "posts_photos/" if it exists)
+          let photoFile = row.photo || "default.jpg";
+          photoFile = photoFile.replace(/^posts_photos\//, "");
+
+          return {
+            id: row.posts_id,
+            title: row.title,
+            body: row.body ? row.body.toString("utf-8") : "",
+            category: row.category,
+            tags: row.tags,
+            status: row.status,
+            timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+            imageUrl: row.photo
+              ? `${baseUrl}/posts_photos/${photoFile}`
+              : `${baseUrl}/uploads/default.jpg`,
+          };
+        })
       : [];
 
     res.json(formatted);
   } catch (error) {
-    console.error("Error fetching news:", error);
+    console.error("❌ Error fetching news:", error);
     res.json([]);
   }
 });
-
-
-// // // news.js
-// router.get("/", async (req, res) => {
-//   try {
-//     const [rows] = await db
-//       .promise()
-//       .query("SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4");
-
-//     const baseExternal = "https://wablp.com/admin"; // ✅ external host only
-
-//     const news = rows.map((row, index) => {
-//       const photoFile = row.photo || "default.jpg";
-
-//       return {
-//         id: row.id || `news-${index}`, // ✅ ensures unique React key
-//         title: row.title,
-//         body: row.body,
-//         timestamp: row.timestamp,
-//         category: row.category,
-//         image: {
-//           externalUrl: `${baseExternal}/posts_photos/${photoFile}`,
-//           fallback: "/uploads/default.jpg", // ✅ still provides fallback
-//         },
-//       };
-//     });
-
-//     console.log(`📢 Served ${news.length} news items`);
-//     res.json(news);
-//   } catch (err) {
-//     console.error("❌ Failed to fetch news:", err);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-
-
-
 
 
 // ✅ Get full single news by ID + related posts
