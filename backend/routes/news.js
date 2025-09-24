@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
 
     const baseUrl = "https://wablp.com/admin";
 
-    const formatted = rows.map((row) => {
+    const formatted = (rows || []).map((row) => {
       let photoFile = row.photo || "default.jpg";
       photoFile = photoFile.replace(/^posts_photos\//, "");
 
@@ -23,9 +23,7 @@ router.get("/", async (req, res) => {
         category: row.category,
         tags: row.tags,
         status: row.status,
-        timestamp: dayjs
-          .unix(row.timestamp)
-          .format("YYYY-MM-DD HH:mm:ss"),
+        timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
         imageUrl: row.photo
           ? `${baseUrl}/posts_photos/${photoFile}`
           : `${baseUrl}/uploads/default.jpg`,
@@ -35,7 +33,7 @@ router.get("/", async (req, res) => {
     res.json(formatted);
   } catch (error) {
     console.error("❌ Error fetching news:", error);
-    res.status(500).json([]);
+    res.status(500).json({ error: "Database error" });
   }
 });
 
@@ -73,13 +71,11 @@ router.get("/:id", async (req, res) => {
       category: row.category,
       tags: row.tags,
       status: row.status,
-      timestamp: dayjs
-        .unix(row.timestamp)
-        .format("YYYY-MM-DD HH:mm:ss"),
+      timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       imageUrl: row.photo
         ? `${baseUrl}/posts_photos/${photoFile}`
         : `${baseUrl}/uploads/default.jpg`,
-      related: relatedRows.map((r) => ({
+      related: (relatedRows || []).map((r) => ({
         id: r.posts_id,
         title: r.title,
       })),
@@ -88,11 +84,12 @@ router.get("/:id", async (req, res) => {
     res.json(formatted);
   } catch (error) {
     console.error("❌ Error fetching single news:", error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Database error" });
   }
 });
 
 module.exports = router;
+
 
 
 

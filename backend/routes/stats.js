@@ -12,19 +12,13 @@ router.get("/stats", async (req, res) => {
       resources: "SELECT COUNT(*) AS count FROM resource_categories",
     };
 
-    // Run all queries in parallel
-    const results = await Promise.all(
-      Object.entries(queries).map(async ([key, sql]) => {
-        const [rows] = await db.query(sql);
-        return { key, count: rows[0].count };
-      })
-    );
+    const stats = {};
 
-    // Convert array back to object
-    const stats = results.reduce((acc, item) => {
-      acc[item.key] = item.count;
-      return acc;
-    }, {});
+    // ✅ Run queries sequentially (one by one)
+    for (const [key, sql] of Object.entries(queries)) {
+      const [rows] = await db.query(sql);
+      stats[key] = rows[0].count;
+    }
 
     res.json(stats);
   } catch (err) {
@@ -34,6 +28,54 @@ router.get("/stats", async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const db = require("../config/db"); // ✅ pooled MySQL connection
+
+// // ✅ GET /api/stats
+// router.get("/stats", async (req, res) => {
+//   try {
+//     const queries = {
+//       businesses: "SELECT COUNT(*) AS count FROM business_categories",
+//       experts: "SELECT COUNT(*) AS count FROM experts_categories",
+//       organizations: "SELECT COUNT(*) AS count FROM organizations_categories",
+//       resources: "SELECT COUNT(*) AS count FROM resource_categories",
+//     };
+
+//     // Run all queries in parallel
+//     const results = await Promise.all(
+//       Object.entries(queries).map(async ([key, sql]) => {
+//         const [rows] = await db.query(sql);
+//         return { key, count: rows[0].count };
+//       })
+//     );
+
+//     // Convert array back to object
+//     const stats = results.reduce((acc, item) => {
+//       acc[item.key] = item.count;
+//       return acc;
+//     }, {});
+
+//     res.json(stats);
+//   } catch (err) {
+//     console.error("❌ Error fetching stats:", err);
+//     res.status(500).json({ error: "Database error" });
+//   }
+// });
+
+// module.exports = router;
 
 
 

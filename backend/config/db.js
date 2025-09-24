@@ -1,37 +1,38 @@
 require("dotenv").config();
 const mysql = require("mysql2");
 
-const isProduction = process.env.NODE_ENV === "production";
-
+// ✅ Remote Database Config (Render)
 const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,       // e.g., your Render DB host
+  user: process.env.DB_USER,       // e.g., your DB username
+  password: process.env.DB_PASSWORD, // e.g., your DB password
+  database: process.env.DB_NAME,   // e.g., your DB name
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
-  connectionLimit: 10, // adjust as needed
+  connectionLimit: 3,  // Adjust as needed
   queueLimit: 0,
+  ssl: {
+    rejectUnauthorized: true, // Render requires secure SSL
+  },
 };
 
-// Create a pool and wrap with promise API
+// ✅ Create pool and wrap with promise API
 const pool = mysql.createPool(dbConfig);
 const db = pool.promise();
 
-// Optional: Test connection
+// ✅ Test connection once on startup
 (async () => {
   try {
     const connection = await db.getConnection();
-    console.log(
-      `Database connected: ${isProduction ? "Remote DB (Render)" : "Local DB"}`
-    );
+    console.log("✅ Remote Database connected successfully (Render)");
     connection.release();
   } catch (err) {
-    console.error("Database connection failed:", err);
+    console.error("❌ Remote Database connection failed:", err.message);
   }
 })();
 
 module.exports = db;
+
 
 
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { db } = require("../config/db"); // ✅ pooled MySQL only
-const { uploadToFTP } = require("../config/ftp"); // ✅ FTP helper
+const db = require("../config/db"); // ✅ direct import of db pool
+const { uploadToFTP } = require("../config/ftp");
 const multer = require("multer");
 const path = require("path");
 const { countryNames } = require("../utils/CountryNames");
@@ -38,9 +38,12 @@ function normalizeCustomer(customer) {
 
 // ✅ Get customer by ID
 router.get("/:id", async (req, res) => {
+  let connection;
   try {
     const { id } = req.params;
-    const [results] = await db.query(
+    connection = await db.getConnection();
+
+    const [results] = await connection.query(
       "SELECT * FROM customers WHERE customers_id = ?",
       [id]
     );
@@ -53,13 +56,17 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error("DB Error:", err);
     res.status(500).json({ error: "Database error" });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
 // ✅ Update customer by ID
 router.put("/:id", async (req, res) => {
+  let connection;
   try {
     const { id } = req.params;
+    connection = await db.getConnection();
 
     const allowedFields = [
       "name",
@@ -91,10 +98,10 @@ router.put("/:id", async (req, res) => {
     `;
     const values = [...Object.values(updates), id];
 
-    await db.query(sql, values);
+    await connection.query(sql, values);
 
     // Return updated record
-    const [results] = await db.query(
+    const [results] = await connection.query(
       "SELECT * FROM customers WHERE customers_id = ?",
       [id]
     );
@@ -103,6 +110,8 @@ router.put("/:id", async (req, res) => {
   } catch (err) {
     console.error("DB Error:", err);
     res.status(500).json({ error: "Database error" });
+  } finally {
+    if (connection) connection.release();
   }
 });
 
@@ -111,20 +120,22 @@ router.post(
   "/:id/upload-profile-photo",
   upload.single("photo"),
   async (req, res) => {
-    const { id } = req.params;
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
-
-    const filename = Date.now() + path.extname(req.file.originalname);
-    const remotePath = `/public_html/admin/jtps_photos/${filename}`;
-
+    let connection;
     try {
+      const { id } = req.params;
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      const filename = Date.now() + path.extname(req.file.originalname);
+      const remotePath = `/public_html/admin/jtps_photos/${filename}`;
+
       // ✅ Upload file buffer to FTP
       await uploadToFTP(req.file.buffer, remotePath);
 
       // ✅ Save filename in DB
-      await db.query(
+      connection = await db.getConnection();
+      await connection.query(
         "UPDATE customers SET photo = ? WHERE customers_id = ?",
         [filename, id]
       );
@@ -132,13 +143,16 @@ router.post(
       const photoUrl = `https://wablp.com/admin/jtps_photos/${filename}`;
       res.json({ STATUS: "SUCC", MESSAGE: "Photo uploaded", photoUrl });
     } catch (err) {
-      console.error("FTP Upload Error:", err);
+      console.error("FTP/DB Error:", err);
       res.status(500).json({ error: "Failed to upload image via FTP" });
+    } finally {
+      if (connection) connection.release();
     }
   }
 );
 
 module.exports = router;
+
 
 
 
