@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
       "SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4"
     );
 
-    const baseUrl = "http://localhost:5000";
+    const baseUrl = "https://wablp.com/admin";
 
     const formatted = Array.isArray(rows)
       ? rows.map((row) => ({

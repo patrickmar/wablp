@@ -366,48 +366,8 @@ export function DashboardPage() {
                     src={item.imageUrl}
                     alt={item.title}
                     className="w-full h-40 object-cover"
-                    // onError={(e) => {
-                    //   const target = e.currentTarget as HTMLImageElement;
-                    //   if (target.src !== item.image.externalUrl) {
-                    //     target.src = item.image.externalUrl;
-                    //   } else {
-                    //     target.src = item.image.fallback;
-                    //   }
-                    // }}
                   />
                 )}
-
-                {/* {item.imageUrl && (
-
-                  <img
-                    src={item.image.localUrl}
-                    alt={item.title}
-                    className="w-full h-40 object-cover"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src =
-                        item.image.externalUrl || item.image.fallback;
-                    }}
-                  />
-
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    className="w-full h-40 object-cover"
-                    onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src =
-                          `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/default.jpg`;
-                      }}
-                  />
-                )} */}
-                {/* <img
-                  src={`http://localhost:5000${item.imageUrl}`} // ✅ backend-provided URL
-                  alt={item.title}
-                  className="w-full h-40 object-cover"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src =
-                      "http://localhost:5000/uploads/default.jpg";
-                  }}
-                /> */}
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-lg text-[#004C97] mb-2 line-clamp-2">
                     {item.title}
