@@ -47,7 +47,7 @@ app.use(
   createProxyMiddleware({
     target: externalBase,
     changeOrigin: true,
-    pathRewrite: { "^/external/posts_photos": "/posts_photos" },
+    pathRewrite: { "^/external/": "/posts_photos" },
     onProxyReq: (proxyReq, req) => {
       console.log("➡️ Proxy request:", req.url);
     },
