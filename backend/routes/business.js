@@ -88,6 +88,37 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
+// ✅ Get products for a business
+router.get("/:id/products", (req, res) => {
+  const { id } = req.params;
+
+  const sql = "SELECT * FROM products WHERE business_id = ?"; // assuming products reference business_id
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("❌ Error fetching products:", err);
+      return res.status(500).json({ error: err.message });
+    }
+
+    const normalized = results.map((p) => {
+      let photoFile = p.photo || null;
+      if (photoFile) {
+        photoFile = photoFile.replace(/^product_photos\//, "");
+        photoFile = photoFile.replace(/^\/+/, "");
+      }
+
+      return {
+        ...p,
+        photo: photoFile
+          ? `https://wablp.com/admin/product_photos/${photoFile}`
+          : null,
+      };
+    });
+
+    res.json(normalized);
+  });
+});
+
 // ✅ Get products for a business (fully safe)
 // router.get("/:id/products", async (req, res) => {
 //   try {
