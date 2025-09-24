@@ -1,34 +1,53 @@
-require("dotenv").config();
+// db.js
 const mysql = require("mysql2");
-
-const isProduction = process.env.NODE_ENV === "production";
-
-const dbConfig = {
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
-  connectionLimit: 10, // adjust as needed
+  connectionLimit: 10,
   queueLimit: 0,
-};
-
-const db = mysql.createPool(dbConfig);
-
-// Optional: Test connection
-db.getConnection((err, connection) => {
-  if (err) {
-    console.error("Database connection failed:", err);
-  } else {
-    console.log(
-      `Database connected: ${isProduction ? "Remote DB (Render)" : "Local DB"}`
-    );
-    connection.release(); // release connection back to pool
-  }
 });
 
-module.exports = db;
+module.exports = pool.promise();
+
+
+
+
+
+// require("dotenv").config();
+// const mysql = require("mysql2");
+
+// const isProduction = process.env.NODE_ENV === "production";
+
+// const dbConfig = {
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_NAME,
+//   port: process.env.DB_PORT || 3306,
+//   waitForConnections: true,
+//   connectionLimit: 10, // adjust as needed
+//   queueLimit: 0,
+// };
+
+// const db = mysql.createPool(dbConfig);
+
+// // Optional: Test connection
+// db.getConnection((err, connection) => {
+//   if (err) {
+//     console.error("Database connection failed:", err);
+//   } else {
+//     console.log(
+//       `Database connected: ${isProduction ? "Remote DB (Render)" : "Local DB"}`
+//     );
+//     connection.release(); // release connection back to pool
+//   }
+// });
+
+// module.exports = db;
 
 
 
