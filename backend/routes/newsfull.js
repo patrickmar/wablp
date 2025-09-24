@@ -10,7 +10,11 @@ router.get("/", async (req, res) => {
       "SELECT * FROM posts ORDER BY timestamp DESC"
     );
 
-    const baseUrl = "http://localhost:5000";
+    const baseUrl = "https://wablp.com/admin";
+
+    // ✅ ensure no duplicate "posts_photos/"
+    let photoFile = row.photo || "default.jpg";
+    photoFile = photoFile.replace(/^posts_photos\//, "");
 
     const formatted = Array.isArray(rows)
       ? rows.map((row) => ({
@@ -24,7 +28,7 @@ router.get("/", async (req, res) => {
             .unix(row.timestamp)
             .format("YYYY-MM-DD HH:mm:ss"),
           imageUrl: row.photo
-            ? `${baseUrl}/posts_photos/${row.photo}`
+            ? `${baseUrl}/posts_photos/${photoFile}`
             : `${baseUrl}/uploads/default.jpg`,
         }))
       : [];
