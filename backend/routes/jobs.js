@@ -88,8 +88,8 @@ router.get("/", (req, res) => {
       return {
         ...job,
         photo: job.photo
-          ? `http://localhost:5000/jobs_photos/${job.photo}`
-          : "http://localhost:5000/uploads/default.png",
+          ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+          : "https://wablp.com/admin/uploads/default.png",
         timeAgo: timeAgo(job.timestamp),
       };
     });
@@ -128,10 +128,10 @@ router.get("/:id", (req, res) => {
     });
 
     job.photo = job.photo
-      ? `http://localhost:5000/jobs_photos/${job.photo}`
-      : "http://localhost:5000/uploads/default.png";
+      ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+      : "https://wablp.com/admin/uploads/default.png";
     job.document = job.document
-      ? `http://localhost:5000/${job.document}`
+      ? `https://wablp.com/admin/${job.document}`
       : null;
     job.timeAgo = timeAgo(job.timestamp);
 
