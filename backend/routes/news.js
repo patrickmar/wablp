@@ -6,7 +6,7 @@ const dayjs = require("dayjs");
 // ✅ Get latest news
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await db.promise().query(
+    const [rows] = await db.query(
       "SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4"
     );
 
@@ -45,9 +45,10 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
 
     // Fetch main article
-    const [rows] = await db
-      .promise()
-      .query("SELECT * FROM posts WHERE posts_id = ? LIMIT 1", [id]);
+    const [rows] = await db.query(
+      "SELECT * FROM posts WHERE posts_id = ? LIMIT 1",
+      [id]
+    );
 
     if (!rows || rows.length === 0) {
       return res.status(404).json({ error: "News not found" });
@@ -60,7 +61,7 @@ router.get("/:id", async (req, res) => {
     photoFile = photoFile.replace(/^posts_photos\//, "");
 
     // Fetch related news (same category, exclude this post)
-    const [relatedRows] = await db.promise().query(
+    const [relatedRows] = await db.query(
       "SELECT posts_id, title FROM posts WHERE category = ? AND posts_id != ? ORDER BY timestamp DESC LIMIT 10",
       [row.category, id]
     );
@@ -92,6 +93,7 @@ router.get("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 

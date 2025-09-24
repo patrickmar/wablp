@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // MySQL pool
+const db = require("../config/db"); // ✅ pooled MySQL connection (promise-based)
 const multer = require("multer");
 const path = require("path");
 const ftp = require("basic-ftp");
@@ -40,7 +40,7 @@ function normalizeCustomer(customer) {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const [results] = await db.promise().query(
+    const [results] = await db.query(
       "SELECT * FROM customers WHERE customers_id = ?",
       [id]
     );
@@ -91,12 +91,13 @@ router.put("/:id", async (req, res) => {
     `;
     const values = [...Object.values(updates), id];
 
-    await db.promise().query(sql, values);
+    await db.query(sql, values);
 
     // Return updated record
-    const [results] = await db
-      .promise()
-      .query("SELECT * FROM customers WHERE customers_id = ?", [id]);
+    const [results] = await db.query(
+      "SELECT * FROM customers WHERE customers_id = ?",
+      [id]
+    );
 
     res.json(normalizeCustomer(results[0]));
   } catch (err) {
@@ -136,12 +137,10 @@ router.post(
       client.close();
 
       // ✅ Save filename in DB
-      await db
-        .promise()
-        .query("UPDATE customers SET photo = ? WHERE customers_id = ?", [
-          filename,
-          id,
-        ]);
+      await db.query(
+        "UPDATE customers SET photo = ? WHERE customers_id = ?",
+        [filename, id]
+      );
 
       const photoUrl = `https://wablp.com/admin/jtps_photos/${filename}`;
       res.json({ STATUS: "SUCC", MESSAGE: "Photo uploaded", photoUrl });
@@ -153,6 +152,7 @@ router.post(
 );
 
 module.exports = router;
+
 
 
 

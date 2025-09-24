@@ -15,7 +15,7 @@ router.get("/stats", async (req, res) => {
     // Run all queries in parallel
     const results = await Promise.all(
       Object.entries(queries).map(async ([key, sql]) => {
-        const [rows] = await db.promise().query(sql);
+        const [rows] = await db.query(sql);
         return { key, count: rows[0].count };
       })
     );

@@ -10,16 +10,26 @@ const dbConfig = {
   database: process.env.DB_NAME,
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
-  connectionLimit: 3, // keep small if your DB host has strict limits
+  connectionLimit: 10, // adjust as needed
   queueLimit: 0,
 };
 
-// Create a pool with promise wrapper for async/await usage
-const db = mysql.createPool(dbConfig).promise();
+// Create a pool and wrap with promise API
+const pool = mysql.createPool(dbConfig);
+const db = pool.promise();
 
-console.log(
-  `Database config loaded: ${isProduction ? "Remote DB (Render)" : "Local DB"}`
-);
+// Optional: Test connection
+(async () => {
+  try {
+    const connection = await db.getConnection();
+    console.log(
+      `Database connected: ${isProduction ? "Remote DB (Render)" : "Local DB"}`
+    );
+    connection.release();
+  } catch (err) {
+    console.error("Database connection failed:", err);
+  }
+})();
 
 module.exports = db;
 
