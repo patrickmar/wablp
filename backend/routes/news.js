@@ -4,68 +4,69 @@ const db = require("../config/db");
 const dayjs = require("dayjs");
 
 // ✅ Get latest news (already exists, untouched)
-// router.get("/", async (req, res) => {
-//   try {
-//     const [rows] = await db.promise().query(
-//       "SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4"
-//     );
-
-//     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
-//     const formatted = Array.isArray(rows)
-//       ? rows.map((row) => ({
-//           id: row.posts_id,
-//           title: row.title,
-//           body: row.body ? row.body.toString("utf-8") : "",
-//           category: row.category,
-//           tags: row.tags,
-//           status: row.status,
-//           timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-//           imageUrl: row.photo
-//             ? `${baseUrl}/posts_photos/${row.photo}`
-//             : `${baseUrl}/uploads/default.jpg`,
-//         }))
-//       : [];
-
-//     res.json(formatted);
-//   } catch (error) {
-//     console.error("Error fetching news:", error);
-//     res.json([]);
-//   }
-// });
-
-
-// // news.js
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.promise().query(
-      // "SELECT id, title, body, photo, timestamp, category FROM news ORDER BY timestamp DESC"
       "SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4"
     );
 
-    const baseExternal = "https://wablp.com/admin"; // ✅ only external host
+    const baseUrl = "http://localhost:5000";
 
-    const news = rows.map((row) => {
-      const photoFile = row.photo || "default.jpg";
+    const formatted = Array.isArray(rows)
+      ? rows.map((row) => ({
+          id: row.posts_id,
+          title: row.title,
+          body: row.body ? row.body.toString("utf-8") : "",
+          category: row.category,
+          tags: row.tags,
+          status: row.status,
+          timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          imageUrl: row.photo
+            ? `${baseUrl}/posts_photos/${row.photo}`
+            : `${baseUrl}/uploads/default.jpg`,
+        }))
+      : [];
 
-      return {
-        id: row.id,
-        title: row.title,
-        body: row.body,
-        timestamp: row.timestamp,
-        category: row.category,
-        image: {
-          externalUrl: `${baseExternal}/posts_photos/${photoFile}`,
-        },
-      };
-    });
-
-    res.json(news);
-  } catch (err) {
-    console.error("Failed to fetch news:", err);
-    res.status(500).json({ error: "Internal server error" });
+    res.json(formatted);
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    res.json([]);
   }
 });
+
+
+// // // news.js
+// router.get("/", async (req, res) => {
+//   try {
+//     const [rows] = await db
+//       .promise()
+//       .query("SELECT * FROM posts ORDER BY timestamp DESC LIMIT 4");
+
+//     const baseExternal = "https://wablp.com/admin"; // ✅ external host only
+
+//     const news = rows.map((row, index) => {
+//       const photoFile = row.photo || "default.jpg";
+
+//       return {
+//         id: row.id || `news-${index}`, // ✅ ensures unique React key
+//         title: row.title,
+//         body: row.body,
+//         timestamp: row.timestamp,
+//         category: row.category,
+//         image: {
+//           externalUrl: `${baseExternal}/posts_photos/${photoFile}`,
+//           fallback: "/uploads/default.jpg", // ✅ still provides fallback
+//         },
+//       };
+//     });
+
+//     console.log(`📢 Served ${news.length} news items`);
+//     res.json(news);
+//   } catch (err) {
+//     console.error("❌ Failed to fetch news:", err);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 
 
