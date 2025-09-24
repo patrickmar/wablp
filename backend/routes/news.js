@@ -46,25 +46,24 @@ router.get("/", async (req, res) => {
 
     const formatted = Array.isArray(rows)
       ? rows.map((row) => {
-          const photoFile = row.photo || "default.jpg";
+        const photoFile = row.photo || "default.jpg";
 
-          return {
-            id: row.posts_id,
-            title: row.title,
-            body: row.body ? row.body.toString("utf-8") : "",
-            category: row.category,
-            tags: row.tags,
-            status: row.status,
-            timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        return {
+          id: row.posts_id,
+          title: row.title,
+          body: row.body ? row.body.toString("utf-8") : "",
+          category: row.category,
+          tags: row.tags,
+          status: row.status,
+          timestamp: dayjs.unix(row.timestamp).format("YYYY-MM-DD HH:mm:ss"),
 
-            // ✅ NEW: Provide both URLs
-            image: {
-              localUrl: `${baseUrl}/posts_photos/${photoFile}`,
-              externalUrl: `${baseUrl}/external/posts_photos/${photoFile}`,
-              fallback: `${baseUrl}/uploads/default.jpg`
-            }
-          };
-        })
+          // ✅ NEW: Provide both URLs
+          image: {
+            externalUrl: `${baseUrl}/external/posts_photos/${photoFile}`
+          }
+
+        };
+      })
       : [];
 
     res.json(formatted);
@@ -116,9 +115,9 @@ router.get("/:id", async (req, res) => {
         : `${baseUrl}/uploads/default.jpg`,
       related: Array.isArray(relatedRows)
         ? relatedRows.map((r) => ({
-            id: r.posts_id,
-            title: r.title,
-          }))
+          id: r.posts_id,
+          title: r.title,
+        }))
         : [],
     };
 

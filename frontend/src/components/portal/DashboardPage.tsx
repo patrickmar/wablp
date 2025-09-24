@@ -353,7 +353,45 @@ export function DashboardPage() {
       </div>
 
       {/* ✅ News & Events Section */}
-      <div>
+
+
+      {/* ✅ News & Events Section */}
+<div>
+  <h2 className="text-xl font-bold text-[#333333] mb-4">News & Events</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    {news.length === 0 ? (
+      <p className="text-gray-500">No news available</p>
+    ) : (
+      news.map((item) => (
+        <Card key={item.id} className="overflow-hidden hover:shadow-md transition">
+          {item.image && (
+            <img
+              src={item.image.externalUrl}
+              alt={item.title}
+              className="w-full h-40 object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = item.image.fallback;
+              }}
+            />
+          )}
+          <CardContent className="p-4">
+            <h3 className="font-semibold text-lg text-[#004C97] mb-2 line-clamp-2">
+              {item.title}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {item.timeAgo || item.timestamp || "Recently"} | {item.category || "General"}
+            </p>
+          </CardContent>
+        </Card>
+      ))
+    )}
+  </div>
+</div>
+
+
+
+      {/* LOCAL */}
+      {/* <div>
         <h2 className="text-xl font-bold text-[#333333] mb-4">News & Events</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {news.length === 0 ? (
@@ -361,23 +399,7 @@ export function DashboardPage() {
           ) : (
             news.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-md transition">
-                {item.image && (
-                  <img
-                    src={item.image.localUrl}
-                    alt={item.title}
-                    className="w-full h-40 object-cover"
-                    onError={(e) => {
-                      const target = e.currentTarget as HTMLImageElement;
-                      if (target.src !== item.image.externalUrl) {
-                        target.src = item.image.externalUrl;
-                      } else {
-                        target.src = item.image.fallback;
-                      }
-                    }}
-                  />
-                )}
-
-                {/* {item.imageUrl && (
+                {item.imageUrl && (
 
                   <img
                     src={item.image.localUrl}
@@ -398,16 +420,7 @@ export function DashboardPage() {
                   //         `${process.env.NEXT_PUBLIC_API_BASE_URL}/uploads/default.jpg`;
                   //     }}
                   // />
-                )} */}
-                {/* <img
-                  src={`http://localhost:5000${item.imageUrl}`} // ✅ backend-provided URL
-                  alt={item.title}
-                  className="w-full h-40 object-cover"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src =
-                      "http://localhost:5000/uploads/default.jpg";
-                  }}
-                /> */}
+                )}
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-lg text-[#004C97] mb-2 line-clamp-2">
                     {item.title}
@@ -420,7 +433,7 @@ export function DashboardPage() {
             ))
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Keep your existing Recent Activity + Quick Actions here */}
     </div>
