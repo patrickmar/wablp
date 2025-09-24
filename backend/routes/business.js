@@ -1,15 +1,22 @@
-// routes/business.js
+/// routes/business.js
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
-const path = require("path");
 
-// ✅ Helper to normalize business rows
+// ✅ Helper to normalize business rows and remove duplicate path
 function normalizeBusiness(business) {
+  let photoFile = business.photo || null;
+
+  if (photoFile) {
+    // Remove any leading "jtps_photos/" to avoid duplicates
+    photoFile = photoFile.replace(/^jtps_photos\//, "");
+    photoFile = photoFile.replace(/^\/+/, ""); // remove leading slashes
+  }
+
   return {
     ...business,
-    photo: business.photo
-      ? `https://wablp.com/admin/jtps_photos/${business.photo}`
+    photo: photoFile
+      ? `https://wablp.com/admin/jtps_photos/${photoFile}`
       : null,
   };
 }
@@ -72,25 +79,34 @@ router.get("/:id", (req, res) => {
 router.get("/:id/products", (req, res) => {
   const { id } = req.params;
 
-  const sql = "SELECT * FROM products WHERE products_id = ?";
+  const sql = "SELECT * FROM products WHERE business_id = ?"; // assuming products reference business_id
   db.query(sql, [id], (err, results) => {
     if (err) {
       console.error("❌ Error fetching products:", err);
       return res.status(500).json({ error: err.message });
     }
 
-    const normalized = results.map((p) => ({
-      ...p,
-      photo: p.photo
-        ? `https://wablp.com/admin/product_photos/${p.photo}`
-        : null,
-    }));
+    const normalized = results.map((p) => {
+      let photoFile = p.photo || null;
+      if (photoFile) {
+        photoFile = photoFile.replace(/^product_photos\//, "");
+        photoFile = photoFile.replace(/^\/+/, "");
+      }
+
+      return {
+        ...p,
+        photo: photoFile
+          ? `https://wablp.com/admin/product_photos/${photoFile}`
+          : null,
+      };
+    });
 
     res.json(normalized);
   });
 });
 
 module.exports = router;
+
 
 
 

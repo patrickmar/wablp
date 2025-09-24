@@ -1,10 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
-const path = require("path");
 
-// ✅ Helper to normalize organization row
+// ✅ Helper to normalize organization row and remove duplicate path
 function normalizeOrg(org) {
+  let photoFile = org.photo || null;
+
+  if (photoFile) {
+    // Remove any leading "jtps_photos/" or slashes to prevent duplicates
+    photoFile = photoFile.replace(/^jtps_photos\//, "");
+    photoFile = photoFile.replace(/^\/+/, "");
+  }
+
   return {
     ...org,
     customers_id: org.customers_id,
@@ -18,8 +25,8 @@ function normalizeOrg(org) {
     website: org.website?.toString() || "",
     portfolio: org.portfolio?.toString() || "",
     description: org.description?.toString() || "",
-    photo: org.photo
-      ? `https://wablp.com/admin/jtps_photos/${org.photo}`
+    photo: photoFile
+      ? `https://wablp.com/admin/jtps_photos/${photoFile}`
       : null,
   };
 }
@@ -90,6 +97,7 @@ router.get("/:id", (req, res) => {
 });
 
 module.exports = router;
+
 
 
 

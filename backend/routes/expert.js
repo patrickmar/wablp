@@ -1,14 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
-const path = require("path");
 
-// ✅ Helper to normalize expert rows
+// ✅ Helper to normalize expert rows and remove duplicate path
 function normalizeExpert(expert) {
+  let photoFile = expert.photo || null;
+
+  if (photoFile) {
+    // Remove any leading "jtps_photos/" or slashes to prevent duplicates
+    photoFile = photoFile.replace(/^jtps_photos\//, "");
+    photoFile = photoFile.replace(/^\/+/, "");
+  }
+
   return {
     ...expert,
-    photo: expert.photo
-      ? `https://wablp.com/admin/jtps_photos/${expert.photo}`
+    photo: photoFile
+      ? `https://wablp.com/admin/jtps_photos/${photoFile}`
       : null,
   };
 }
@@ -32,19 +39,16 @@ router.get("/", (req, res) => {
   let query = "SELECT * FROM customers WHERE joined_as = 'EXPERT'";
   const params = [];
 
-  // filter by category (skip if "all")
   if (category && category !== "all") {
     query += " AND category = ?";
     params.push(category);
   }
 
-  // filter by location (skip if "all")
   if (location && location !== "all") {
     query += " AND country LIKE ?";
     params.push(`%${location}%`);
   }
 
-  // filter by search (matches name or company_name)
   if (search) {
     query += " AND (name LIKE ? OR company_name LIKE ?)";
     params.push(`%${search}%`, `%${search}%`);
@@ -58,7 +62,6 @@ router.get("/", (req, res) => {
       return res.status(500).json({ error: "Failed to fetch experts" });
     }
 
-    // ✅ Normalize results so photo is a URL
     const normalized = results.map(normalizeExpert);
     res.json(normalized);
   });
@@ -84,4 +87,3 @@ router.get("/:id", (req, res) => {
 });
 
 module.exports = router;
-
