@@ -20,10 +20,18 @@ export function OurMissionSection() {
             By providing a secure, reliable platform for business networking and collaboration, we're building bridges that
              enable West African enterprises to thrive in the global marketplace while strengthening regional economic ties.
           </p>
-          <p className="text-xl text-gray-700 leading-relaxed">
+          <p className="text-xl text-gray-700 leading-relaxed mb-8">
             Our mission is to provide an integrated solution to these challenges, addressing the core needs of SMEs, which
              form the backbone of the region's economy. 
           </p>
+
+          {/* Signup Button */}
+          <a
+            href="/sign-up"
+            className="inline-block mt-8 px-8 py-4 bg-[#003366] text-white font-semibold rounded-lg hover:bg-[#002244] transition"
+          >
+            Know More
+          </a>
         </div>
       </div>
     </section>

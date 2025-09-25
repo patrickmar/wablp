@@ -9,6 +9,7 @@ import { TechnologySecuritySection } from "@/components/TechnologySecuritySectio
 import { Testimonial } from "@/components/Testimonial";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { VideoShowcaseSection } from "@/components/VideoShowcaseSection";
+import { VideoTesti } from "@/components/VideoTesti";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
               <NewsMarquee className="my-4" speed={50} />
               <KeyFeaturesSection />
               <CommunitySpotlightSection />
+              <VideoTesti />
               <VideoShowcaseSection />
               <HowItWorksSection />
               <Testimonial />

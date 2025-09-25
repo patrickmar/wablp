@@ -13,8 +13,8 @@ const videos = [
     url: "/videos/news2.mp4",
   },
   {
-    title: "Video Title 3",
-    url: "/videos/news2.mp4",
+    title: "#In5Minutes_ _If we integrate and collaborate, we can push Africa ahead_",
+    url: "/videos/news3.mp4",
   },
 ];
 
