@@ -19,7 +19,7 @@ router.get("/platforms", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.execute(`
-      SELECT w.webinars_id, w.title, w.description, w.date, w.time, p.name AS platform
+      SELECT w.webinars_id, w.name, w.date, w.time, p.name AS platform
       FROM webinars w
       LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
       ORDER BY w.date DESC
@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      `SELECT w.webinars_id, w.title, w.description, w.date, w.time, p.name AS platform
+      `SELECT w.webinars_id, w.name, w.date, w.time, p.name AS platform
        FROM webinars w
        LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
        WHERE w.webinars_id = ?`,
@@ -56,15 +56,15 @@ router.get("/:id", async (req, res) => {
 // ✅ Create a new webinar
 router.post("/", async (req, res) => {
   try {
-    const { title, description, date, time, platform_id } = req.body;
+    const { name, date, time, platform_id } = req.body;
 
-    if (!title || !date || !time || !platform_id) {
+    if (!name || !date || !time || !platform_id) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const [result] = await db.execute(
-      "INSERT INTO webinars (title, description, date, time, platform_id) VALUES (?, ?, ?, ?, ?)",
-      [title, description, date, time, platform_id]
+      "INSERT INTO webinars (name, date, time, platform_id) VALUES (?, ?, ?, ?, ?)",
+      [title, date, time, platform_id]
     );
 
     res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
@@ -77,11 +77,11 @@ router.post("/", async (req, res) => {
 // ✅ Update a webinar
 router.put("/:id", async (req, res) => {
   try {
-    const { title, description, date, time, platform_id } = req.body;
+    const { name, date, time, platform_id } = req.body;
 
     const [result] = await db.execute(
-      "UPDATE webinars SET title = ?, description = ?, date = ?, time = ?, platform_id = ? WHERE id = ?",
-      [title, description, date, time, platform_id, req.params.id]
+      "UPDATE webinars SET name = ?, date = ?, time = ?, platform_id = ? WHERE webinars_id = ?",
+      [name, date, time, platform_id, req.params.id]
     );
 
     if (result.affectedRows === 0) {
@@ -112,6 +112,131 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const db = require("../config/db"); // ✅ your promise-based pool
+
+// // ✅ Fetch all webinar platforms
+// router.get("/platforms", async (req, res) => {
+//   try {
+//     const [rows] = await db.execute(
+//       "SELECT webinar_platforms_id, name FROM webinar_platforms ORDER BY name ASC"
+//     );
+//     res.json(rows);
+//   } catch (error) {
+//     console.error("Error fetching platforms:", error);
+//     res.status(500).json({ error: "Failed to fetch platforms" });
+//   }
+// });
+
+// // ✅ Fetch all webinars
+// router.get("/", async (req, res) => {
+//   try {
+//     const [rows] = await db.execute(`
+//       SELECT w.webinars_id, w.name, w.description, w.date, w.time, p.name AS platform
+//       FROM webinars w
+//       LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
+//       ORDER BY w.date DESC
+//     `);
+//     res.json(rows);
+//   } catch (error) {
+//     console.error("Error fetching webinars:", error);
+//     res.status(500).json({ error: "Failed to fetch webinars" });
+//   }
+// });
+
+// // ✅ Fetch single webinar by ID
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const [rows] = await db.execute(
+//       `SELECT w.webinars_id, w.name, w.description, w.date, w.time, p.name AS platform
+//        FROM webinars w
+//        LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
+//        WHERE w.webinars_id = ?`,
+//       [req.params.id]
+//     );
+
+//     if (rows.length === 0) {
+//       return res.status(404).json({ error: "Webinar not found" });
+//     }
+
+//     res.json(rows[0]);
+//   } catch (error) {
+//     console.error("Error fetching webinar:", error);
+//     res.status(500).json({ error: "Failed to fetch webinar" });
+//   }
+// });
+
+// // ✅ Create a new webinar
+// router.post("/", async (req, res) => {
+//   try {
+//     const { title, description, date, time, platform_id } = req.body;
+
+//     if (!title || !date || !time || !platform_id) {
+//       return res.status(400).json({ error: "Missing required fields" });
+//     }
+
+//     const [result] = await db.execute(
+//       "INSERT INTO webinars (name, description, date, time, platform_id) VALUES (?, ?, ?, ?, ?)",
+//       [title, description, date, time, platform_id]
+//     );
+
+//     res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
+//   } catch (error) {
+//     console.error("Error creating webinar:", error);
+//     res.status(500).json({ error: "Failed to create webinar" });
+//   }
+// });
+
+// // ✅ Update a webinar
+// router.put("/:id", async (req, res) => {
+//   try {
+//     const { title, description, date, time, platform_id } = req.body;
+
+//     const [result] = await db.execute(
+//       "UPDATE webinars SET title = ?, description = ?, date = ?, time = ?, platform_id = ? WHERE id = ?",
+//       [title, description, date, time, platform_id, req.params.id]
+//     );
+
+//     if (result.affectedRows === 0) {
+//       return res.status(404).json({ error: "Webinar not found" });
+//     }
+
+//     res.json({ message: "Webinar updated" });
+//   } catch (error) {
+//     console.error("Error updating webinar:", error);
+//     res.status(500).json({ error: "Failed to update webinar" });
+//   }
+// });
+
+// // ✅ Delete a webinar
+// router.delete("/:id", async (req, res) => {
+//   try {
+//     const [result] = await db.execute("DELETE FROM webinars WHERE id = ?", [req.params.id]);
+
+//     if (result.affectedRows === 0) {
+//       return res.status(404).json({ error: "Webinar not found" });
+//     }
+
+//     res.json({ message: "Webinar deleted" });
+//   } catch (error) {
+//     console.error("Error deleting webinar:", error);
+//     res.status(500).json({ error: "Failed to delete webinar" });
+//   }
+// });
+
+// module.exports = router;
 
 
 
