@@ -5,7 +5,7 @@ const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // better to use .env
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // move to .env
 
 // 📝 Register
 router.post("/register", async (req, res) => {
@@ -17,7 +17,7 @@ router.post("/register", async (req, res) => {
     }
 
     // Check if email exists
-    const [existing] = await db.promise().query(
+    const [existing] = await db.query(
       "SELECT * FROM customers WHERE email = ?",
       [email]
     );
@@ -30,7 +30,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user
-    await db.promise().query(
+    await db.query(
       "INSERT INTO customers (name, email, phone, joined_as, how_did_you_hear, password) VALUES (?, ?, ?, ?, ?, ?)",
       [name, email, phone, joined_as, how_did_you_hear, hashedPassword]
     );
@@ -51,7 +51,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "Email & password required" });
     }
 
-    const [rows] = await db.promise().query(
+    const [rows] = await db.query(
       "SELECT * FROM customers WHERE email = ?",
       [email]
     );
@@ -74,7 +74,7 @@ router.post("/login", async (req, res) => {
       if (isMatch) {
         // 🔄 Rehash password & save
         const newHashed = await bcrypt.hash(password, 10);
-        await db.promise().query(
+        await db.query(
           "UPDATE customers SET password = ? WHERE customers_id = ?",
           [newHashed, user.customers_id]
         );
@@ -93,7 +93,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Remove password
+    // Remove password before sending back
     const { password: _, ...safeUser } = user;
 
     return res.json({
