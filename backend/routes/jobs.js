@@ -1,3 +1,4 @@
+// routes/job.js
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
@@ -29,51 +30,48 @@ function timeAgo(timestamp) {
   return "Just now";
 }
 
-// Get all job categories
-router.get("/categories", (req, res) => {
-  const sql = "SELECT job_categories_id, name FROM job_categories ORDER BY name ASC";
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("Error fetching job categories:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
+// ✅ Get all job categories
+router.get("/categories", async (req, res) => {
+  try {
+    const sql = "SELECT job_categories_id, name FROM job_categories ORDER BY name ASC";
+    const [results] = await db.query(sql);
     res.json(results);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching job categories:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
-// Get jobs with filters
-router.get("/", (req, res) => {
-  const { category, institution, search } = req.query;
+// ✅ Get jobs with filters
+router.get("/", async (req, res) => {
+  try {
+    const { category, institution, search } = req.query;
 
-  let sql = `
-    SELECT j.jobs_id, j.title, j.institution, j.photo, j.timestamp,
-           c.name AS category_name, j.description, j.more_details, j.salary
-    FROM jobs j
-    LEFT JOIN job_categories c ON j.category = c.job_categories_id
-    WHERE 1=1
-  `;
-  const params = [];
+    let sql = `
+      SELECT j.jobs_id, j.title, j.institution, j.photo, j.timestamp,
+             c.name AS category_name, j.description, j.more_details, j.salary
+      FROM jobs j
+      LEFT JOIN job_categories c ON j.category = c.job_categories_id
+      WHERE 1=1
+    `;
+    const params = [];
 
-  if (category && category !== "all") {
-    sql += " AND j.category = ?";
-    params.push(category);
-  }
-  if (institution && institution.trim() !== "") {
-    sql += " AND j.institution LIKE ?";
-    params.push(`%${institution}%`);
-  }
-  if (search && search.trim() !== "") {
-    sql += " AND (j.title LIKE ? OR j.institution LIKE ?)";
-    params.push(`%${search}%`, `%${search}%`);
-  }
-
-  sql += " ORDER BY j.timestamp DESC";
-
-  db.query(sql, params, (err, results) => {
-    if (err) {
-      console.error("Error fetching jobs:", err);
-      return res.status(500).json({ error: "Database error" });
+    if (category && category !== "all") {
+      sql += " AND j.category = ?";
+      params.push(category);
     }
+    if (institution && institution.trim() !== "") {
+      sql += " AND j.institution LIKE ?";
+      params.push(`%${institution}%`);
+    }
+    if (search && search.trim() !== "") {
+      sql += " AND (j.title LIKE ? OR j.institution LIKE ?)";
+      params.push(`%${search}%`, `%${search}%`);
+    }
+
+    sql += " ORDER BY j.timestamp DESC";
+
+    const [results] = await db.query(sql, params);
 
     const jobsWithExtras = results.map((job) => {
       ["description", "more_details", "salary"].forEach((field) => {
@@ -82,7 +80,6 @@ router.get("/", (req, res) => {
         }
       });
 
-      // Remove duplicate "jobs_photos/" if present
       let photoFile = job.photo || null;
       if (photoFile) photoFile = photoFile.replace(/^jobs_photos\//, "");
 
@@ -96,25 +93,26 @@ router.get("/", (req, res) => {
     });
 
     res.json(jobsWithExtras);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching jobs:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
-// Get single job details
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
+// ✅ Get single job details
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
-  const sql = `
-    SELECT j.*, c.name as category_name
-    FROM jobs j
-    LEFT JOIN job_categories c ON j.category = c.job_categories_id
-    WHERE j.jobs_id = ?
-  `;
+    const sql = `
+      SELECT j.*, c.name as category_name
+      FROM jobs j
+      LEFT JOIN job_categories c ON j.category = c.job_categories_id
+      WHERE j.jobs_id = ?
+    `;
 
-  db.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching job details:", err);
-      return res.status(500).json({ error: "Failed to fetch job details" });
-    }
+    const [results] = await db.query(sql, [id]);
+
     if (results.length === 0) {
       return res.status(404).json({ error: "Job not found" });
     }
@@ -127,7 +125,6 @@ router.get("/:id", (req, res) => {
       }
     });
 
-    // Remove duplicate "jobs_photos/" if present
     let photoFile = job.photo || null;
     if (photoFile) photoFile = photoFile.replace(/^jobs_photos\//, "");
 
@@ -140,10 +137,23 @@ router.get("/:id", (req, res) => {
     job.timeAgo = timeAgo(job.timestamp);
 
     res.json(job);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching job details:", err);
+    res.status(500).json({ error: "Failed to fetch job details" });
+  }
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -161,7 +171,6 @@ module.exports = router;
 // function timeAgo(timestamp) {
 //   if (!timestamp) return "Unknown date";
 
-//   // handle UNIX timestamps
 //   let date = typeof timestamp === "number" || !isNaN(timestamp)
 //     ? new Date(timestamp * 1000)
 //     : new Date(timestamp);
@@ -185,7 +194,7 @@ module.exports = router;
 //   return "Just now";
 // }
 
-// // ✅ Get all job categories
+// // Get all job categories
 // router.get("/categories", (req, res) => {
 //   const sql = "SELECT job_categories_id, name FROM job_categories ORDER BY name ASC";
 //   db.query(sql, (err, results) => {
@@ -197,7 +206,7 @@ module.exports = router;
 //   });
 // });
 
-// // ✅ Get jobs with filters
+// // Get jobs with filters
 // router.get("/", (req, res) => {
 //   const { category, institution, search } = req.query;
 
@@ -210,7 +219,6 @@ module.exports = router;
 //   `;
 //   const params = [];
 
-//   // Filtering
 //   if (category && category !== "all") {
 //     sql += " AND j.category = ?";
 //     params.push(category);
@@ -233,17 +241,20 @@ module.exports = router;
 //     }
 
 //     const jobsWithExtras = results.map((job) => {
-//       // ✅ Convert Buffer fields to string
 //       ["description", "more_details", "salary"].forEach((field) => {
 //         if (job[field] && Buffer.isBuffer(job[field])) {
 //           job[field] = job[field].toString("utf-8");
 //         }
 //       });
 
+//       // Remove duplicate "jobs_photos/" if present
+//       let photoFile = job.photo || null;
+//       if (photoFile) photoFile = photoFile.replace(/^jobs_photos\//, "");
+
 //       return {
 //         ...job,
-//         photo: job.photo
-//           ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+//         photo: photoFile
+//           ? `https://wablp.com/admin/jobs_photos/${photoFile}`
 //           : null,
 //         timeAgo: timeAgo(job.timestamp),
 //       };
@@ -253,7 +264,7 @@ module.exports = router;
 //   });
 // });
 
-// // ✅ Get single job details
+// // Get single job details
 // router.get("/:id", (req, res) => {
 //   const { id } = req.params;
 
@@ -275,21 +286,22 @@ module.exports = router;
 
 //     const job = results[0];
 
-//     // ✅ Convert Buffer fields (BLOB/TEXT) into UTF-8 strings
 //     ["description", "more_details", "salary", "application_link", "document"].forEach((field) => {
 //       if (job[field] && Buffer.isBuffer(job[field])) {
 //         job[field] = job[field].toString("utf-8");
 //       }
 //     });
 
-//     // update photo/document to full URL
+//     // Remove duplicate "jobs_photos/" if present
+//     let photoFile = job.photo || null;
+//     if (photoFile) photoFile = photoFile.replace(/^jobs_photos\//, "");
 
-//     job.photo = job.photo
-//       ? `https://wablp.com/admin/jobs_photos/${job.photo}`
+//     job.photo = photoFile
+//       ? `https://wablp.com/admin/jobs_photos/${photoFile}`
 //       : null;
-//     job.document = job.document
-//       ? `https://wablp.com/admin/${job.document}`
-//       : null;
+
+//     if (job.document) job.document = `https://wablp.com/admin/${job.document}`;
+
 //     job.timeAgo = timeAgo(job.timestamp);
 
 //     res.json(job);

@@ -25,34 +25,66 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// 🔹 Helper for "time ago"
+function timeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+  };
+
+  for (let key in intervals) {
+    const interval = Math.floor(seconds / intervals[key]);
+    if (interval >= 1) {
+      return `${interval} ${key}${interval > 1 ? "s" : ""} ago`;
+    }
+  }
+  return "Just now";
+}
+
 // ✅ Get product categories for dropdown
-router.get("/categories", (req, res) => {
-  const sql = "SELECT product_categories_id, name FROM product_categories ORDER BY name ASC";
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
+router.get("/categories", async (req, res) => {
+  try {
+    const [results] = await db
+      .promise()
+      .query("SELECT product_categories_id, name FROM product_categories ORDER BY name ASC");
+
     const categories = results.map((cat) => ({
       product_categories_id: String(cat.product_categories_id),
       name: String(cat.name),
     }));
+
     res.json(categories);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching product categories:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 // ✅ Get product types for dropdown
-router.get("/types", (req, res) => {
-  const sql = "SELECT product_types_id, name FROM product_types ORDER BY name ASC";
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
+router.get("/types", async (req, res) => {
+  try {
+    const [results] = await db
+      .promise()
+      .query("SELECT product_types_id, name FROM product_types ORDER BY name ASC");
+
     const types = results.map((t) => ({
       product_types_id: String(t.product_types_id),
       name: String(t.name),
     }));
+
     res.json(types);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching product types:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 // ✅ Get all products (with filters)
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const { category, type, search } = req.query;
 
   let sql = `
@@ -80,13 +112,12 @@ router.get("/", (req, res) => {
 
   sql += " ORDER BY p.timestamp DESC";
 
-  db.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
+  try {
+    const [results] = await db.promise().query(sql, params);
 
     const products = results.map((prod) => {
       const ts = prod.timestamp ? new Date(prod.timestamp * 1000) : null;
 
-      // ✅ Remove duplicate prefixes
       let photoFile = prod.photo ? prod.photo.replace(/^products_photos\//, "") : null;
       let docFile = prod.document ? prod.document.replace(/^product_documents\//, "") : null;
 
@@ -106,11 +137,14 @@ router.get("/", (req, res) => {
     });
 
     res.json(products);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching products:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 // ✅ Get single product details
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   const sql = `
@@ -125,9 +159,12 @@ router.get("/:id", (req, res) => {
     LIMIT 1
   `;
 
-  db.query(sql, [id], (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    if (results.length === 0) return res.status(404).json({ error: "Product not found" });
+  try {
+    const [results] = await db.promise().query(sql, [id]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
 
     const prod = results[0];
     const ts = prod.timestamp ? new Date(prod.timestamp * 1000) : null;
@@ -156,30 +193,14 @@ router.get("/:id", (req, res) => {
     };
 
     res.json(product);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching product details:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
-// 🔹 Helper for "time ago"
-function timeAgo(date) {
-  const seconds = Math.floor((new Date() - date) / 1000);
-  const intervals = {
-    year: 31536000,
-    month: 2592000,
-    day: 86400,
-    hour: 3600,
-    minute: 60,
-  };
-
-  for (let key in intervals) {
-    const interval = Math.floor(seconds / intervals[key]);
-    if (interval >= 1) {
-      return `${interval} ${key}${interval > 1 ? "s" : ""} ago`;
-    }
-  }
-  return "Just now";
-}
-
 module.exports = router;
+
 
 
 

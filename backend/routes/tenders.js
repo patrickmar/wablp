@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // ✅ MySQL connection
+const db = require("../config/db"); // ✅ MySQL pool with promises
 
 // ✅ Helper: Convert UNIX timestamp to "time ago"
 function timeAgo(unixSeconds) {
@@ -31,29 +31,33 @@ function timeAgo(unixSeconds) {
 }
 
 // ✅ Get tender types
-router.get("/types", (req, res) => {
-  db.query("SELECT tender_types_id, name FROM tender_types", (err, results) => {
-    if (err) {
-      console.error("Error fetching tender types:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
+router.get("/types", async (req, res) => {
+  try {
+    const [results] = await db.promise().query(
+      "SELECT tender_types_id, name FROM tender_types"
+    );
     res.json(results);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching tender types:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 // ✅ Get tender categories
-router.get("/categories", (req, res) => {
-  db.query("SELECT tender_categories_id, name FROM tender_categories", (err, results) => {
-    if (err) {
-      console.error("Error fetching tender categories:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
+router.get("/categories", async (req, res) => {
+  try {
+    const [results] = await db.promise().query(
+      "SELECT tender_categories_id, name FROM tender_categories"
+    );
     res.json(results);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching tender categories:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 // ✅ Get tenders (with filters)
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   let sql = `
     SELECT tenders_id, title, timestamp, type, category,
            currency, tender_value, bid_open_date, bid_close_date
@@ -78,19 +82,19 @@ router.get("/", (req, res) => {
 
   sql += " ORDER BY timestamp DESC";
 
-  db.query(sql, params, (err, results) => {
-    if (err) {
-      console.error("Error fetching tenders:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
+  try {
+    const [results] = await db.promise().query(sql, params);
 
     const formatted = results.map((row) => ({
       ...row,
-      timeAgo: timeAgo(row.timestamp), // ✅ converted to "2 years ago"
+      timeAgo: timeAgo(row.timestamp), // ✅ "2 years ago"
     }));
 
     res.json(formatted);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching tenders:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 module.exports = router;

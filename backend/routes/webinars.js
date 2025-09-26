@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const con = require("../config/db");
+const db = require("../config/db"); // ✅ using db with promises
 
 // Helper: format "x time ago"
 function timeAgo(timestamp) {
   if (!timestamp) return "Unknown date";
 
-  let date = typeof timestamp === "number" || !isNaN(timestamp)
-    ? new Date(timestamp * 1000)
-    : new Date(timestamp);
+  let date =
+    typeof timestamp === "number" || !isNaN(timestamp)
+      ? new Date(timestamp * 1000)
+      : new Date(timestamp);
 
   if (isNaN(date.getTime())) return "Unknown date";
 
@@ -29,20 +30,21 @@ function timeAgo(timestamp) {
   return "Just now";
 }
 
-// Fetch all webinar platforms
-router.get("/platforms", (req, res) => {
-  const sql = "SELECT webinar_platforms_id, name FROM webinar_platforms";
-  con.query(sql, (err, results) => {
-    if (err) {
-      console.error("Error fetching platforms:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
+// ✅ Fetch all webinar platforms
+router.get("/platforms", async (req, res) => {
+  try {
+    const [results] = await db.promise().query(
+      "SELECT webinar_platforms_id, name FROM webinar_platforms"
+    );
     res.json(results);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching platforms:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
-// Fetch webinars
-router.get("/", (req, res) => {
+// ✅ Fetch webinars
+router.get("/", async (req, res) => {
   let { platform, search } = req.query;
 
   let sql = `
@@ -65,11 +67,8 @@ router.get("/", (req, res) => {
 
   sql += " ORDER BY w.timestamp DESC";
 
-  con.query(sql, params, (err, results) => {
-    if (err) {
-      console.error("Error fetching webinars:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
+  try {
+    const [results] = await db.promise().query(sql, params);
 
     const formatted = results.map((w) => {
       let photoFile = w.photo || null;
@@ -85,10 +84,14 @@ router.get("/", (req, res) => {
     });
 
     res.json(formatted);
-  });
+  } catch (err) {
+    console.error("❌ Error fetching webinars:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 module.exports = router;
+
 
 
 
