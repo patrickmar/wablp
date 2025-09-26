@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
     const [rows] = await db.execute(`
       SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
       FROM webinars w
-      LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
+      LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
       ORDER BY w.date DESC
     `);
     res.json(rows);
@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
     const [rows] = await db.execute(
       `SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
        FROM webinars w
-       LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
+       LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
        WHERE w.webinars_id = ?`,
       [req.params.id]
     );
@@ -56,15 +56,15 @@ router.get("/:id", async (req, res) => {
 // ✅ Create a new webinar
 router.post("/", async (req, res) => {
   try {
-    const { name, photo, timestamp, platform_id } = req.body;
+    const { name, photo, timestamp, platform } = req.body;
 
-    if (!name || !photo || !timestamp || !platform_id) {
+    if (!name || !photo || !timestamp || !platform) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const [result] = await db.execute(
-      "INSERT INTO webinars (name, photo, timestamp, platform_id) VALUES (?, ?, ?, ?, ?)",
-      [title, photo, timestamp, platform_id]
+      "INSERT INTO webinars (name, photo, timestamp, platform) VALUES (?, ?, ?, ?, ?)",
+      [title, photo, timestamp, platform]
     );
 
     res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
@@ -77,11 +77,11 @@ router.post("/", async (req, res) => {
 // ✅ Update a webinar
 router.put("/:id", async (req, res) => {
   try {
-    const { name, photo, timestamp, platform_id } = req.body;
+    const { name, photo, timestamp, platform } = req.body;
 
     const [result] = await db.execute(
-      "UPDATE webinars SET name = ?, photo = ?, timestamp = ?, platform_id = ? WHERE webinars_id = ?",
-      [name, photo, timestamp, platform_id, req.params.id]
+      "UPDATE webinars SET name = ?, photo = ?, timestamp = ?, platform = ? WHERE webinars_id = ?",
+      [name, photo, timestamp, platform, req.params.id]
     );
 
     if (result.affectedRows === 0) {
