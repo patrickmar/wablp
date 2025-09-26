@@ -19,7 +19,7 @@ router.get("/platforms", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.execute(`
-      SELECT w.webinars_id, w.name, w.date, w.time, p.name AS platform
+      SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
       FROM webinars w
       LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
       ORDER BY w.date DESC
@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      `SELECT w.webinars_id, w.name, w.date, w.time, p.name AS platform
+      `SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
        FROM webinars w
        LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
        WHERE w.webinars_id = ?`,
@@ -56,15 +56,15 @@ router.get("/:id", async (req, res) => {
 // ✅ Create a new webinar
 router.post("/", async (req, res) => {
   try {
-    const { name, date, time, platform_id } = req.body;
+    const { name, photo, timestamp, platform_id } = req.body;
 
-    if (!name || !date || !time || !platform_id) {
+    if (!name || !photo || !timestamp || !platform_id) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const [result] = await db.execute(
-      "INSERT INTO webinars (name, date, time, platform_id) VALUES (?, ?, ?, ?, ?)",
-      [title, date, time, platform_id]
+      "INSERT INTO webinars (name, photo, timestamp, platform_id) VALUES (?, ?, ?, ?, ?)",
+      [title, photo, timestamp, platform_id]
     );
 
     res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
@@ -77,11 +77,11 @@ router.post("/", async (req, res) => {
 // ✅ Update a webinar
 router.put("/:id", async (req, res) => {
   try {
-    const { name, date, time, platform_id } = req.body;
+    const { name, photo, timestamp, platform_id } = req.body;
 
     const [result] = await db.execute(
-      "UPDATE webinars SET name = ?, date = ?, time = ?, platform_id = ? WHERE webinars_id = ?",
-      [name, date, time, platform_id, req.params.id]
+      "UPDATE webinars SET name = ?, photo = ?, timestamp = ?, platform_id = ? WHERE webinars_id = ?",
+      [name, photo, timestamp, platform_id, req.params.id]
     );
 
     if (result.affectedRows === 0) {
@@ -98,7 +98,7 @@ router.put("/:id", async (req, res) => {
 // ✅ Delete a webinar
 router.delete("/:id", async (req, res) => {
   try {
-    const [result] = await db.execute("DELETE FROM webinars WHERE id = ?", [req.params.id]);
+    const [result] = await db.execute("DELETE FROM webinars WHERE webinars_id = ?", [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Webinar not found" });
