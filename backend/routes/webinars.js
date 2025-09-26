@@ -6,7 +6,7 @@ const db = require("../config/db"); // ✅ your promise-based pool
 router.get("/platforms", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      "SELECT id, name FROM webinar_platforms ORDER BY name ASC"
+      "SELECT webinar_platforms_id, name FROM webinar_platforms ORDER BY name ASC"
     );
     res.json(rows);
   } catch (error) {
@@ -35,10 +35,10 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      `SELECT w.id, w.title, w.description, w.date, w.time, p.name AS platform
+      `SELECT w.webinars_id, w.title, w.description, w.date, w.time, p.name AS platform
        FROM webinars w
-       LEFT JOIN webinar_platforms p ON w.platform_id = p.id
-       WHERE w.id = ?`,
+       LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
+       WHERE w.webinars_id = ?`,
       [req.params.id]
     );
 
