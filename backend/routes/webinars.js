@@ -1,16 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // ✅ using db with promises
+const db = require("../config/db");
 
-// Helper: format "x time ago"
-function timeAgo(timestamp) {
-  if (!timestamp) return "Unknown date";
-
-  let date =
-    typeof timestamp === "number" || !isNaN(timestamp)
-      ? new Date(timestamp * 1000)
-      : new Date(timestamp);
-
+// ✅ Helper: Convert UNIX timestamp to "time ago"
+function timeAgo(unixSeconds) {
+  if (!unixSeconds) return "Unknown date";
+  const date = new Date(parseInt(unixSeconds) * 1000);
   if (isNaN(date.getTime())) return "Unknown date";
 
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -25,30 +20,39 @@ function timeAgo(timestamp) {
 
   for (let i of intervals) {
     const count = Math.floor(seconds / i.seconds);
-    if (count >= 1) return `${count} ${i.label}${count > 1 ? "s" : ""} ago`;
+    if (count >= 1) {
+      return `${count} ${i.label}${count > 1 ? "s" : ""} ago`;
+    }
   }
-  return "Just now";
+  return "just now";
 }
 
-// ✅ Fetch all webinar platforms
+// ✅ Get webinar platforms
 router.get("/platforms", async (req, res) => {
   try {
     const [results] = await db.promise().query(
-      "SELECT webinar_platforms_id, name FROM webinar_platforms"
+      "SELECT webinar_platforms_id, name FROM webinar_platforms ORDER BY name ASC"
     );
-    res.json(results);
+
+    res.json(
+      results.map((p) => ({
+        webinar_platforms_id: String(p.webinar_platforms_id),
+        name: String(p.name),
+      }))
+    );
   } catch (err) {
-    console.error("❌ Error fetching platforms:", err);
+    console.error("Error fetching platforms:", err);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// ✅ Fetch webinars
+// ✅ Get webinars (with optional filters)
 router.get("/", async (req, res) => {
-  let { platform, search } = req.query;
+  const { platform, search } = req.query;
 
   let sql = `
-    SELECT w.webinars_id, w.name, w.photo, w.timestamp,
+    SELECT w.webinars_id, w.title, w.description, w.link,
+           w.platform, w.timestamp,
            p.name AS platform_name
     FROM webinars w
     LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
@@ -56,13 +60,13 @@ router.get("/", async (req, res) => {
   `;
   const params = [];
 
-  if (platform) {
+  if (platform && platform !== "all") {
     sql += " AND w.platform = ?";
     params.push(platform);
   }
-  if (search) {
-    sql += " AND w.name LIKE ?";
-    params.push(`%${search}%`);
+  if (search && search.trim() !== "") {
+    sql += " AND (w.title LIKE ? OR w.description LIKE ?)";
+    params.push(`%${search}%`, `%${search}%`);
   }
 
   sql += " ORDER BY w.timestamp DESC";
@@ -70,22 +74,22 @@ router.get("/", async (req, res) => {
   try {
     const [results] = await db.promise().query(sql, params);
 
-    const formatted = results.map((w) => {
-      let photoFile = w.photo || null;
-      if (photoFile) photoFile = photoFile.replace(/^webinars_photos\//, "");
-
+    const webinars = results.map((w) => {
+      const ts = w.timestamp ? new Date(w.timestamp * 1000) : null;
       return {
-        ...w,
-        photo: photoFile
-          ? `https://wablp.com/admin/webinars_photos/${photoFile}`
-          : null,
-        timeAgo: timeAgo(w.timestamp),
+        webinars_id: String(w.webinars_id),
+        title: String(w.title),
+        description: w.description ? String(w.description) : "",
+        link: w.link ? String(w.link) : "",
+        platform: String(w.platform),
+        platform_name: w.platform_name ? String(w.platform_name) : "",
+        timeAgo: ts ? timeAgo(w.timestamp) : "Unknown date",
       };
     });
 
-    res.json(formatted);
+    res.json(webinars);
   } catch (err) {
-    console.error("❌ Error fetching webinars:", err);
+    console.error("Error fetching webinars:", err);
     res.status(500).json({ error: "Database error" });
   }
 });
