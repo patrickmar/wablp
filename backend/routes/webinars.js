@@ -19,9 +19,9 @@ router.get("/platforms", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.execute(`
-      SELECT w.id, w.title, w.description, w.date, w.time, p.name AS platform
+      SELECT w.webinars_id, w.title, w.description, w.date, w.time, p.name AS platform
       FROM webinars w
-      LEFT JOIN webinar_platforms p ON w.platform_id = p.id
+      LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
       ORDER BY w.date DESC
     `);
     res.json(rows);
