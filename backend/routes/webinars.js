@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { db } = require("../config/db"); // using your existing db.js
+const db = require("../config/db"); // using your existing db.js
 
 // ✅ Fetch all webinar platforms
 router.get("/platforms", async (req, res) => {
