@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
       SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
       FROM webinars w
       LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
-      ORDER BY w.date DESC
+      ORDER BY w.timestamp DESC
     `);
     res.json(rows);
   } catch (error) {
