@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // using your existing db.js
+const db = require("../config/db"); // ✅ your promise-based pool
 
 // ✅ Fetch all webinar platforms
 router.get("/platforms", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM webinar_platforms ORDER BY name ASC");
+    const [rows] = await db.execute(
+      "SELECT id, name FROM webinar_platforms ORDER BY name ASC"
+    );
     res.json(rows);
   } catch (error) {
     console.error("Error fetching platforms:", error);
@@ -16,7 +18,7 @@ router.get("/platforms", async (req, res) => {
 // ✅ Fetch all webinars
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const [rows] = await db.execute(`
       SELECT w.id, w.title, w.description, w.date, w.time, p.name AS platform
       FROM webinars w
       LEFT JOIN webinar_platforms p ON w.platform_id = p.id
@@ -32,7 +34,7 @@ router.get("/", async (req, res) => {
 // ✅ Fetch single webinar by ID
 router.get("/:id", async (req, res) => {
   try {
-    const [rows] = await db.query(
+    const [rows] = await db.execute(
       `SELECT w.id, w.title, w.description, w.date, w.time, p.name AS platform
        FROM webinars w
        LEFT JOIN webinar_platforms p ON w.platform_id = p.id
@@ -60,7 +62,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const [result] = await db.query(
+    const [result] = await db.execute(
       "INSERT INTO webinars (title, description, date, time, platform_id) VALUES (?, ?, ?, ?, ?)",
       [title, description, date, time, platform_id]
     );
@@ -77,7 +79,7 @@ router.put("/:id", async (req, res) => {
   try {
     const { title, description, date, time, platform_id } = req.body;
 
-    const [result] = await db.query(
+    const [result] = await db.execute(
       "UPDATE webinars SET title = ?, description = ?, date = ?, time = ?, platform_id = ? WHERE id = ?",
       [title, description, date, time, platform_id, req.params.id]
     );
@@ -96,7 +98,7 @@ router.put("/:id", async (req, res) => {
 // ✅ Delete a webinar
 router.delete("/:id", async (req, res) => {
   try {
-    const [result] = await db.query("DELETE FROM webinars WHERE id = ?", [req.params.id]);
+    const [result] = await db.execute("DELETE FROM webinars WHERE id = ?", [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Webinar not found" });
@@ -110,6 +112,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
