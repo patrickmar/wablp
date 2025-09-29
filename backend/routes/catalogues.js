@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // ✅ Using pooled db without .promise()
+const db = require("../config/db"); // ✅ already promise client
 const multer = require("multer");
 const path = require("path");
 
@@ -48,12 +48,9 @@ function timeAgo(date) {
 // ✅ Get product categories for dropdown
 router.get("/categories", async (req, res) => {
   try {
-    const [results] = await new Promise((resolve, reject) => {
-      db.query(
-        "SELECT product_categories_id, name FROM product_categories ORDER BY name ASC",
-        (err, rows) => (err ? reject(err) : resolve([rows]))
-      );
-    });
+    const [results] = await db.query(
+      "SELECT product_categories_id, name FROM product_categories ORDER BY name ASC"
+    );
 
     const categories = results.map((cat) => ({
       product_categories_id: String(cat.product_categories_id),
@@ -70,12 +67,9 @@ router.get("/categories", async (req, res) => {
 // ✅ Get product types for dropdown
 router.get("/types", async (req, res) => {
   try {
-    const [results] = await new Promise((resolve, reject) => {
-      db.query(
-        "SELECT product_types_id, name FROM product_types ORDER BY name ASC",
-        (err, rows) => (err ? reject(err) : resolve([rows]))
-      );
-    });
+    const [results] = await db.query(
+      "SELECT product_types_id, name FROM product_types ORDER BY name ASC"
+    );
 
     const types = results.map((t) => ({
       product_types_id: String(t.product_types_id),
@@ -119,9 +113,7 @@ router.get("/", async (req, res) => {
   sql += " ORDER BY p.timestamp DESC";
 
   try {
-    const [results] = await new Promise((resolve, reject) => {
-      db.query(sql, params, (err, rows) => (err ? reject(err) : resolve([rows])));
-    });
+    const [results] = await db.query(sql, params);
 
     const products = results.map((prod) => {
       const ts = prod.timestamp ? new Date(prod.timestamp * 1000) : null;
@@ -168,9 +160,7 @@ router.get("/:id", async (req, res) => {
   `;
 
   try {
-    const [results] = await new Promise((resolve, reject) => {
-      db.query(sql, [id], (err, rows) => (err ? reject(err) : resolve([rows])));
-    });
+    const [results] = await db.query(sql, [id]);
 
     if (results.length === 0) {
       return res.status(404).json({ error: "Product not found" });
@@ -210,6 +200,7 @@ router.get("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
