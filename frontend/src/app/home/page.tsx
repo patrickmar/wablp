@@ -9,7 +9,7 @@ import { TechnologySecuritySection } from "@/components/TechnologySecuritySectio
 import { Testimonial } from "@/components/Testimonial";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { VideoShowcaseSection } from "@/components/VideoShowcaseSection";
-import { VideoTesti } from "@/components/VideoTesti";
+import  { VideoTesti } from "@/components/VideoTesti";
 import { Video } from "lucide-react";
 
 export default function Home() {

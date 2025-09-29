@@ -24,7 +24,20 @@ router.get("/", async (req, res) => {
       LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
       ORDER BY w.timestamp DESC
     `);
-    res.json(rows);
+
+    const webinarsWithPhoto = rows.map((w) => {
+      let photoFile = w.photo || null;
+      if (photoFile) photoFile = photoFile.replace(/^webinars_photos\//, "");
+
+      return {
+        ...w,
+        photo: photoFile
+          ? `https://wablp.com/admin/webinars_photos/${photoFile}`
+          : null,
+      };
+    });
+
+    res.json(webinarsWithPhoto);
   } catch (error) {
     console.error("Error fetching webinars:", error);
     res.status(500).json({ error: "Failed to fetch webinars" });
@@ -46,7 +59,15 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Webinar not found" });
     }
 
-    res.json(rows[0]);
+    let webinar = rows[0];
+    let photoFile = webinar.photo || null;
+    if (photoFile) photoFile = photoFile.replace(/^webinars_photos\//, "");
+
+    webinar.photo = photoFile
+      ? `https://wablp.com/admin/webinars_photos/${photoFile}`
+      : null;
+
+    res.json(webinar);
   } catch (error) {
     console.error("Error fetching webinar:", error);
     res.status(500).json({ error: "Failed to fetch webinar" });
@@ -63,8 +84,8 @@ router.post("/", async (req, res) => {
     }
 
     const [result] = await db.execute(
-      "INSERT INTO webinars (name, photo, timestamp, platform) VALUES (?, ?, ?, ?, ?)",
-      [title, photo, timestamp, platform]
+      "INSERT INTO webinars (name, photo, timestamp, platform) VALUES (?, ?, ?, ?)",
+      [name, photo, timestamp, platform]
     );
 
     res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
@@ -144,10 +165,10 @@ module.exports = router;
 // router.get("/", async (req, res) => {
 //   try {
 //     const [rows] = await db.execute(`
-//       SELECT w.webinars_id, w.name, w.description, w.date, w.time, p.name AS platform
+//       SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
 //       FROM webinars w
-//       LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
-//       ORDER BY w.date DESC
+//       LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
+//       ORDER BY w.timestamp DESC
 //     `);
 //     res.json(rows);
 //   } catch (error) {
@@ -160,9 +181,9 @@ module.exports = router;
 // router.get("/:id", async (req, res) => {
 //   try {
 //     const [rows] = await db.execute(
-//       `SELECT w.webinars_id, w.name, w.description, w.date, w.time, p.name AS platform
+//       `SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
 //        FROM webinars w
-//        LEFT JOIN webinar_platforms p ON w.platform_id = p.webinar_platforms_id
+//        LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
 //        WHERE w.webinars_id = ?`,
 //       [req.params.id]
 //     );
@@ -181,15 +202,15 @@ module.exports = router;
 // // ✅ Create a new webinar
 // router.post("/", async (req, res) => {
 //   try {
-//     const { title, description, date, time, platform_id } = req.body;
+//     const { name, photo, timestamp, platform } = req.body;
 
-//     if (!title || !date || !time || !platform_id) {
+//     if (!name || !photo || !timestamp || !platform) {
 //       return res.status(400).json({ error: "Missing required fields" });
 //     }
 
 //     const [result] = await db.execute(
-//       "INSERT INTO webinars (name, description, date, time, platform_id) VALUES (?, ?, ?, ?, ?)",
-//       [title, description, date, time, platform_id]
+//       "INSERT INTO webinars (name, photo, timestamp, platform) VALUES (?, ?, ?, ?, ?)",
+//       [title, photo, timestamp, platform]
 //     );
 
 //     res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
@@ -202,11 +223,11 @@ module.exports = router;
 // // ✅ Update a webinar
 // router.put("/:id", async (req, res) => {
 //   try {
-//     const { title, description, date, time, platform_id } = req.body;
+//     const { name, photo, timestamp, platform } = req.body;
 
 //     const [result] = await db.execute(
-//       "UPDATE webinars SET title = ?, description = ?, date = ?, time = ?, platform_id = ? WHERE id = ?",
-//       [title, description, date, time, platform_id, req.params.id]
+//       "UPDATE webinars SET name = ?, photo = ?, timestamp = ?, platform = ? WHERE webinars_id = ?",
+//       [name, photo, timestamp, platform, req.params.id]
 //     );
 
 //     if (result.affectedRows === 0) {
@@ -223,7 +244,7 @@ module.exports = router;
 // // ✅ Delete a webinar
 // router.delete("/:id", async (req, res) => {
 //   try {
-//     const [result] = await db.execute("DELETE FROM webinars WHERE id = ?", [req.params.id]);
+//     const [result] = await db.execute("DELETE FROM webinars WHERE webinars_id = ?", [req.params.id]);
 
 //     if (result.affectedRows === 0) {
 //       return res.status(404).json({ error: "Webinar not found" });
@@ -237,6 +258,8 @@ module.exports = router;
 // });
 
 // module.exports = router;
+
+
 
 
 
