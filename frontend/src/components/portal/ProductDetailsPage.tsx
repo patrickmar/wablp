@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type Product = {
   products_id: string;
@@ -21,7 +23,7 @@ type Product = {
   contact_phone: string;
   website: string;
   timeAgo: string;
-  seller?: string; // optional
+  seller?: string;
 };
 
 type ProductDetailsPageProps = {
@@ -35,6 +37,7 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
   const [quantity, setQuantity] = useState("");
   const [shippingDetails, setShippingDetails] = useState("");
   const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     axios
@@ -46,15 +49,23 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!quantity || !shippingDetails) {
+      toast.error("⚠️ Fill in all the details before sending order");
+      return;
+    }
+
     try {
-      const client_id = localStorage.getItem("userId"); // 👈 logged-in user
+      const client_id = localStorage.getItem("userId");
       if (!client_id) {
-        alert("You must be logged in to place an order.");
+        toast.error("⚠️ You must be logged in to place an order.");
         return;
       }
 
-      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders`, {
-        product_id: product?.products_id,
+      setLoading(true);
+
+      const payload = {
+        mod: "place_order", // ✅ to mimic PHP version
+        product: product?.products_id,
         quantity,
         shipping_details: shippingDetails,
         description: notes,
@@ -62,16 +73,31 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
         price: product?.price,
         currency: product?.currency,
         seller: product?.seller || "",
-      });
+      };
 
-      alert("✅ Order placed successfully!");
-      setShowForm(false);
-      setQuantity("");
-      setShippingDetails("");
-      setNotes("");
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders`,
+        payload
+      );
+
+      if (res.data?.STATUS === "SUCC") {
+        toast.success(`✅ ${res.data.MESSAGE || "Order placed successfully!"}`);
+        setShowForm(false);
+        setQuantity("");
+        setShippingDetails("");
+        setNotes("");
+        // Optional: reload like PHP
+        // window.location.reload();
+      } else if (res.data?.STATUS === "ERR") {
+        toast.error(`❌ ${res.data.MESSAGE || "Request error"}`);
+      } else {
+        toast.error("❌ No valid response from server");
+      }
     } catch (err) {
       console.error("❌ Error placing order:", err);
-      alert("Failed to place order. Please try again.");
+      toast.error("❌ Server error. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,7 +131,7 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
           </Card>
         </div>
 
-        {/* Right side: Catalogue details (sticky) */}
+        {/* Right side: Catalogue details */}
         <div className="lg:col-span-1">
           <Card className="sticky top-24">
             <CardContent className="p-6 space-y-3">
@@ -146,9 +172,7 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
               {showForm && (
                 <form onSubmit={handleSubmit} className="space-y-3 mt-4">
                   <div>
-                    <label className="block text-sm font-medium">
-                      Quantity
-                    </label>
+                    <label className="block text-sm font-medium">Quantity</label>
                     <input
                       type="number"
                       className="w-full border p-2 rounded"
@@ -181,8 +205,12 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full bg-blue-600 text-white">
-                    Send Order
+                  <Button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white"
+                    disabled={loading}
+                  >
+                    {loading ? "Sending..." : "Send Order"}
                   </Button>
                 </form>
               )}
@@ -193,3 +221,216 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+// import { Card, CardContent } from "../ui/card";
+// import { Button } from "../ui/button";
+
+// type Product = {
+//   products_id: string;
+//   name: string;
+//   description: string;
+//   category: string;
+//   category_name: string;
+//   type: string;
+//   currency: string;
+//   price: string;
+//   photo: string;
+//   stock_available: string;
+//   uom: string;
+//   contact_email: string;
+//   contact_phone: string;
+//   website: string;
+//   timeAgo: string;
+//   seller?: string; // optional
+// };
+
+// type ProductDetailsPageProps = {
+//   id: string;
+//   onBack: () => void;
+// };
+
+// export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
+//   const [product, setProduct] = useState<Product | null>(null);
+//   const [showForm, setShowForm] = useState(false);
+//   const [quantity, setQuantity] = useState("");
+//   const [shippingDetails, setShippingDetails] = useState("");
+//   const [notes, setNotes] = useState("");
+
+//   useEffect(() => {
+//     axios
+//       .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/catalogues/${id}`)
+//       .then((res) => setProduct(res.data))
+//       .catch((err) => console.error("❌ Error fetching product:", err));
+//   }, [id]);
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     try {
+//       const client_id = localStorage.getItem("userId"); // 👈 logged-in user
+//       if (!client_id) {
+//         alert("You must be logged in to place an order.");
+//         return;
+//       }
+
+//       await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/orders`, {
+//         product_id: product?.products_id,
+//         quantity,
+//         shipping_details: shippingDetails,
+//         description: notes,
+//         client_id,
+//         price: product?.price,
+//         currency: product?.currency,
+//         seller: product?.seller || "",
+//       });
+
+//       alert("✅ Order placed successfully!");
+//       setShowForm(false);
+//       setQuantity("");
+//       setShippingDetails("");
+//       setNotes("");
+//     } catch (err) {
+//       console.error("❌ Error placing order:", err);
+//       alert("Failed to place order. Please try again.");
+//     }
+//   };
+
+//   if (!product) return <div className="p-6">Loading...</div>;
+
+//   return (
+//     <div className="p-6">
+//       {/* Back button */}
+//       <Button variant="outline" onClick={onBack} className="mb-6">
+//         ← Back to Catalogue
+//       </Button>
+
+//       {/* Grid layout */}
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//         {/* Left side: Image + description */}
+//         <div className="lg:col-span-2">
+//           <Card>
+//             <CardContent className="p-6">
+//               <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
+//               <p className="text-sm text-gray-500">
+//                 {product.type} | {product.category_name} • {product.timeAgo}
+//               </p>
+
+//               <img
+//                 src={product.photo}
+//                 alt={product.name}
+//                 className="w-full rounded-md mt-4"
+//               />
+//               <p className="mt-4 leading-relaxed">{product.description}</p>
+//             </CardContent>
+//           </Card>
+//         </div>
+
+//         {/* Right side: Catalogue details (sticky) */}
+//         <div className="lg:col-span-1">
+//           <Card className="sticky top-24">
+//             <CardContent className="p-6 space-y-3">
+//               <h4 className="text-xl font-semibold">Catalogue Details</h4>
+//               <p>
+//                 Stock: {product.stock_available} {product.uom}
+//               </p>
+//               <p>SKU: {product.products_id}</p>
+//               <p>Email: {product.contact_email}</p>
+//               <p>Phone: {product.contact_phone}</p>
+//               <p>
+//                 Website:{" "}
+//                 <a
+//                   href={product.website}
+//                   target="_blank"
+//                   rel="noopener noreferrer"
+//                   className="text-blue-600"
+//                 >
+//                   {product.website}
+//                 </a>
+//               </p>
+
+//               {/* Price button */}
+//               <Button className="w-full bg-blue-600 text-white">
+//                 {product.currency}
+//                 {product.price}
+//               </Button>
+
+//               {/* Order Now toggle */}
+//               <Button
+//                 className="w-full bg-green-600 text-white mt-3"
+//                 onClick={() => setShowForm(!showForm)}
+//               >
+//                 {showForm ? "Cancel Order" : "Order Now"}
+//               </Button>
+
+//               {/* Order form */}
+//               {showForm && (
+//                 <form onSubmit={handleSubmit} className="space-y-3 mt-4">
+//                   <div>
+//                     <label className="block text-sm font-medium">
+//                       Quantity
+//                     </label>
+//                     <input
+//                       type="number"
+//                       className="w-full border p-2 rounded"
+//                       value={quantity}
+//                       onChange={(e) => setQuantity(e.target.value)}
+//                       required
+//                     />
+//                   </div>
+
+//                   <div>
+//                     <label className="block text-sm font-medium">
+//                       Shipping Details
+//                     </label>
+//                     <textarea
+//                       className="w-full border p-2 rounded"
+//                       value={shippingDetails}
+//                       onChange={(e) => setShippingDetails(e.target.value)}
+//                       required
+//                     />
+//                   </div>
+
+//                   <div>
+//                     <label className="block text-sm font-medium">
+//                       Order Notes
+//                     </label>
+//                     <textarea
+//                       className="w-full border p-2 rounded"
+//                       value={notes}
+//                       onChange={(e) => setNotes(e.target.value)}
+//                     />
+//                   </div>
+
+//                   <Button type="submit" className="w-full bg-blue-600 text-white">
+//                     Send Order
+//                   </Button>
+//                 </form>
+//               )}
+//             </CardContent>
+//           </Card>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
