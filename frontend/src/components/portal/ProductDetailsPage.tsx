@@ -63,16 +63,15 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
 
       setLoading(true);
 
+      // ✅ Match backend expectations
       const payload = {
-        mod: "place_order", // ✅ to mimic PHP version
-        product: product?.products_id,
-        quantity,
+        product_id: product?.products_id,
+        quantity: Number(quantity),
         shipping_details: shippingDetails,
         description: notes,
         client_id,
         price: product?.price,
         currency: product?.currency,
-        seller: product?.seller || "",
       };
 
       const res = await axios.post(
@@ -80,18 +79,14 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
         payload
       );
 
-      if (res.data?.STATUS === "SUCC") {
-        toast.success(`✅ ${res.data.MESSAGE || "Order placed successfully!"}`);
+      if (res.data?.success) {
+        toast.success(res.data.message || "✅ Order placed successfully!");
         setShowForm(false);
         setQuantity("");
         setShippingDetails("");
         setNotes("");
-        // Optional: reload like PHP
-        // window.location.reload();
-      } else if (res.data?.STATUS === "ERR") {
-        toast.error(`❌ ${res.data.MESSAGE || "Request error"}`);
       } else {
-        toast.error("❌ No valid response from server");
+        toast.error(res.data?.error || "❌ Failed to place order");
       }
     } catch (err) {
       console.error("❌ Error placing order:", err);
@@ -221,6 +216,7 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
     </div>
   );
 }
+
 
 
 
