@@ -17,13 +17,10 @@ type Webinar = {
   platform_name: string;
   timestamp: string;
   date_time: string;
-  description: string | null;
   details: string | null;
-  document: string | null;
-  links: string | null;
+  link: string | null;
   meeting_id: string | null;
   password: string | null;
-  link: string | null;
 };
 
 export default function WebinarDetailsPage({ id, onBack }: WebinarDetailsPageProps) {
@@ -66,6 +63,7 @@ export default function WebinarDetailsPage({ id, onBack }: WebinarDetailsPagePro
             />
           )}
 
+          {/* Share / Refer */}
           <div>
             <h6 className="font-semibold">Share / Refer</h6>
             <p className="text-sm text-blue-600 underline cursor-pointer">
@@ -73,44 +71,14 @@ export default function WebinarDetailsPage({ id, onBack }: WebinarDetailsPagePro
             </p>
           </div>
 
-          {/* Description */}
-          {webinar.description && (
+          {/* Details */}
+          {webinar.details && (
             <div>
-              <h3 className="text-lg font-semibold">Description</h3>
+              <h3 className="text-lg font-semibold">Details</h3>
               <div
                 className="text-gray-700 prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: webinar.description }}
+                dangerouslySetInnerHTML={{ __html: webinar.details }}
               />
-            </div>
-          )}
-
-          {/* Files */}
-          {webinar.document && (
-            <div>
-              <h3 className="text-lg font-semibold">Files</h3>
-              <a
-                href={webinar.document}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline"
-              >
-                View / Download
-              </a>
-            </div>
-          )}
-
-          {/* Links */}
-          {webinar.links && (
-            <div>
-              <h3 className="text-lg font-semibold">Link</h3>
-              <a
-                href={webinar.links}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline"
-              >
-                {webinar.links}
-              </a>
             </div>
           )}
         </CardContent>
@@ -124,14 +92,6 @@ export default function WebinarDetailsPage({ id, onBack }: WebinarDetailsPagePro
           <p>
             <strong>Date & Time:</strong> {webinar.date_time}
           </p>
-
-          {/* Extra details (HTML content) */}
-          {webinar.details && (
-            <div
-              className="text-gray-700 prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: webinar.details }}
-            />
-          )}
 
           {webinar.meeting_id && (
             <p>

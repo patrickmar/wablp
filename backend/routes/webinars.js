@@ -23,6 +23,7 @@ router.get("/", async (req, res) => {
              w.name, 
              w.photo, 
              w.timestamp, 
+             w.date_time,
              p.name AS platform_name
       FROM webinars w
       LEFT JOIN webinar_platforms p 
@@ -49,7 +50,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Fetch single webinar by ID (minimal safe version)
+// ✅ Fetch single webinar by ID (full details, aligned with PHP version)
 router.get("/:id", async (req, res) => {
   try {
     const [rows] = await db.execute(
@@ -58,6 +59,10 @@ router.get("/:id", async (req, res) => {
               w.photo, 
               w.timestamp, 
               w.date_time,
+              w.details,
+              w.link,
+              w.meeting_id,
+              w.password,
               p.name AS platform_name
        FROM webinars w
        LEFT JOIN webinar_platforms p 
@@ -150,6 +155,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
