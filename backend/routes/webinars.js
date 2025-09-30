@@ -15,13 +15,18 @@ router.get("/platforms", async (req, res) => {
   }
 });
 
-// ✅ Fetch all webinars
+// ✅ Fetch all webinars (summary list)
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.execute(`
-      SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
+      SELECT w.webinars_id, 
+             w.name, 
+             w.photo, 
+             w.timestamp, 
+             p.name AS platform_name
       FROM webinars w
-      LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
+      LEFT JOIN webinar_platforms p 
+        ON w.platform = p.webinar_platforms_id
       ORDER BY w.timestamp DESC
     `);
 
@@ -44,13 +49,27 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Fetch single webinar by ID
+// ✅ Fetch single webinar by ID (full details)
 router.get("/:id", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      `SELECT w.webinars_id, w.name, w.photo, w.timestamp, p.name AS platform
+      `SELECT w.webinars_id, 
+              w.name, 
+              w.photo, 
+              w.timestamp, 
+              w.platform, 
+              w.date_time,
+              w.description,
+              w.details,
+              w.document,
+              w.links,
+              w.meeting_id,
+              w.password,
+              w.link,
+              p.name AS platform_name
        FROM webinars w
-       LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
+       LEFT JOIN webinar_platforms p 
+         ON w.platform = p.webinar_platforms_id
        WHERE w.webinars_id = ?`,
       [req.params.id]
     );
@@ -60,12 +79,18 @@ router.get("/:id", async (req, res) => {
     }
 
     let webinar = rows[0];
+
+    // ✅ Fix photo path
     let photoFile = webinar.photo || null;
     if (photoFile) photoFile = photoFile.replace(/^webinars_photos\//, "");
-
     webinar.photo = photoFile
       ? `https://wablp.com/admin/webinars_photos/${photoFile}`
       : null;
+
+    // ✅ Fix document path (if it exists)
+    if (webinar.document) {
+      webinar.document = `https://wablp.com/admin/${webinar.document}`;
+    }
 
     res.json(webinar);
   } catch (error) {
@@ -88,7 +113,9 @@ router.post("/", async (req, res) => {
       [name, photo, timestamp, platform]
     );
 
-    res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
+    res
+      .status(201)
+      .json({ message: "Webinar created", webinarId: result.insertId });
   } catch (error) {
     console.error("Error creating webinar:", error);
     res.status(500).json({ error: "Failed to create webinar" });
@@ -119,7 +146,10 @@ router.put("/:id", async (req, res) => {
 // ✅ Delete a webinar
 router.delete("/:id", async (req, res) => {
   try {
-    const [result] = await db.execute("DELETE FROM webinars WHERE webinars_id = ?", [req.params.id]);
+    const [result] = await db.execute(
+      "DELETE FROM webinars WHERE webinars_id = ?",
+      [req.params.id]
+    );
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Webinar not found" });
@@ -133,6 +163,10 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
 
 
 
@@ -170,7 +204,20 @@ module.exports = router;
 //       LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
 //       ORDER BY w.timestamp DESC
 //     `);
-//     res.json(rows);
+
+//     const webinarsWithPhoto = rows.map((w) => {
+//       let photoFile = w.photo || null;
+//       if (photoFile) photoFile = photoFile.replace(/^webinars_photos\//, "");
+
+//       return {
+//         ...w,
+//         photo: photoFile
+//           ? `https://wablp.com/admin/webinars_photos/${photoFile}`
+//           : null,
+//       };
+//     });
+
+//     res.json(webinarsWithPhoto);
 //   } catch (error) {
 //     console.error("Error fetching webinars:", error);
 //     res.status(500).json({ error: "Failed to fetch webinars" });
@@ -192,7 +239,15 @@ module.exports = router;
 //       return res.status(404).json({ error: "Webinar not found" });
 //     }
 
-//     res.json(rows[0]);
+//     let webinar = rows[0];
+//     let photoFile = webinar.photo || null;
+//     if (photoFile) photoFile = photoFile.replace(/^webinars_photos\//, "");
+
+//     webinar.photo = photoFile
+//       ? `https://wablp.com/admin/webinars_photos/${photoFile}`
+//       : null;
+
+//     res.json(webinar);
 //   } catch (error) {
 //     console.error("Error fetching webinar:", error);
 //     res.status(500).json({ error: "Failed to fetch webinar" });
@@ -209,8 +264,8 @@ module.exports = router;
 //     }
 
 //     const [result] = await db.execute(
-//       "INSERT INTO webinars (name, photo, timestamp, platform) VALUES (?, ?, ?, ?, ?)",
-//       [title, photo, timestamp, platform]
+//       "INSERT INTO webinars (name, photo, timestamp, platform) VALUES (?, ?, ?, ?)",
+//       [name, photo, timestamp, platform]
 //     );
 
 //     res.status(201).json({ message: "Webinar created", webinarId: result.insertId });
@@ -256,83 +311,5 @@ module.exports = router;
 //     res.status(500).json({ error: "Failed to delete webinar" });
 //   }
 // });
-
-// module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require("express");
-// const router = express.Router();
-
-// // import your db connection
-// const con = require("../config/db");
-
-// // ✅ Fetch all webinar platforms
-// router.get("/platforms", (req, res) => {
-//   const sql = "SELECT webinar_platforms_id, name FROM webinar_platforms";
-//   con.query(sql, (err, results) => {
-//     if (err) {
-//       console.error("Error fetching platforms:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-//     res.json(results);
-//   });
-// });
-
-// // ✅ Fetch webinars (with optional filters)
-// router.get("/", (req, res) => {
-//   let { platform, search } = req.query;
-
-//   let sql = `
-//     SELECT w.webinars_id, w.name, w.photo,
-//            w.timestamp,
-//            p.name AS platform_name
-//     FROM webinars w
-//     LEFT JOIN webinar_platforms p ON w.platform = p.webinar_platforms_id
-//     WHERE 1=1
-//   `;
-//   const params = [];
-
-//   if (platform) {
-//     sql += " AND w.platform = ?";
-//     params.push(platform);
-//   }
-//   if (search) {
-//     sql += " AND w.name LIKE ?";
-//     params.push(`%${search}%`);
-//   }
-
-//   sql += " ORDER BY w.timestamp DESC";
-
-//   con.query(sql, params, (err, results) => {
-//     if (err) {
-//       console.error("Error fetching webinars:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-
-//     // Prefix with server URL for frontend access
-//     const formatted = results.map(w => ({
-//       ...w,
-//       photo: w.photo 
-//       ? `http://localhost:5000/webinars_photos/${w.photo}` 
-//       : "http://localhost:5000/uploads/default.png",
-//     }));
-
-//     res.json(formatted);
-//   });
-// });
-
 
 // module.exports = router;

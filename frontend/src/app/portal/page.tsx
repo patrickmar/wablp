@@ -20,9 +20,10 @@ import { SellerOrdersPage } from "@/components/portal/SellerOrdersPage";
 import { CreateCataloguePage } from "@/components/portal/CreateCataloguePage";
 import FullNewsPage from "@/components/portal/FullNewsPage";
 import BusinessDetailsPage from "@/components/portal/BusinessDetailsPage";
-import OrganizationDetailsPage from "@/components/portal/OrganizationDetailsPage"; // ✅ added
+import OrganizationDetailsPage from "@/components/portal/OrganizationDetailsPage";
 import ExpertDetailsPage from "@/components/portal/ExpertDetailsPage";
 import JobDetailsPage from "@/components/portal/JobDetailsPage";
+import WebinarDetailsPage from "@/components/portal/WebinarDetailsPage"; // ✅ added
 
 function Placeholder({ title }: { title: string }) {
   return <div>{title} content goes here</div>;
@@ -32,12 +33,14 @@ export default function PortalPage() {
   const [activePage, setActivePage] = useState("dashboard");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
-  const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null); // ✅ added
-  const [selectedExpertId, setSelectedExpertId] = useState<string | null>(null); // ✅ added
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null); // ✅ added
+  const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null);
+  const [selectedExpertId, setSelectedExpertId] = useState<string | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [selectedWebinarId, setSelectedWebinarId] = useState<string | null>(null); // ✅ added
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -161,7 +164,24 @@ export default function PortalPage() {
         return <Placeholder title="Courses" />;
 
       case "webinars":
-        return <WebinarsPage />;
+        return (
+          <WebinarsPage
+            onSelectWebinar={(id: number) => {
+              setSelectedWebinarId(id.toString());
+              setActivePage("webinarDetails");
+            }}
+          />
+        );
+
+      case "webinarDetails":
+        return selectedWebinarId ? (
+          <WebinarDetailsPage
+            id={selectedWebinarId.toString()}
+            onBack={() => setActivePage("webinars")}
+          />
+        ) : (
+          <div className="p-6">No webinar selected.</div>
+        );
 
       case "dealrooms":
         return <Placeholder title="Deal Rooms" />;
@@ -228,6 +248,17 @@ export default function PortalPage() {
     </PortalLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -331,10 +362,6 @@ export default function PortalPage() {
 //           <BusinessDetailsPage
 //             id={selectedBusinessId.toString()}
 //             onBack={() => setActivePage("businesses")}
-//           // onSelectProduct={(id: number) => {
-//           //   setSelectedProductId(id.toString());
-//           //   setActivePage("productDetails");
-//           // }}
 //           />
 //         ) : (
 //           <div className="p-6">No business selected.</div>
@@ -399,7 +426,6 @@ export default function PortalPage() {
 //         ) : (
 //           <div className="p-6">No job selected.</div>
 //         );
-
 
 //       case "courses":
 //         return <Placeholder title="Courses" />;
