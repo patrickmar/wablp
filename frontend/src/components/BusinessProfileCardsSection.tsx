@@ -1,8 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { MapPin, Users, Star, ExternalLink, Filter, Grid, List } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+
+const countries = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Argentina", "Armenia", "Australia",
+  "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium",
+  "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei",
+  "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Chad",
+  "Chile", "China", "Colombia", "Comoros", "Costa Rica", "Croatia", "Cuba", "Cyprus",
+  "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "DR Congo",
+  "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini",
+  "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana",
+  "Greece", "Grenada", "Guatemala", "Guinea", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland",
+  "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan",
+  "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
+  "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar",
+  "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Mauritania", "Mauritius", "Mexico",
+  "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia",
+  "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea",
+  "North Macedonia", "Norway", "Oman", "Pakistan", "Palestine", "Panama", "Papua New Guinea",
+  "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia",
+  "Rwanda", "San Marino", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone",
+  "Singapore", "Slovakia", "Slovenia", "Somalia", "South Africa", "South Korea", "South Sudan",
+  "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan",
+  "Tajikistan", "Tanzania", "Thailand", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia",
+  "Turkey", "Turkmenistan", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom",
+  "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam",
+  "Yemen", "Zambia", "Zimbabwe"
+];
 
 const businesses = [
   {
@@ -86,6 +116,9 @@ const businesses = [
 ];
 
 export function BusinessProfileCardsSection() {
+  const [locationFilter, setLocationFilter] = useState("all");
+
+
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -95,7 +128,7 @@ export function BusinessProfileCardsSection() {
           <div className="lg:w-1/4">
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h3 className="text-xl text-[#005A8C] mb-6">Filter Directory</h3>
-              
+
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Industry Sector</label>
@@ -105,19 +138,48 @@ export function BusinessProfileCardsSection() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Sectors</SelectItem>
-                      <SelectItem value="technology">Technology</SelectItem>
-                      <SelectItem value="agriculture">Agriculture</SelectItem>
-                      <SelectItem value="construction">Construction</SelectItem>
-                      <SelectItem value="fintech">Fintech</SelectItem>
-                      <SelectItem value="energy">Renewable Energy</SelectItem>
-                      <SelectItem value="logistics">Logistics</SelectItem>
+                      <SelectItem value="technology">Agribusiness and Agroprocessing</SelectItem>
+                      <SelectItem value="agriculture">Mining and Extraction</SelectItem>
+                      <SelectItem value="construction">Oil and Gas</SelectItem>
+                      <SelectItem value="fintech">Manufacturing (automotive, aerospace, e.t.c)</SelectItem>
+                      <SelectItem value="energy">Construction</SelectItem>
+                      <SelectItem value="logistics">Utilities (electric power, water)</SelectItem>
+                      <SelectItem value="logistics">Wholesale and Retail Trade</SelectItem>
+                      <SelectItem value="logistics">Transportation and Warehousing</SelectItem>
+                      <SelectItem value="logistics">Information Technology and Software</SelectItem>
+                      <SelectItem value="logistics">Telecommunications</SelectItem>
+                      <SelectItem value="logistics"> Financial Services (banking, insurance)</SelectItem>
+                      <SelectItem value="logistics">Real Estate</SelectItem>
+                      <SelectItem value="logistics">Professional, Scientific and Technical Services</SelectItem>
+                      <SelectItem value="logistics">Health Care and Social Assistance</SelectItem>
+                      <SelectItem value="logistics">Education</SelectItem>
+                      <SelectItem value="logistics">Arts, Entertainment and Recreation</SelectItem>
+                      <SelectItem value="logistics">Hospitality and Tourism</SelectItem>
+                      <SelectItem value="logistics">Public Administration</SelectItem>
+                      <SelectItem value="logistics">Administrative and Support Services</SelectItem>
+                      <SelectItem value="logistics">Waste Management and Remediation Services</SelectItem>
+                      <SelectItem value="logistics">Energy (including renewable)</SelectItem>
+                      <SelectItem value="logistics">Media and Broadcasting</SelectItem>
+                      <SelectItem value="logistics">Science and Technology Services</SelectItem>
+                      <SelectItem value="logistics">Environmental Services</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                  <Select>
+                  <Select value={locationFilter} onValueChange={setLocationFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Countries" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      <SelectItem value="all">All Countries</SelectItem>
+                      {countries.map((country) => (
+                        <SelectItem key={country} value={country}>{country}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {/* <Select>
                     <SelectTrigger>
                       <SelectValue placeholder="All Countries" />
                     </SelectTrigger>
@@ -130,9 +192,9 @@ export function BusinessProfileCardsSection() {
                       <SelectItem value="mali">Mali</SelectItem>
                       <SelectItem value="togo">Togo</SelectItem>
                     </SelectContent>
-                  </Select>
+                  </Select> */}
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Company Size</label>
                   <Select>
@@ -148,7 +210,7 @@ export function BusinessProfileCardsSection() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <Button className="w-full bg-[#005A8C] text-white hover:bg-[#004a73]">
                   <Filter className="w-4 h-4 mr-2" />
                   Apply Filters
@@ -156,7 +218,7 @@ export function BusinessProfileCardsSection() {
               </div>
             </div>
           </div>
-          
+
           {/* Main Content */}
           <div className="lg:w-3/4">
             {/* Results Header */}
@@ -187,11 +249,11 @@ export function BusinessProfileCardsSection() {
                 </div>
               </div>
             </div>
-            
+
             {/* Business Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {businesses.map((business) => (
-                <div 
+                <div
                   key={business.id}
                   className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group hover:-translate-y-1"
                 >
@@ -223,7 +285,7 @@ export function BusinessProfileCardsSection() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="text-right">
                         <div className="flex items-center justify-end mb-1">
                           <Star className="w-4 h-4 text-[#C9A74B] fill-current mr-1" />
@@ -235,11 +297,11 @@ export function BusinessProfileCardsSection() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                       {business.description}
                     </p>
-                    
+
                     <div className="flex flex-wrap gap-2 mb-4">
                       {business.tags.slice(0, 3).map((tag, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
@@ -247,12 +309,12 @@ export function BusinessProfileCardsSection() {
                         </Badge>
                       ))}
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-gray-500 text-sm">
                         Founded {business.founded}
                       </span>
-                      <Button 
+                      <Button
                         size="sm"
                         className="bg-[#005A8C] text-white hover:bg-[#004a73] group-hover:bg-[#C9A74B] group-hover:hover:bg-[#b8964a] transition-all"
                       >
@@ -264,7 +326,7 @@ export function BusinessProfileCardsSection() {
                 </div>
               ))}
             </div>
-            
+
             {/* Pagination */}
             <div className="flex justify-center items-center space-x-4 mt-12">
               <Button variant="outline" disabled>Previous</Button>

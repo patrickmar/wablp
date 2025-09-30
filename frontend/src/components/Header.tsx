@@ -18,7 +18,7 @@ export function Header() {
       hasDropdown: true,
       dropdownItems: [
         { label: "Join as a Business", href: "/join" },
-        { label: "Opportunities & Tenders", href: "/opportunity" },
+        { label: "Deals, Opportunities & Tenders", href: "/opportunity" },
         { label: "Community Directory", href: "/community" },
       ],
     },
