@@ -5,11 +5,11 @@ export function FeaturesHeroSection() {
     <section className="relative bg-gradient-to-br from-[#003366] via-[#004080] to-[#003366] text-white overflow-hidden">
       <div className="absolute inset-0">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+          src="/features.jpg"
           alt="Business networking illustration"
           className="w-full h-full object-cover opacity-20"
         />
-        <div className="absolute inset-0 bg-[#003366] bg-opacity-80"></div>
+        <div className="absolute inset-0 bg-opacity-80"></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
