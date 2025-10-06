@@ -6,6 +6,7 @@ import { Badge } from "./ui/badge";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { MapPin, Users, Star, ExternalLink, Filter, Grid, List } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import Link from "next/link";
 
 const countries = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Argentina", "Armenia", "Australia",
@@ -318,7 +319,8 @@ export function BusinessProfileCardsSection() {
                         size="sm"
                         className="bg-[#005A8C] text-white hover:bg-[#004a73] group-hover:bg-[#C9A74B] group-hover:hover:bg-[#b8964a] transition-all"
                       >
-                        View Profile
+                        <Link href="/sign-up">View Profile</Link>
+                        {/* View Profile */}
                         <ExternalLink className="w-4 h-4 ml-1" />
                       </Button>
                     </div>

@@ -76,7 +76,8 @@ export function TeamMembersSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl text-[#003366] mb-4">
-            Regional Sector Champions Spotlight
+            {/* Regional Sector Champions Spotlight */}
+            Country Spotlight and Sector Champions Success Stories
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Passionate professionals dedicated to connecting and empowering West African businesses

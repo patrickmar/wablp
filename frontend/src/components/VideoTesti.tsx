@@ -5,9 +5,10 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const youtubeVideos = [
-  { id: "1vADuHybr10", title: "Ngone Diop explains the importance of demographic dynamics in West Africa" },
-  { id: "ULTg6WI6OvE", title: "CoM 2025 - Interview with Ngone Diop, Director of the sub-regional office for West Africa" },
-  { id: "Y4LmgesLy0A", title: "Africa's Future unveiled: Ngone Diop’s Vision and the UN’s role in transforming it" },
+  // { id: "1vADuHybr10", title: "Madam Ngone Diop explains the importance of demographic dynamics in West Africa" },
+  { id: "1vADuHybr10", title: "From the Office of The Director Sub Regional Office - West Africa" },
+  { id: "ULTg6WI6OvE", title: "CoM 2025 - Interview with Madam Ngone Diop, Director - United Nations Economic Commission for Africa (ECA),  Sub-Regional Office for West Africa." },
+  { id: "Y4LmgesLy0A", title: "Africa's Future unveiled: Madam Ngone Diop’s Vision and the UN’s role in transforming it" },
 ];
 
 export function VideoTesti() {

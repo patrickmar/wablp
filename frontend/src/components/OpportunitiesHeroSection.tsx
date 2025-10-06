@@ -2,17 +2,18 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Search, Filter, Plus } from "lucide-react";
+import Link from "next/link";
 
 export function OpportunitiesHeroSection() {
   return (
     <section className="relative bg-gradient-to-br from-[#005A8C] via-[#0066a3] to-[#005A8C] text-white overflow-hidden">
       <div className="absolute inset-0">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+          src="/opportunity01.jpg"
           alt="Procurement meeting"
           className="w-full h-full object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-[#005A8C] bg-opacity-70"></div>
+        <div className="absolute inset-0 bg-opacity-70"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
@@ -78,10 +79,9 @@ export function OpportunitiesHeroSection() {
           <Button 
             size="lg"
             variant="outline"
-            className="border-2 border-[#C9A74B] text-[#C9A74B] hover:bg-[#C9A74B] hover:text-white px-8 py-4 rounded-lg"
+            className="border-2 border-[#C9A74B] bg-[#C9A74B] hover:bg-[#C9A74B] hover:text-white px-8 py-4 rounded-lg"
           >
-            <Plus className="w-5 h-5 mr-2" />
-            Post an Opportunity
+            <Link href="/sign-up">Post an Opportunity</Link>
           </Button>
         </div>
       </div>

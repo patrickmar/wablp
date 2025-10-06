@@ -77,7 +77,7 @@ export function JoinBusinessHeroSection() {
           <div className="relative">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                src="/join01.jpg"
                 alt="Business growth visualization"
                 className="w-full h-64 object-cover rounded-lg"
               />

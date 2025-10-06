@@ -10,7 +10,7 @@ export function ContactHeroSection() {
           alt="Lagos skyline"
           className="w-full h-full object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-[#005A8C] bg-opacity-70"></div>
+        <div className="absolute inset-0 bg-opacity-70"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">

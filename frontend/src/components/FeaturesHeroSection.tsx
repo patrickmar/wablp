@@ -36,7 +36,7 @@ export function FeaturesHeroSection() {
           <div className="relative">
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
               <ImageWithFallback
-                src="/features.jpg"
+                src="/features01.jpg"
                 alt="Business networking visualization"
                 className="w-full h-64 object-cover rounded-lg"
               />

@@ -69,7 +69,7 @@ export function VideoShowcaseSection() {
   const prevTestimonial = () => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-5 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
@@ -85,6 +85,19 @@ export function VideoShowcaseSection() {
             <Play className="w-4 h-4 mr-2" />
             Video Showcase
           </Badge>
+        </div>
+
+        <div className="text-center mb-16">
+          {/* <div className="inline-flex items-center bg-[#C9A74B] bg-opacity-10 rounded-full px-6 py-2 mb-4">
+            <Users className="w-5 h-5 text-[#C9A74B] mr-2" />
+            <span className="text-white font-medium">Community Spotlight</span>
+          </div> */}
+          <h2 className="text-3xl md:text-3xl text-[#005A8C] mb-4">
+            Hear from the region’s Sector Champions and their success stories
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Discover how businesses across West Africa are thriving through WABLP connections
+          </p>
         </div>
 
         {/* Main Video Player */}

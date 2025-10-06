@@ -9,11 +9,11 @@ export function CommunityDirectoryHeroSection() {
     <section className="relative bg-gradient-to-br from-[#005A8C] via-[#0066a3] to-[#005A8C] text-white overflow-hidden">
       <div className="absolute inset-0">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+          src="/connect.jpg"
           alt="Collage of diverse business owners"
           className="w-full h-full object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-[#005A8C] bg-opacity-70"></div>
+        <div className="absolute inset-0 bg-opacity-70"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
@@ -32,31 +32,14 @@ export function CommunityDirectoryHeroSection() {
           </p>
           
           {/* Search Bar */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <Input 
-                    placeholder="Search companies, industries, or locations..."
-                    className="pl-12 pr-4 py-3 bg-white border-0 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-[#C9A74B] text-lg"
-                  />
-                </div>
-                {/* <Button 
-                  variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-[#005A8C] px-6 py-3 rounded-lg"
-                >
-                  <Filter className="w-5 h-5 mr-2" />
-                  Advanced Filters
-                </Button> */}
-                <Button 
+          <div>
+            <div className="inline-flex items-center bg-[#C9A74B] bg-opacity-10 rounded-full px-6 py-2 mb-4">
+            <Button 
                   className="bg-[#C9A74B] text-white hover:bg-[#b8964a] px-6 py-3 rounded-lg"
                 >
-                  <Search className="w-5 h-5 mr-2" />
                   <Link href="/sign-up">Search Directory</Link>
                 </Button>
-              </div>
-            </div>
+          </div>
           </div>
           
           {/* Quick Stats */}

@@ -8,11 +8,11 @@ export function ResourcesHeroSection() {
     <section className="relative bg-gradient-to-br from-[#005A8C] via-[#0066a3] to-[#005A8C] text-white overflow-hidden">
       <div className="absolute inset-0">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+          src="/resource.jpg"
           alt="Business team working"
           className="w-full h-full object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-[#005A8C] bg-opacity-70"></div>
+        <div className="absolute inset-0 bg-opacity-70"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
