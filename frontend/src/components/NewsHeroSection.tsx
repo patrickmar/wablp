@@ -17,7 +17,7 @@ export function NewsHeroSection() {
           <h1 className="text-4xl md:text-6xl lg:text-7xl mb-6 text-white leading-tight">
             WABLP News
           </h1>
-          <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-white max-w-3xl mx-auto">
             Bringing you the best News from the West African Business Community and beyond
           </p>
         </div>

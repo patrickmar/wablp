@@ -1,6 +1,6 @@
 export function Difference() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-10 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-16 bg-[#003366] rounded-2xl p-8 lg:p-12 text-white text-center">
           <h3 className="text-3xl mb-6">Making a Difference</h3>

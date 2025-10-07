@@ -5,14 +5,14 @@ import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "luc
 const footerLinks = {
   company: [
     { label: "About Us", href: "/about" },
-    { label: "Our Team", href: "#" },
+    { label: "Success Stories", href: "#" },
     // { label: "Careers", href: "#" },
     // { label: "Press", href: "#" },
     { label: "Contact", href: "/contact" }
   ],
   services: [
     { label: "Join as Business", href: "/join" },
-    { label: "Opportunities ", href: "/opportunity" },
+    { label: "Deals, Opportunities & Tenders ", href: "/opportunity" },
     // { label: "Directory", href: "#" },
     // { label: "Resources", href: "#" },
     // { label: "Pricing", href: "#" }

@@ -223,7 +223,7 @@ export function BusinessProfileCardsSection() {
           {/* Main Content */}
           <div className="lg:w-3/4">
             {/* Results Header */}
-            <div className="flex justify-between items-center mb-6">
+            {/* <div className="flex justify-between items-center mb-6">
               <div>
                 <h2 className="text-2xl text-[#005A8C]">560 Businesses Found</h2>
                 <p className="text-gray-600">Showing verified business profiles</p>
@@ -249,7 +249,7 @@ export function BusinessProfileCardsSection() {
                   </Button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Business Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -330,7 +330,7 @@ export function BusinessProfileCardsSection() {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-center items-center space-x-4 mt-12">
+            {/* <div className="flex justify-center items-center space-x-4 mt-12">
               <Button variant="outline" disabled>Previous</Button>
               <div className="flex space-x-2">
                 <Button className="bg-[#005A8C] text-white">1</Button>
@@ -340,7 +340,7 @@ export function BusinessProfileCardsSection() {
                 <Button variant="outline">47</Button>
               </div>
               <Button variant="outline">Next</Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
