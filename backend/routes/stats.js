@@ -1,33 +1,52 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db"); // ✅ pooled MySQL connection
+const db = require("../config/db"); // ✅ Your MySQL connection (pooled)
 
 // ✅ GET /api/stats
 router.get("/stats", async (req, res) => {
   try {
+    // ✅ Match the PHP queries exactly
     const queries = {
-      businesses: "SELECT COUNT(*) AS count FROM business_categories",
-      experts: "SELECT COUNT(*) AS count FROM experts_categories",
-      organizations: "SELECT COUNT(*) AS count FROM organizations_categories",
-      resources: "SELECT COUNT(*) AS count FROM resource_categories",
+      businesses: "SELECT COUNT(*) AS count FROM customers WHERE joined_as = 'BUSINESS'",
+      experts: "SELECT COUNT(*) AS count FROM customers WHERE joined_as = 'EXPERT'",
+      organizations: "SELECT COUNT(*) AS count FROM customers WHERE joined_as = 'ORGANIZATION'",
+      resources: "SELECT COUNT(*) AS count FROM resource_center"
     };
 
     const stats = {};
 
-    // ✅ Run queries sequentially (one by one)
+    // ✅ Execute queries sequentially
     for (const [key, sql] of Object.entries(queries)) {
       const [rows] = await db.query(sql);
-      stats[key] = rows[0].count;
+      stats[key] = rows[0].count || 0;
     }
 
-    res.json(stats);
+    // ✅ Send JSON response
+    res.json({
+      success: true,
+      data: stats,
+    });
   } catch (err) {
     console.error("❌ Error fetching stats:", err);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({
+      success: false,
+      message: "Database error",
+    });
   }
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -54,72 +73,18 @@ module.exports = router;
 //       resources: "SELECT COUNT(*) AS count FROM resource_categories",
 //     };
 
-//     // Run all queries in parallel
-//     const results = await Promise.all(
-//       Object.entries(queries).map(async ([key, sql]) => {
-//         const [rows] = await db.query(sql);
-//         return { key, count: rows[0].count };
-//       })
-//     );
+//     const stats = {};
 
-//     // Convert array back to object
-//     const stats = results.reduce((acc, item) => {
-//       acc[item.key] = item.count;
-//       return acc;
-//     }, {});
+//     // ✅ Run queries sequentially (one by one)
+//     for (const [key, sql] of Object.entries(queries)) {
+//       const [rows] = await db.query(sql);
+//       stats[key] = rows[0].count;
+//     }
 
 //     res.json(stats);
 //   } catch (err) {
 //     console.error("❌ Error fetching stats:", err);
 //     res.status(500).json({ error: "Database error" });
-//   }
-// });
-
-// module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require("express");
-// const router = express.Router();
-// const db = require("../config/db"); // make sure this is your DB connection
-
-// // ✅ GET /api/stats
-// router.get("/stats", (req, res) => {
-//   const queries = {
-//     businesses: "SELECT COUNT(*) AS count FROM business_categories",
-//     experts: "SELECT COUNT(*) AS count FROM experts_categories",
-//     organizations: "SELECT COUNT(*) AS count FROM organizations_categories",
-//     resources: "SELECT COUNT(*) AS count FROM resource_categories",
-//   };
-
-//   const results = {};
-//   let completed = 0;
-//   const total = Object.keys(queries).length;
-
-//   for (let key in queries) {
-//     db.query(queries[key], (err, rows) => {
-//       if (err) {
-//         console.error(`Error fetching ${key}:`, err);
-//         return res.status(500).json({ error: err.message });
-//       }
-
-//       results[key] = rows[0].count;
-//       completed++;
-
-//       // ✅ send once all queries are done
-//       if (completed === total) {
-//         return res.json(results);
-//       }
-//     });
 //   }
 // });
 
