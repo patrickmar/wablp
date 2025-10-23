@@ -62,7 +62,7 @@ app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 // ✅ API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/routes/stats", statsRoutes);
+app.use("/routes", statsRoutes);
 app.use("/routes/news", newsRoutes);
 app.use("/routes/newsfull", newsfullRoutes);
 app.use("/routes/customers", customersRoutes);
