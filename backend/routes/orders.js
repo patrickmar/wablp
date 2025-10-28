@@ -1,44 +1,307 @@
+// const express = require("express");
+// const router = express.Router();
+// const db = require("../config/db");
+
+// //
+// // ✅ Place an order
+// //
+// router.post("/", async (req, res) => {
+//   const { product_id, quantity, shipping_details, description, client_id, price, currency } = req.body;
+
+//   if (!product_id || !quantity || !client_id) {
+//     return res.status(400).json({ error: "Missing required fields" });
+//   }
+
+//   try {
+//     const [productResult] = await db.query(
+//       "SELECT owner, price, currency FROM products WHERE products_id = ?",
+//       [product_id]
+//     );
+
+//     if (productResult.length === 0) {
+//       return res.status(404).json({ error: "Product not found" });
+//     }
+
+//     const product = productResult[0];
+//     const seller = product.owner;
+//     const unitPrice = price || product.price || 0;
+//     const orderCurrency = currency || product.currency || "USD";
+//     const total = unitPrice * quantity;
+
+//     await db.query(
+//       `INSERT INTO product_orders 
+//        (product, seller, client, quantity, shipping_details, description, price, currency, total, status, dateentered)
+//        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NOW())`,
+//       [product_id, seller, client_id, quantity, shipping_details || "", description || "", unitPrice, orderCurrency, total]
+//     );
+
+//     res.json({ success: true, message: "Order placed successfully!" });
+//   } catch (err) {
+//     console.error("❌ Error placing order:", err);
+//     res.status(500).json({ error: "Database error" });
+//   }
+// });
+
+// //
+// // ✅ Fetch orders for a client
+// //
+// router.get("/:clientId", async (req, res) => {
+//   const { clientId } = req.params;
+//   try {
+//     const [results] = await db.query(
+//       `SELECT 
+//         o.product_orders_id, o.quantity, o.status, o.price, o.currency, o.total, o.product,
+//         p.name AS product_name,
+//         c.name AS seller_name
+//       FROM product_orders o
+//       LEFT JOIN products p ON o.product = p.products_id
+//       LEFT JOIN customers c ON o.seller = c.customers_id
+//       WHERE o.client = ?
+//       ORDER BY o.dateentered DESC`,
+//       [clientId]
+//     );
+//     res.json(results);
+//   } catch (err) {
+//     console.error("❌ Error fetching client orders:", err);
+//     res.status(500).json({ error: "Database error" });
+//   }
+// });
+
+// //
+// // ✅ Fetch orders for a seller
+// //
+// router.get("/seller/:sellerId", async (req, res) => {
+//   const { sellerId } = req.params;
+//   try {
+//     const [results] = await db.query(
+//       `SELECT 
+//         o.product_orders_id, o.quantity, o.status, o.price, o.currency, o.total, 
+//         o.product, o.client,
+//         p.name AS product_name,
+//         c.name AS client_name
+//       FROM product_orders o
+//       LEFT JOIN products p ON o.product = p.products_id
+//       LEFT JOIN customers c ON o.client = c.customers_id
+//       WHERE o.seller = ?
+//       ORDER BY o.dateentered DESC`,
+//       [sellerId]
+//     );
+//     res.json(results);
+//   } catch (err) {
+//     console.error("❌ Error fetching seller orders:", err);
+//     res.status(500).json({ error: "Database error" });
+//   }
+// });
+
+// //
+// // ✅ Update order status
+// //
+// router.put("/:id/status", async (req, res) => {
+//   const { id } = req.params;
+//   const { status } = req.body;
+
+//   if (!["NEW", "CLOSED", "ARCHIVED"].includes(status)) {
+//     return res.status(400).json({ error: "Invalid status" });
+//   }
+
+//   try {
+//     await db.query(
+//       "UPDATE product_orders SET status = ?, lastupdate = NOW() WHERE product_orders_id = ?",
+//       [status, id]
+//     );
+//     res.json({ success: true, message: "Order status updated" });
+//   } catch (err) {
+//     console.error("❌ Error updating order status:", err);
+//     res.status(500).json({ error: "Database error" });
+//   }
+// });
+
+// //
+// // ✅ Delete order
+// //
+// router.delete("/:id", async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     await db.query("DELETE FROM product_orders WHERE product_orders_id = ?", [id]);
+//     res.json({ success: true, message: "Order deleted successfully" });
+//   } catch (err) {
+//     console.error("❌ Error deleting order:", err);
+//     res.status(500).json({ error: "Database error" });
+//   }
+// });
+
+// module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
+const nodemailer = require("nodemailer"); // ✅ new email setup
 
 //
 // ✅ Place an order
 //
 router.post("/", async (req, res) => {
-  const { product_id, quantity, shipping_details, description, client_id, price, currency } = req.body;
+  const {
+    product_id,
+    quantity,
+    shipping_details,
+    description,
+    client_id,
+    price,
+    currency,
+    contact_email, // ✅ seller email directly from frontend
+  } = req.body;
+
+  console.log("📦 New order request received:", req.body);
 
   if (!product_id || !quantity || !client_id) {
+    console.warn("⚠️ Missing required fields in order request.");
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
+    // ✅ Fetch product info only (no seller lookup)
+    console.log("🔍 Fetching product info for product_id:", product_id);
     const [productResult] = await db.query(
-      "SELECT owner, price, currency FROM products WHERE products_id = ?",
+      "SELECT name AS product_name, price, currency FROM products WHERE products_id = ?",
       [product_id]
     );
 
     if (productResult.length === 0) {
+      console.error("❌ Product not found for ID:", product_id);
       return res.status(404).json({ error: "Product not found" });
     }
 
     const product = productResult[0];
-    const seller = product.owner;
+    console.log("✅ Product found:", product);
+
     const unitPrice = price || product.price || 0;
     const orderCurrency = currency || product.currency || "USD";
     const total = unitPrice * quantity;
 
+    console.log("💰 Calculated order total:", total, orderCurrency);
+
+    // ✅ Insert the order
+    console.log("📝 Inserting order into database...");
     await db.query(
       `INSERT INTO product_orders 
-       (product, seller, client, quantity, shipping_details, description, price, currency, total, status, dateentered)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NOW())`,
-      [product_id, seller, client_id, quantity, shipping_details || "", description || "", unitPrice, orderCurrency, total]
+       (product, client, quantity, shipping_details, description, price, currency, total, status, dateentered)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NOW())`,
+      [product_id, client_id, quantity, shipping_details || "", description || "", unitPrice, orderCurrency, total]
+    );
+    console.log("✅ Order successfully inserted into database");
+
+    // ✅ Fetch buyer info
+    console.log("🔍 Fetching buyer info...");
+    const [[buyerInfo]] = await db.query(
+      "SELECT name, email FROM customers WHERE customers_id = ?",
+      [client_id]
     );
 
-    res.json({ success: true, message: "Order placed successfully!" });
+    console.log("👤 Buyer info:", buyerInfo);
+
+    // ✅ Setup email
+    const mailTo = contact_email || process.env.ADMIN_EMAIL;
+    if (!mailTo) {
+      console.warn("⚠️ No seller email found, skipping email notification.");
+    } else {
+      console.log("📨 Setting up email transporter...");
+
+      const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      try {
+        await transporter.verify();
+        console.log("✅ SMTP connection verified successfully");
+      } catch (verifyErr) {
+        console.error("❌ SMTP connection verification failed:", verifyErr);
+      }
+
+      // ✅ Refined, professional email content
+      const mailOptions = {
+        from: `"${buyerInfo?.name || "Customer"}" <${process.env.EMAIL_USER}>`,
+        to: mailTo,
+        subject: `🛒 New Order from ${buyerInfo?.name || "a customer"}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border:1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <div style="background-color:#004aad; color:white; padding:20px; text-align:center;">
+              <h1 style="margin:0; font-size:24px;">New Order Notification</h1>
+            </div>
+            <div style="padding:20px; color:#333;">
+              <p>Hello,</p>
+              <p>You have received a new order from <strong>${buyerInfo?.name || "a customer"}</strong>.</p>
+
+              <table style="width:100%; border-collapse: collapse; margin-top:15px;">
+                <tr>
+                  <td style="padding:8px; border:1px solid #ddd;"><strong>Product</strong></td>
+                  <td style="padding:8px; border:1px solid #ddd;">${product.product_name}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px; border:1px solid #ddd;"><strong>Quantity</strong></td>
+                  <td style="padding:8px; border:1px solid #ddd;">${quantity}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px; border:1px solid #ddd;"><strong>Total</strong></td>
+                  <td style="padding:8px; border:1px solid #ddd;">${total} ${orderCurrency}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px; border:1px solid #ddd;"><strong>Description</strong></td>
+                  <td style="padding:8px; border:1px solid #ddd;">${description || "N/A"}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px; border:1px solid #ddd;"><strong>Shipping Details</strong></td>
+                  <td style="padding:8px; border:1px solid #ddd;">${shipping_details || "N/A"}</td>
+                </tr>
+              </table>
+
+              <p style="margin-top:20px;">Please log in to your dashboard to process this order.</p>
+
+              <p style="margin-top:30px; font-size:14px; color:#777;">Best regards,<br/>Your Store Team</p>
+            </div>
+            <div style="background-color:#f2f2f2; padding:10px; text-align:center; font-size:12px; color:#555;">
+              &copy; ${new Date().getFullYear()} Your Store. All rights reserved.
+            </div>
+          </div>
+        `,
+      };
+
+      try {
+        console.log("📤 Sending email to:", mailTo);
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Email notification sent successfully to ${mailTo}`);
+      } catch (mailErr) {
+        console.error("❌ Error sending email notification:", mailErr);
+      }
+    }
+
+    res.json({ success: true, message: "Order placed successfully and seller notified!" });
   } catch (err) {
     console.error("❌ Error placing order:", err);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({ error: "Database or server error" });
   }
 });
 
@@ -47,19 +310,19 @@ router.post("/", async (req, res) => {
 //
 router.get("/:clientId", async (req, res) => {
   const { clientId } = req.params;
+  console.log("📦 Fetching orders for client:", clientId);
   try {
     const [results] = await db.query(
       `SELECT 
         o.product_orders_id, o.quantity, o.status, o.price, o.currency, o.total, o.product,
-        p.name AS product_name,
-        c.name AS seller_name
+        p.name AS product_name
       FROM product_orders o
       LEFT JOIN products p ON o.product = p.products_id
-      LEFT JOIN customers c ON o.seller = c.customers_id
       WHERE o.client = ?
       ORDER BY o.dateentered DESC`,
       [clientId]
     );
+    console.log(`✅ Found ${results.length} orders for client ${clientId}`);
     res.json(results);
   } catch (err) {
     console.error("❌ Error fetching client orders:", err);
@@ -68,10 +331,11 @@ router.get("/:clientId", async (req, res) => {
 });
 
 //
-// ✅ Fetch orders for a seller
+// ✅ Fetch orders for a seller (kept for backward compatibility)
 //
 router.get("/seller/:sellerId", async (req, res) => {
   const { sellerId } = req.params;
+  console.log("📦 Fetching orders for seller:", sellerId);
   try {
     const [results] = await db.query(
       `SELECT 
@@ -86,6 +350,7 @@ router.get("/seller/:sellerId", async (req, res) => {
       ORDER BY o.dateentered DESC`,
       [sellerId]
     );
+    console.log(`✅ Found ${results.length} orders for seller ${sellerId}`);
     res.json(results);
   } catch (err) {
     console.error("❌ Error fetching seller orders:", err);
@@ -100,7 +365,10 @@ router.put("/:id/status", async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
+  console.log(`🔄 Updating order ${id} to status:`, status);
+
   if (!["NEW", "CLOSED", "ARCHIVED"].includes(status)) {
+    console.warn("⚠️ Invalid status received:", status);
     return res.status(400).json({ error: "Invalid status" });
   }
 
@@ -109,6 +377,7 @@ router.put("/:id/status", async (req, res) => {
       "UPDATE product_orders SET status = ?, lastupdate = NOW() WHERE product_orders_id = ?",
       [status, id]
     );
+    console.log("✅ Order status updated successfully");
     res.json({ success: true, message: "Order status updated" });
   } catch (err) {
     console.error("❌ Error updating order status:", err);
@@ -121,8 +390,10 @@ router.put("/:id/status", async (req, res) => {
 //
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
+  console.log("🗑️ Deleting order with ID:", id);
   try {
     await db.query("DELETE FROM product_orders WHERE product_orders_id = ?", [id]);
+    console.log("✅ Order deleted successfully");
     res.json({ success: true, message: "Order deleted successfully" });
   } catch (err) {
     console.error("❌ Error deleting order:", err);
@@ -135,373 +406,3 @@ module.exports = router;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require("express");
-// const router = express.Router();
-// const db = require("../config/db");
-
-// //
-// // ✅ Place an order (auto-fetch seller from products table)
-// //
-// router.post("/", (req, res) => {
-//   const { product_id, quantity, shipping_details, description, client_id, price, currency } = req.body;
-
-//   if (!product_id || !quantity || !client_id) {
-//     return res.status(400).json({ error: "Missing required fields" });
-//   }
-
-//   db.getConnection((connErr, connection) => {
-//     if (connErr) {
-//       console.error("❌ DB connection error:", connErr);
-//       return res.status(500).json({ error: "Database connection failed" });
-//     }
-
-//     const sellerSql = "SELECT owner, price, currency FROM products WHERE products_id = ?";
-//     connection.query(sellerSql, [product_id], (err, productResult) => {
-//       if (err) {
-//         connection.release();
-//         console.error("❌ Error fetching product seller:", err);
-//         return res.status(500).json({ error: "Database error" });
-//       }
-
-//       if (productResult.length === 0) {
-//         connection.release();
-//         return res.status(404).json({ error: "Product not found" });
-//       }
-
-//       const product = productResult[0];
-//       const seller = product.owner;
-//       const unitPrice = price || product.price || 0;
-//       const orderCurrency = currency || product.currency || "USD";
-//       const total = unitPrice * quantity;
-
-//       const insertSql = `
-//         INSERT INTO product_orders 
-//         (product, seller, client, quantity, shipping_details, description, price, currency, total, status, dateentered)
-//         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NOW())
-//       `;
-
-//       connection.query(
-//         insertSql,
-//         [product_id, seller, client_id, quantity, shipping_details || "", description || "", unitPrice, orderCurrency, total],
-//         (insertErr) => {
-//           connection.release();
-//           if (insertErr) {
-//             console.error("❌ Error inserting order:", insertErr);
-//             return res.status(500).json({ error: "Database error" });
-//           }
-//           res.json({ success: true, message: "Order placed successfully!" });
-//         }
-//       );
-//     });
-//   });
-// });
-
-// //
-// // ✅ Fetch orders for a client (My Orders)
-// //
-// router.get("/:clientId", (req, res) => {
-//   const { clientId } = req.params;
-
-//   db.getConnection((connErr, connection) => {
-//     if (connErr) {
-//       console.error("❌ DB connection error:", connErr);
-//       return res.status(500).json({ error: "Database connection failed" });
-//     }
-
-//     const sql = `
-//       SELECT 
-//         o.product_orders_id, o.quantity, o.status, o.price, o.currency, o.total, o.product,
-//         p.name AS product_name,
-//         c.name AS seller_name
-//       FROM product_orders o
-//       LEFT JOIN products p ON o.product = p.products_id
-//       LEFT JOIN customers c ON o.seller = c.customers_id
-//       WHERE o.client = ?
-//       ORDER BY o.dateentered DESC
-//     `;
-
-//     connection.query(sql, [clientId], (err, results) => {
-//       connection.release();
-//       if (err) {
-//         console.error("❌ Error fetching client orders:", err);
-//         return res.status(500).json({ error: "Database error" });
-//       }
-//       res.json(results);
-//     });
-//   });
-// });
-
-// //
-// // ✅ Fetch orders for a seller (Seller Orders)
-// //
-// router.get("/seller/:sellerId", (req, res) => {
-//   const { sellerId } = req.params;
-
-//   db.getConnection((connErr, connection) => {
-//     if (connErr) {
-//       console.error("❌ DB connection error:", connErr);
-//       return res.status(500).json({ error: "Database connection failed" });
-//     }
-
-//     const sql = `
-//       SELECT 
-//         o.product_orders_id, o.quantity, o.status, o.price, o.currency, o.total, 
-//         o.product, o.client,
-//         p.name AS product_name,
-//         c.name AS client_name
-//       FROM product_orders o
-//       LEFT JOIN products p ON o.product = p.products_id
-//       LEFT JOIN customers c ON o.client = c.customers_id
-//       WHERE o.seller = ?
-//       ORDER BY o.dateentered DESC
-//     `;
-
-//     connection.query(sql, [sellerId], (err, results) => {
-//       connection.release();
-//       if (err) {
-//         console.error("❌ Error fetching seller orders:", err);
-//         return res.status(500).json({ error: "Database error" });
-//       }
-//       res.json(results);
-//     });
-//   });
-// });
-
-// //
-// // ✅ Update order status (CLOSE / ARCHIVE)
-// //
-// router.put("/:id/status", (req, res) => {
-//   const { id } = req.params;
-//   const { status } = req.body;
-
-//   if (!["NEW", "CLOSED", "ARCHIVED"].includes(status)) {
-//     return res.status(400).json({ error: "Invalid status" });
-//   }
-
-//   db.getConnection((connErr, connection) => {
-//     if (connErr) {
-//       console.error("❌ DB connection error:", connErr);
-//       return res.status(500).json({ error: "Database connection failed" });
-//     }
-
-//     const sql = "UPDATE product_orders SET status = ?, lastupdate = NOW() WHERE product_orders_id = ?";
-//     connection.query(sql, [status, id], (err) => {
-//       connection.release();
-//       if (err) {
-//         console.error("❌ Error updating order status:", err);
-//         return res.status(500).json({ error: "Database error" });
-//       }
-//       res.json({ success: true, message: "Order status updated" });
-//     });
-//   });
-// });
-
-// //
-// // ✅ Delete order
-// //
-// router.delete("/:id", (req, res) => {
-//   const { id } = req.params;
-
-//   db.getConnection((connErr, connection) => {
-//     if (connErr) {
-//       console.error("❌ DB connection error:", connErr);
-//       return res.status(500).json({ error: "Database connection failed" });
-//     }
-
-//     const sql = "DELETE FROM product_orders WHERE product_orders_id = ?";
-//     connection.query(sql, [id], (err) => {
-//       connection.release();
-//       if (err) {
-//         console.error("❌ Error deleting order:", err);
-//         return res.status(500).json({ error: "Database error" });
-//       }
-//       res.json({ success: true, message: "Order deleted successfully" });
-//     });
-//   });
-// });
-
-// module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require("express");
-// const router = express.Router();
-// const db = require("../config/db");
-
-// //
-// // ✅ Place an order (auto-fetch seller from products table)
-// //
-// router.post("/", (req, res) => {
-//   const { product_id, quantity, shipping_details, description, client_id, price, currency } = req.body;
-
-//   if (!product_id || !quantity || !client_id) {
-//     return res.status(400).json({ error: "Missing required fields" });
-//   }
-
-//   // Step 1: Fetch product to get seller, default price/currency
-//   const sellerSql = "SELECT owner, price, currency FROM products WHERE products_id = ?";
-//   db.query(sellerSql, [product_id], (err, productResult) => {
-//     if (err) {
-//       console.error("❌ Error fetching product seller:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-
-//     if (productResult.length === 0) {
-//       return res.status(404).json({ error: "Product not found" });
-//     }
-
-//     const product = productResult[0];
-//     const seller = product.owner; // assumes column is "owner"
-//     const unitPrice = price || product.price || 0;
-//     const orderCurrency = currency || product.currency || "USD";
-//     const total = unitPrice * quantity;
-
-//     // Step 2: Insert into product_orders
-//     const insertSql = `
-//       INSERT INTO product_orders 
-//       (product, seller, client, quantity, shipping_details, description, price, currency, total, status, dateentered)
-//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NOW())
-//     `;
-
-//     db.query(
-//       insertSql,
-//       [product_id, seller, client_id, quantity, shipping_details || "", description || "", unitPrice, orderCurrency, total],
-//       (insertErr) => {
-//         if (insertErr) {
-//           console.error("❌ Error inserting order:", insertErr);
-//           return res.status(500).json({ error: "Database error" });
-//         }
-//         res.json({ success: true, message: "Order placed successfully!" });
-//       }
-//     );
-//   });
-// });
-
-// //
-// // ✅ Fetch orders for a client (My Orders)
-// //
-// router.get("/:clientId", (req, res) => {
-//   const { clientId } = req.params;
-
-//   const sql = `
-//     SELECT 
-//       o.product_orders_id, o.quantity, o.status, o.price, o.currency, o.total, o.product,
-//       p.name AS product_name,
-//       c.name AS seller_name
-//     FROM product_orders o
-//     LEFT JOIN products p ON o.product = p.products_id
-//     LEFT JOIN customers c ON o.seller = c.customers_id
-//     WHERE o.client = ?
-//     ORDER BY o.dateentered DESC
-//   `;
-
-//   db.query(sql, [clientId], (err, results) => {
-//     if (err) {
-//       console.error("❌ Error fetching client orders:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-//     res.json(results);
-//   });
-// });
-
-// //
-// // ✅ Fetch orders for a seller (Seller Orders)
-// //
-// router.get("/seller/:sellerId", (req, res) => {
-//   const { sellerId } = req.params;
-
-//   const sql = `
-//     SELECT 
-//       o.product_orders_id, o.quantity, o.status, o.price, o.currency, o.total, 
-//       o.product, o.client,
-//       p.name AS product_name,
-//       c.name AS client_name
-//     FROM product_orders o
-//     LEFT JOIN products p ON o.product = p.products_id
-//     LEFT JOIN customers c ON o.client = c.customers_id
-//     WHERE o.seller = ?
-//     ORDER BY o.dateentered DESC
-//   `;
-
-//   db.query(sql, [sellerId], (err, results) => {
-//     if (err) {
-//       console.error("❌ Error fetching seller orders:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-//     res.json(results);
-//   });
-// });
-
-// //
-// // ✅ Update order status (CLOSE / ARCHIVE)
-// //
-// router.put("/:id/status", (req, res) => {
-//   const { id } = req.params;
-//   const { status } = req.body;
-
-//   if (!["NEW", "CLOSED", "ARCHIVED"].includes(status)) {
-//     return res.status(400).json({ error: "Invalid status" });
-//   }
-
-//   const sql = "UPDATE product_orders SET status = ?, lastupdate = NOW() WHERE product_orders_id = ?";
-//   db.query(sql, [status, id], (err) => {
-//     if (err) {
-//       console.error("❌ Error updating order status:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-//     res.json({ success: true, message: "Order status updated" });
-//   });
-// });
-
-// //
-// // ✅ Delete order
-// //
-// router.delete("/:id", (req, res) => {
-//   const { id } = req.params;
-
-//   const sql = "DELETE FROM product_orders WHERE product_orders_id = ?";
-//   db.query(sql, [id], (err) => {
-//     if (err) {
-//       console.error("❌ Error deleting order:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-//     res.json({ success: true, message: "Order deleted successfully" });
-//   });
-// });
-
-// module.exports = router;

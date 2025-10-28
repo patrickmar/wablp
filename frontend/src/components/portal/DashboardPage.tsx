@@ -233,6 +233,7 @@ const quickActions = [ /* keep your actions */];
 export function DashboardPage() {
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
   const [stats, setStats] = useState({
+    users: 0,
     businesses: 0,
     experts: 0,
     organizations: 0,
@@ -272,6 +273,7 @@ export function DashboardPage() {
   }, []);
 
   const statCards = [
+    { title: "Users", value: stats.users, icon: Eye },
     { title: "Businesses", value: stats.businesses, icon: Eye },
     { title: "Experts", value: stats.experts, icon: MessageSquare },
     { title: "Organizations", value: stats.organizations, icon: Briefcase },
@@ -310,7 +312,7 @@ export function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {loading
           ? Array(4).fill(0).map((_, idx) => (
             <Card key={idx} className="animate-pulse">

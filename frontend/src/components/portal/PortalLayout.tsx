@@ -75,7 +75,7 @@ export function PortalLayout({
           label: "Training",
           icon: GraduationCap,
           children: [
-            { key: "courses", label: "Courses", icon: BookMarked },
+            // { key: "courses", label: "Courses", icon: BookMarked },
             { key: "webinars", label: "Webinars", icon: VideoIcon },
           ],
         },
@@ -84,7 +84,7 @@ export function PortalLayout({
           label: "Deals",
           icon: Handshake,
           children: [
-            { key: "dealrooms", label: "Deal Rooms", icon: Ticket },
+            // { key: "dealrooms", label: "Deal Rooms", icon: Ticket },
             { key: "tenders", label: "Tenders", icon: FolderKanban },
             { key: "projects", label: "WABLP Projects", icon: Notebook },
           ],
@@ -95,7 +95,7 @@ export function PortalLayout({
       heading: "Directories",
       items: [
         { key: "catalogue", label: "Members Catalogue", icon: BookOpen },
-        { key: "services", label: "Services Directory", icon: Landmark },
+        // { key: "services", label: "Services Directory", icon: Landmark },
       ],
     },
     {

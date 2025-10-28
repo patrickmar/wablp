@@ -41,13 +41,23 @@ export default function ChatBox({
   const [isMinimized, setIsMinimized] = useState(false);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchMessages = async () => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/messages`, {
-        params: { sender: userId, client: peerId },
-      });
+  // ✅ Always scroll to bottom
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-      // 🔔 detect new messages
+  // ✅ Fetch messages with cancellation support
+  const fetchMessages = async (controller?: AbortController) => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/routes/messages`,
+        {
+          params: { sender: userId, client: peerId },
+          signal: controller?.signal,
+        }
+      );
+
+      // 🔔 Detect new messages
       if (messages.length && res.data.length > messages.length) {
         if (isMinimized || !open) {
           onNewMessage?.();
@@ -56,23 +66,42 @@ export default function ChatBox({
 
       setMessages(res.data);
       scrollToBottom();
-    } catch (err) {
-      console.error("❌ Error fetching messages", err);
+    } catch (err: any) {
+      if (err.name === "CanceledError") {
+        console.log("🟡 Request canceled:", err.message);
+      } else {
+        console.error("❌ Error fetching messages:", err);
+      }
     }
   };
 
-  // Auto-refresh messages
+  // ✅ Auto-refresh messages every 5s, cancel overlapping requests
   useEffect(() => {
     if (!open) return;
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 5000);
-    return () => clearInterval(interval);
+
+    const controller = new AbortController();
+    let isMounted = true;
+
+    const loadMessages = async () => {
+      if (!isMounted) return;
+      await fetchMessages(controller);
+    };
+
+    loadMessages();
+
+    const interval = setInterval(() => {
+      const newController = new AbortController();
+      fetchMessages(newController);
+    }, 5000);
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+      clearInterval(interval);
+    };
   }, [open, userId, peerId]);
 
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
+  // ✅ Send message and update UI instantly
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
@@ -81,6 +110,7 @@ export default function ChatBox({
         client: peerId,
         text: newMessage,
       });
+
       setMessages((prev) => [
         ...prev,
         {
@@ -101,7 +131,7 @@ export default function ChatBox({
   if (!open) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 bg-white shadow-xl rounded-lg flex flex-col">
+    <div className="fixed bottom-4 right-4 w-96 bg-white shadow-xl rounded-lg flex flex-col z-50">
       {/* Header */}
       <div className="flex items-center justify-between border-b p-3">
         <div className="flex items-center gap-2 cursor-pointer">
@@ -186,3 +216,4 @@ export default function ChatBox({
     </div>
   );
 }
+

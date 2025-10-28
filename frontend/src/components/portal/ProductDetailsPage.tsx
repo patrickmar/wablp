@@ -72,6 +72,7 @@ export function ProductDetailsPage({ id, onBack }: ProductDetailsPageProps) {
         client_id,
         price: product?.price,
         currency: product?.currency,
+        contact_email: product?.contact_email,
       };
 
       const res = await axios.post(
