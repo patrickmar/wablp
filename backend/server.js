@@ -104,7 +104,6 @@ const cataloguesRoutes = require("./routes/catalogues");
 const ordersRoutes = require("./routes/orders");
 const statusRoutes = require("./routes/status");
 const messageRoutes = require("./routes/messages");
-const { credentials } = require("./middleware/credentials");
 
 // ✅ Route setup
 app.use("/api/auth", authRoutes);
