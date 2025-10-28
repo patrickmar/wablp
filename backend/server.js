@@ -29,7 +29,7 @@ app.use(
 );
 
 // ✅ Handle preflight (OPTIONS) requests globally
-app.options("*", cors());
+app.options("", cors());
 
 // ✅ Apply credentials middleware AFTER CORS
 app.use(credentials);
