@@ -229,7 +229,7 @@ export default function BusinessDetailsPage({ id, onBack }: BusinessDetailsPageP
         </div>
       </Card>
 
-      {/* Catalogue Section */}
+      {/* Code Catalogue Section Code*/}
       <div className="mt-8">
         <h3 className="text-lg font-bold mb-4">Our Catalogue</h3>
         <Card className="p-6">
