@@ -18,7 +18,7 @@ app.use(credentials);
 app.use(
   cors({
     origin: [
-      "https://wablp.onrender.com",
+      "https://wablp.netlify.app",
       "http://localhost:3000",
       // "https://wablp.com"
     ],
@@ -35,8 +35,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
+      "https://wablp.netlify.app",
       "http://localhost:3000",
-      "https://wablp.onrender.com",
       "https://wablp.com"
     ],
     methods: ["GET", "POST"]
