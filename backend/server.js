@@ -4,9 +4,12 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
+const { credentials } = require("./middleware/credentials");
 require("dotenv").config();
 
 const db = require("./config/db");
+
+app.use(credentials)
 
 // ✅ Initialize Express
 const app = express();
@@ -16,13 +19,13 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: [
-      // "http://localhost:3000",
-      process.env.FRONTEND_URL,
       "https://wablp.onrender.com",
-      "https://wablp.com"
+      "http://localhost:3000",
+      // "https://wablp.com"
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -101,6 +104,7 @@ const cataloguesRoutes = require("./routes/catalogues");
 const ordersRoutes = require("./routes/orders");
 const statusRoutes = require("./routes/status");
 const messageRoutes = require("./routes/messages");
+const { credentials } = require("./middleware/credentials");
 
 // ✅ Route setup
 app.use("/api/auth", authRoutes);
