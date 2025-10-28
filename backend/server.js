@@ -9,12 +9,11 @@ require("dotenv").config();
 
 const db = require("./config/db");
 
-app.use(credentials)
 
 // ✅ Initialize Express
 const app = express();
 app.use(bodyParser.json());
-
+app.use(credentials);
 // ✅ CORS setup
 app.use(
   cors({
