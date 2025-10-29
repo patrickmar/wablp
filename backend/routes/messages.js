@@ -5,14 +5,24 @@ const nodemailer = require("nodemailer");
 
 // ✅ Setup email transporter once
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: true,
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 587,
+  service: process.env.SMTP_SERVICE,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
 });
+
+// const transporter = nodemailer.createTransport({
+//   host: process.env.SMTP_HOST,
+//   port: process.env.SMTP_PORT,
+//   secure: false,
+//   auth: {
+//     user: process.env.SMTP_EMAIL,
+//     pass: process.env.SMTP_PASSWORD,
+//   },
+// });
 
 // ✅ Get chat messages between two users
 router.get("/", async (req, res) => {
@@ -130,7 +140,7 @@ async function sendEmailNotification(toEmail, toName, senderName, messageText) {
   `;
 
   const mailOptions = {
-    from: `"${businessName}" <${process.env.EMAIL_USER}>`,
+    from: `"${businessName}" <${process.env.SMTP_FROM_EMAIL}>`,
     to: toEmail,
     subject: `💬 New message from ${senderName} on ${businessName}`,
     html: htmlTemplate,

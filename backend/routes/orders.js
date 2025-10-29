@@ -225,14 +225,23 @@ router.post("/", async (req, res) => {
       console.log("📨 Setting up email transporter...");
 
       const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        secure: true,
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT) || 587,
+        service: process.env.SMTP_SERVICE,
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
       });
+      // const transporter = nodemailer.createTransport({
+      //   host: process.env.SMTP_HOST,
+      //   port: process.env.SMTP_PORT,
+      //   secure: false,
+      //   auth: {
+      //     user: process.env.SMTP_EMAIL,
+      //     pass: process.env.SMTP_PASSWORD,
+      //   },
+      // });
 
       try {
         await transporter.verify();
@@ -243,7 +252,7 @@ router.post("/", async (req, res) => {
 
       // ✅ Refined, professional email content
       const mailOptions = {
-        from: `"${buyerInfo?.name || "Customer"}" <${process.env.EMAIL_USER}>`,
+        from: `"${buyerInfo?.name || "Customer"}" <${process.env.SMTP_FROM_EMAIL}>`,
         to: mailTo,
         subject: `🛒 New Order from ${buyerInfo?.name || "a customer"}`,
         html: `
