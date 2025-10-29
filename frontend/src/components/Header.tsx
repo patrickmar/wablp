@@ -142,10 +142,10 @@ export function Header() {
                 variant="outline"
                 className="w-full border-[#005A8C] text-[#005A8C] hover:bg-[#005A8C] hover:text-white"
               >
-                Sign In
+                <Link href="/sign-in">Sign In</Link>
               </Button>
               <Button className="w-full bg-[#C9A74B] text-white hover:bg-[#b8964a]">
-                Join Now
+                <Link href="/sign-up">Join Now</Link>
               </Button>
             </div>
           </div>
