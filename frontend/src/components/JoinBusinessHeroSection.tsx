@@ -46,13 +46,13 @@ export function JoinBusinessHeroSection() {
                 Start Free Trial
                 <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
               </Button> */}
-              <Button 
+              {/* <Button 
                 size="lg"
                 variant="outline"
                 className="border-2 border-white text-[#005A8C] hover:bg-white px-8 py-4 text-lg rounded-lg transition-all duration-300"
               >
                 Schedule Demo
-              </Button>
+              </Button> */}
             </div>
 
             <div className="grid grid-cols-3 gap-6">

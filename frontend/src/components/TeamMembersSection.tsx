@@ -5,7 +5,7 @@ const teamMembers = [
   {
     name: "Dr. Amina Kone",
     role: "Founder & CEO",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    image: "/im-senegal.jpg",
     bio: "Former World Bank economist with 15+ years of experience in West African business development and regional economic policy.",
     social: {
       linkedin: "#",
@@ -16,7 +16,7 @@ const teamMembers = [
   {
     name: "Kwame Asante",
     role: "Chief Technology Officer",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    image: "/im-ghana.jpg",
     bio: "Tech entrepreneur and software architect with expertise in building scalable platforms for emerging markets.",
     social: {
       linkedin: "#",
@@ -27,7 +27,7 @@ const teamMembers = [
   {
     name: "Fatou Diallo",
     role: "Head of Business Development",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    image: "/im-ivory.jpg",
     bio: "Strategic partnerships expert with a track record of connecting businesses across francophone and anglophone West Africa.",
     social: {
       linkedin: "#",
@@ -38,7 +38,7 @@ const teamMembers = [
   {
     name: "Tunde Adebayo",
     role: "Director of Operations",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    image: "/im-nigeria.jpg",
     bio: "Operations specialist with extensive experience in supply chain management and business process optimization.",
     social: {
       linkedin: "#",
@@ -49,7 +49,7 @@ const teamMembers = [
   {
     name: "Grace Mensah",
     role: "Community Manager",
-    image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    image: "/im-ghana.jpg",
     bio: "Community building expert focused on member engagement, success stories, and platform adoption across the region.",
     social: {
       linkedin: "#",
@@ -60,7 +60,7 @@ const teamMembers = [
   {
     name: "Omar Ba",
     role: "Head of Security",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    image: "/im-senegal.jpg",
     bio: "Cybersecurity specialist ensuring the highest standards of data protection and platform security for our members.",
     social: {
       linkedin: "#",
