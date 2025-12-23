@@ -1,11 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
-const Brevo = require("@getbrevo/brevo"); // ✅ Brevo SDK
-
-// ✅ Setup Brevo client once
-const brevo = new Brevo.TransactionalEmailsApi();
-brevo.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+const { sendEmail } = require("../utils/emailService"); // ✅ Nodemailer service
 
 // ✅ Get chat messages between two users
 router.get("/", async (req, res) => {
@@ -37,7 +33,9 @@ router.post("/send", async (req, res) => {
   const { sender, client, text } = req.body;
 
   if (!sender || !client || !text) {
-    return res.status(400).json({ error: "sender, client and text are required" });
+    return res
+      .status(400)
+      .json({ error: "sender, client and text are required" });
   }
 
   const insertQuery = `
@@ -61,13 +59,12 @@ router.post("/send", async (req, res) => {
       [sender]
     );
 
-    if (clientData.length > 0 && senderData.length > 0) {
-      const clientInfo = clientData[0];
+    if (clientData.length && senderData.length) {
+      const { email, name, is_online } = clientData[0];
       const senderName = senderData[0].name || "Someone";
-      const { email, name, is_online } = clientInfo;
 
       // ✅ Send email only if user is offline
-      if (!is_online) {
+      if (!is_online && email) {
         await sendEmailNotification(email, name, senderName, text);
       }
     }
@@ -79,24 +76,21 @@ router.post("/send", async (req, res) => {
   }
 });
 
-// ✅ Email Notification Helper using Brevo
+// ✅ Email Notification Helper using cPanel SMTP (Nodemailer)
 async function sendEmailNotification(toEmail, toName, senderName, messageText) {
   const businessName = "WABLP Business Center";
   const replyLink = "https://wablp.com/login";
   const logoUrl = "https://wablp.com/assets/logo.png";
 
-  // 💌 Branded WABLP Email Template
   const htmlTemplate = `
     <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
       <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
         
-        <!-- Header -->
         <div style="background-color: #1d4ed8; color: white; padding: 20px; text-align: center;">
           <img src="${logoUrl}" alt="WABLP Logo" style="max-width: 100px; margin-bottom: 10px;" />
           <h2 style="margin: 0;">New Message from ${senderName}</h2>
         </div>
         
-        <!-- Body -->
         <div style="padding: 25px; color: #333333;">
           <p>Hi <strong>${toName || "there"}</strong>,</p>
           <p><strong>${senderName}</strong> just sent you a new message on <strong>${businessName}</strong>:</p>
@@ -113,7 +107,6 @@ async function sendEmailNotification(toEmail, toName, senderName, messageText) {
           </a>
         </div>
 
-        <!-- Footer -->
         <div style="background-color: #f1f1f1; padding: 15px; text-align: center; font-size: 12px; color: #777;">
           <p>&copy; ${new Date().getFullYear()} ${businessName}. All rights reserved.</p>
           <p><a href="https://wablp.com" style="color: #1d4ed8; text-decoration: none;">Visit WABLP</a></p>
@@ -122,22 +115,13 @@ async function sendEmailNotification(toEmail, toName, senderName, messageText) {
     </div>
   `;
 
-  const emailData = {
-    sender: { 
-      email: process.env.SMTP_FROM_EMAIL || "noreply@wablp.com", 
-      name: process.env.SMTP_FROM_NAME || "WABLP Business Center" 
-    },
-    to: [{ email: toEmail, name: toName }],
+  await sendEmail({
+    to: toEmail,
     subject: `💬 New message from ${senderName} on ${businessName}`,
-    htmlContent: htmlTemplate,
-  };
+    html: htmlTemplate,
+  });
 
-  try {
-    await brevo.sendTransacEmail(emailData);
-    console.log(`📧 Email notification sent via Brevo to ${toEmail}`);
-  } catch (error) {
-    console.error("❌ Failed to send email notification via Brevo:", error.message);
-  }
+  console.log(`📧 Email notification sent to ${toEmail}`);
 }
 
 module.exports = router;
@@ -165,31 +149,16 @@ module.exports = router;
 
 
 
+
+
 // const express = require("express");
 // const router = express.Router();
 // const db = require("../config/db");
-// const nodemailer = require("nodemailer");
+// const Brevo = require("@getbrevo/brevo"); // ✅ Brevo SDK
 
-// // ✅ Setup email transporter once
-// const transporter = nodemailer.createTransport({
-//   host: process.env.SMTP_HOST,
-//   port: Number(process.env.SMTP_PORT) || 587,
-//   service: process.env.SMTP_SERVICE,
-//   auth: {
-//     user: process.env.SMTP_USER,
-//     pass: process.env.SMTP_PASS,
-//   },
-// });
-
-// // const transporter = nodemailer.createTransport({
-// //   host: process.env.SMTP_HOST,
-// //   port: process.env.SMTP_PORT,
-// //   secure: false,
-// //   auth: {
-// //     user: process.env.SMTP_EMAIL,
-// //     pass: process.env.SMTP_PASSWORD,
-// //   },
-// // });
+// // ✅ Setup Brevo client once
+// const brevo = new Brevo.TransactionalEmailsApi();
+// brevo.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
 
 // // ✅ Get chat messages between two users
 // router.get("/", async (req, res) => {
@@ -263,11 +232,11 @@ module.exports = router;
 //   }
 // });
 
-// // ✅ Email Notification Helper
+// // ✅ Email Notification Helper using Brevo
 // async function sendEmailNotification(toEmail, toName, senderName, messageText) {
 //   const businessName = "WABLP Business Center";
 //   const replyLink = "https://wablp.com/login";
-//   const logoUrl = "https://wablp.com/assets/logo.png"; // ✅ Replace with your actual logo URL
+//   const logoUrl = "https://wablp.com/assets/logo.png";
 
 //   // 💌 Branded WABLP Email Template
 //   const htmlTemplate = `
@@ -306,18 +275,21 @@ module.exports = router;
 //     </div>
 //   `;
 
-//   const mailOptions = {
-//     from: `"${businessName}" <${process.env.SMTP_FROM_EMAIL}>`,
-//     to: toEmail,
+//   const emailData = {
+//     sender: { 
+//       email: process.env.SMTP_FROM_EMAIL || "noreply@wablp.com", 
+//       name: process.env.SMTP_FROM_NAME || "WABLP Business Center" 
+//     },
+//     to: [{ email: toEmail, name: toName }],
 //     subject: `💬 New message from ${senderName} on ${businessName}`,
-//     html: htmlTemplate,
+//     htmlContent: htmlTemplate,
 //   };
 
 //   try {
-//     await transporter.sendMail(mailOptions);
-//     console.log(`📧 Email notification sent to ${toEmail}`);
+//     await brevo.sendTransacEmail(emailData);
+//     console.log(`📧 Email notification sent via Brevo to ${toEmail}`);
 //   } catch (error) {
-//     console.error("❌ Failed to send email notification:", error.message);
+//     console.error("❌ Failed to send email notification via Brevo:", error.message);
 //   }
 // }
 
