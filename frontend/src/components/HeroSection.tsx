@@ -91,7 +91,7 @@ export function HeroSection() {
                 size="lg"
                 className="bg-[#C9A74B] text-white hover:bg-[#b8964a] px-8 py-4 text-lg font-semibold transform hover:scale-105 transition-all duration-200 shadow-xl"
               >
-                <Link href="/sign-up">Join as a Business</Link>
+                <Link href="/sign-up">Sign In or Join as a Business</Link>
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               <Link href="/videos/demo.mp4" target="_blank">

@@ -106,6 +106,12 @@ export function SignupFormSection() {
               </CardHeader>
               <CardContent className="p-8">
                 <form className="space-y-6" onSubmit={handleSubmit}>
+
+                  <p className="text-center text-sm text-gray-600">
+                    Already have an account?
+                    <a href="sign-in" className="text-[#005A8C] hover:underline ml-1">Login here</a>
+                  </p>
+
                   {/* Personal Information */}
                   <div>
                     <h3 className="text-lg font-semibold text-[#005A8C] mb-4">Personal Information</h3>
@@ -246,10 +252,10 @@ export function SignupFormSection() {
                     <CheckCircle className="w-5 h-5 ml-2" />
                   </Button>
 
-                  <p className="text-center text-sm text-gray-600">
+                  {/* <p className="text-center text-sm text-gray-600">
                     Already have an account?
                     <a href="sign-in" className="text-[#005A8C] hover:underline ml-1">Login here</a>
-                  </p>
+                  </p> */}
                 </form>
               </CardContent>
             </Card>
