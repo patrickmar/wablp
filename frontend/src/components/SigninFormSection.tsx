@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { UserPlus, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 const isLocalhost =
   typeof window !== "undefined" && window.location.hostname === "localhost";
@@ -140,12 +141,18 @@ export function SigninFormSection() {
 
                   <p className="text-center text-sm text-gray-600">
                     Don't have an account?{" "}
-                    <a
+                    {/* <a
                       href="/sign-up"
                       className="text-[#005A8C] hover:underline ml-1"
                     >
                       Sign Up here
-                    </a>
+                    </a> */}
+                    <Link
+                      href="/sign-up"
+                      className="text-[#005A8C] hover:underline ml-1"
+                    >
+                      Sign up here
+                    </Link>
                   </p>
                 </form>
               </CardContent>

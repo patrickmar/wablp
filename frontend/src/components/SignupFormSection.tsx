@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { UserPlus, Shield, CheckCircle, Users, Phone } from "lucide-react";
+import Link from "next/link";
 
 const benefits = [
   "14-day free trial",
@@ -109,7 +110,13 @@ export function SignupFormSection() {
 
                   <p className="text-center text-sm text-gray-600">
                     Already have an account?
-                    <a href="sign-in" className="text-[#005A8C] hover:underline ml-1">Login here</a>
+                    {/* <a href="sign-in" className="text-[#005A8C] hover:underline ml-1">Login here</a> */}
+                    <Link
+                      href="/sign-in"
+                      className="text-[#005A8C] hover:underline ml-1"
+                    >
+                      Login here
+                    </Link>
                   </p>
 
                   {/* Personal Information */}
