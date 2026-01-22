@@ -113,6 +113,7 @@ const cataloguesRoutes = require("./routes/catalogues");
 const ordersRoutes = require("./routes/orders");
 const statusRoutes = require("./routes/status");
 const messageRoutes = require("./routes/messages");
+const profileRoutes = require("./routes/profile");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
@@ -131,6 +132,7 @@ app.use("/routes/catalogues", cataloguesRoutes);
 app.use("/routes/orders", ordersRoutes);
 app.use("/routes/status", statusRoutes);
 app.use("/routes/messages", messageRoutes);
+app.use("/routes/profile", profileRoutes);
 
 // ====================================================
 // 🚀 Start Server

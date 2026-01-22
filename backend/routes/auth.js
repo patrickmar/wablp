@@ -65,14 +65,12 @@ router.post("/login", async (req, res) => {
 
     // Check password
     if (user.password && user.password.startsWith("$2")) {
-      // ✅ bcrypt hash
       isMatch = await bcrypt.compare(password, user.password);
     } else {
-      // ❌ plain text fallback
       isMatch = password === user.password;
 
       if (isMatch) {
-        // 🔄 Rehash password & save
+        // Upgrade plain password to bcrypt
         const newHashed = await bcrypt.hash(password, 10);
         await db.query(
           "UPDATE customers SET password = ? WHERE customers_id = ?",
@@ -86,7 +84,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // ✅ Create JWT
+    // Create JWT
     const token = jwt.sign(
       { id: user.customers_id, email: user.email },
       JWT_SECRET,
@@ -96,15 +94,33 @@ router.post("/login", async (req, res) => {
     // Remove password before sending back
     const { password: _, ...safeUser } = user;
 
+    // ✅ Return all required profile fields
     return res.json({
       msg: "Login successful",
       token,
       user: {
         customers_id: safeUser.customers_id,
-        name: safeUser.name,
-        email: safeUser.email,
-        phone: safeUser.phone,
-        joined_as: safeUser.joined_as,
+        name: safeUser.name || "",
+        email: safeUser.email || "",
+        phone: safeUser.phone || "",
+        joined_as: safeUser.joined_as || "",
+        country: safeUser.country || "",
+        category: safeUser.category || "",
+        gender: safeUser.gender || "",
+        languages: safeUser.languages || "",
+        company_name: safeUser.company_name || "",
+        business_description: safeUser.business_description || "",
+        website: safeUser.website || "",
+        about_me: safeUser.about_me || "",
+        business_category: safeUser.business_category || "",
+        business_type: safeUser.business_type || "",
+        business_reg_number: safeUser.business_reg_number || "",
+        company_certifications: safeUser.company_certifications || "",
+        company_documents: safeUser.company_documents || "",
+        address: safeUser.address || "",
+        contact_name: safeUser.contact_name || "",
+        contact_phone: safeUser.contact_phone || "",
+        contact_email: safeUser.contact_email || "",
       },
     });
   } catch (err) {
@@ -114,6 +130,159 @@ router.post("/login", async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // routes/auth.js
+// const express = require("express");
+// const router = express.Router();
+// const db = require("../config/db");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+
+// const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // move to .env
+
+// // 📝 Register
+// router.post("/register", async (req, res) => {
+//   try {
+//     const { name, email, phone, joined_as, how_did_you_hear, password } = req.body;
+
+//     if (!name || !email || !phone || !password) {
+//       return res.status(400).json({ msg: "All fields are required" });
+//     }
+
+//     // Check if email exists
+//     const [existing] = await db.query(
+//       "SELECT * FROM customers WHERE email = ?",
+//       [email]
+//     );
+
+//     if (existing.length > 0) {
+//       return res.status(400).json({ msg: "Email already registered" });
+//     }
+
+//     // Hash password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Insert user
+//     await db.query(
+//       "INSERT INTO customers (name, email, phone, joined_as, how_did_you_hear, password) VALUES (?, ?, ?, ?, ?, ?)",
+//       [name, email, phone, joined_as, how_did_you_hear, hashedPassword]
+//     );
+
+//     return res.status(201).json({ msg: "User registered successfully" });
+//   } catch (err) {
+//     console.error("❌ Error in /register:", err);
+//     return res.status(500).json({ msg: "Server error", error: err.message });
+//   }
+// });
+
+// // 🔑 Login
+// router.post("/login", async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (!email || !password) {
+//       return res.status(400).json({ msg: "Email & password required" });
+//     }
+
+//     const [rows] = await db.query(
+//       "SELECT * FROM customers WHERE email = ?",
+//       [email]
+//     );
+
+//     if (rows.length === 0) {
+//       return res.status(400).json({ msg: "Invalid credentials" });
+//     }
+
+//     const user = rows[0];
+//     let isMatch = false;
+
+//     // Check password
+//     if (user.password && user.password.startsWith("$2")) {
+//       // ✅ bcrypt hash
+//       isMatch = await bcrypt.compare(password, user.password);
+//     } else {
+//       // ❌ plain text fallback
+//       isMatch = password === user.password;
+
+//       if (isMatch) {
+//         // 🔄 Rehash password & save
+//         const newHashed = await bcrypt.hash(password, 10);
+//         await db.query(
+//           "UPDATE customers SET password = ? WHERE customers_id = ?",
+//           [newHashed, user.customers_id]
+//         );
+//         console.log(`✅ User ${user.customers_id} password upgraded to bcrypt.`);
+//       }
+//     }
+
+//     if (!isMatch) {
+//       return res.status(400).json({ msg: "Invalid credentials" });
+//     }
+
+//     // ✅ Create JWT
+//     const token = jwt.sign(
+//       { id: user.customers_id, email: user.email },
+//       JWT_SECRET,
+//       { expiresIn: "1h" }
+//     );
+
+//     // Remove password before sending back
+//     const { password: _, ...safeUser } = user;
+
+//     return res.json({
+//       msg: "Login successful",
+//       token,
+//       user: {
+//         customers_id: safeUser.customers_id,
+//         name: safeUser.name,
+//         email: safeUser.email,
+//         phone: safeUser.phone,
+//         joined_as: safeUser.joined_as,
+//       },
+//     });
+//   } catch (err) {
+//     console.error("❌ Error in /login:", err);
+//     return res.status(500).json({ msg: "Server error", error: err.message });
+//   }
+// });
+
+// module.exports = router;
 
 
 
