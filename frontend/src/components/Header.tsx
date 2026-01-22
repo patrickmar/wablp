@@ -21,6 +21,7 @@ export function Header() {
         { label: "Join as a Business", href: "/join" },
         { label: "Deals, Opportunities & Tenders", href: "/opportunity" },
         { label: "Community Directory", href: "/community" },
+        { label: "Training & Development", href: "/training" },
       ],
     },
     { label: "News", href: "/news", hasDropdown: false },
