@@ -45,7 +45,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "https://wablptest.netlify.app",
+      "https://wablp.netlify.app",
       "http://localhost:3000",
       "https://wablp.com",
     ],
