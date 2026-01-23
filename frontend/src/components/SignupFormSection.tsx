@@ -136,7 +136,8 @@ export function SignupFormSection() {
 
                     <div className="mt-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address *(Code will be sent here)
+                        Email Address 
+                        {/* *(Code will be sent here) */}
                       </label>
                       <Input
                         type="email"

@@ -121,6 +121,7 @@ router.post("/login", async (req, res) => {
         contact_name: safeUser.contact_name || "",
         contact_phone: safeUser.contact_phone || "",
         contact_email: safeUser.contact_email || "",
+        business_sector: safeUser.business_sector || "",
       },
     });
   } catch (err) {
