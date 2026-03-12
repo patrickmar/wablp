@@ -23,7 +23,7 @@ import BusinessDetailsPage from "@/components/portal/BusinessDetailsPage";
 import OrganizationDetailsPage from "@/components/portal/OrganizationDetailsPage";
 import ExpertDetailsPage from "@/components/portal/ExpertDetailsPage";
 import JobDetailsPage from "@/components/portal/JobDetailsPage";
-import WebinarDetailsPage from "@/components/portal/WebinarDetailsPage"; // ✅ added
+import WebinarDetailsPage from "@/components/portal/WebinarDetailsPage";
 
 function Placeholder({ title }: { title: string }) {
   return <div>{title} content goes here</div>;
@@ -40,7 +40,7 @@ export default function PortalPage() {
   const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null);
   const [selectedExpertId, setSelectedExpertId] = useState<string | null>(null);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
-  const [selectedWebinarId, setSelectedWebinarId] = useState<string | null>(null); // ✅ added
+  const [selectedWebinarId, setSelectedWebinarId] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -50,18 +50,27 @@ export default function PortalPage() {
 
   if (loading) return <p className="p-6">Checking authentication...</p>;
 
+  // ✅ Shared handler for navigating to a full news page
+  // Accepts both number (from DashboardPage & NewsEventsPage) and string (from FullNewsPage)
+  const handleSelectNews = (id: number | string) => {
+    setSelectedNewsId(id.toString());
+    setActivePage("newsDetails");
+  };
+
   const renderPage = () => {
     switch (activePage) {
       case "dashboard":
-        return <DashboardPage />;
+        // ✅ FIXED: pass onSelectNews so dashboard news titles are clickable
+        return (
+          <DashboardPage
+            onSelectNews={handleSelectNews}
+          />
+        );
 
       case "news":
         return (
           <NewsEventsPage
-            onSelectNews={(id) => {
-              setSelectedNewsId(id.toString());
-              setActivePage("newsDetails");
-            }}
+            onSelectNews={handleSelectNews}
           />
         );
 
@@ -70,10 +79,7 @@ export default function PortalPage() {
           <FullNewsPage
             id={selectedNewsId!}
             onBack={() => setActivePage("news")}
-            onSelectNews={(id) => {
-              setSelectedNewsId(id.toString());
-              setActivePage("newsDetails");
-            }}
+            onSelectNews={handleSelectNews}
           />
         );
 
@@ -238,7 +244,12 @@ export default function PortalPage() {
         );
 
       default:
-        return <DashboardPage />;
+        // ✅ FIXED: also pass onSelectNews in the default fallback
+        return (
+          <DashboardPage
+            onSelectNews={handleSelectNews}
+          />
+        );
     }
   };
 
@@ -248,6 +259,8 @@ export default function PortalPage() {
     </PortalLayout>
   );
 }
+
+
 
 
 
@@ -290,9 +303,10 @@ export default function PortalPage() {
 // import { CreateCataloguePage } from "@/components/portal/CreateCataloguePage";
 // import FullNewsPage from "@/components/portal/FullNewsPage";
 // import BusinessDetailsPage from "@/components/portal/BusinessDetailsPage";
-// import OrganizationDetailsPage from "@/components/portal/OrganizationDetailsPage"; // ✅ added
+// import OrganizationDetailsPage from "@/components/portal/OrganizationDetailsPage";
 // import ExpertDetailsPage from "@/components/portal/ExpertDetailsPage";
 // import JobDetailsPage from "@/components/portal/JobDetailsPage";
+// import WebinarDetailsPage from "@/components/portal/WebinarDetailsPage"; // ✅ added
 
 // function Placeholder({ title }: { title: string }) {
 //   return <div>{title} content goes here</div>;
@@ -302,12 +316,14 @@ export default function PortalPage() {
 //   const [activePage, setActivePage] = useState("dashboard");
 //   const [loading, setLoading] = useState(true);
 //   const router = useRouter();
+
 //   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 //   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
 //   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
-//   const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null); // ✅ added
-//   const [selectedExpertId, setSelectedExpertId] = useState<string | null>(null); // ✅ added
-//   const [selectedJobId, setSelectedJobId] = useState<string | null>(null); // ✅ added
+//   const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null);
+//   const [selectedExpertId, setSelectedExpertId] = useState<string | null>(null);
+//   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+//   const [selectedWebinarId, setSelectedWebinarId] = useState<string | null>(null); // ✅ added
 
 //   useEffect(() => {
 //     const token = localStorage.getItem("token");
@@ -431,7 +447,24 @@ export default function PortalPage() {
 //         return <Placeholder title="Courses" />;
 
 //       case "webinars":
-//         return <WebinarsPage />;
+//         return (
+//           <WebinarsPage
+//             onSelectWebinar={(id: number) => {
+//               setSelectedWebinarId(id.toString());
+//               setActivePage("webinarDetails");
+//             }}
+//           />
+//         );
+
+//       case "webinarDetails":
+//         return selectedWebinarId ? (
+//           <WebinarDetailsPage
+//             id={selectedWebinarId.toString()}
+//             onBack={() => setActivePage("webinars")}
+//           />
+//         ) : (
+//           <div className="p-6">No webinar selected.</div>
+//         );
 
 //       case "dealrooms":
 //         return <Placeholder title="Deal Rooms" />;
